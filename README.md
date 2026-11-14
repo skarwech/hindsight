@@ -30,7 +30,7 @@ ollama serve &  ollama pull bge-m3
 db/server.sh start            # MariaDB 12.3 on 127.0.0.1:3306 (datadir .mariadb/), schemas wikirag/wikihistory/smoke, user hindsight
 
 uv venv --python 3.12 .venv
-PATH="$(brew --prefix mariadb@12.3)/bin:$PATH" uv pip install --python .venv/bin/python -r requirements.txt
+PATH="$(brew --prefix mariadb@12.3)/bin:$PATH" uv pip install --python .venv/bin/python -r requirements-dev.txt
 
 # datasets: M (315 MB) and the S checksums plus S article files, from the official releases
 B=https://github.com/MariaDB/mariadb-wikipedia-datasets/releases/download
@@ -113,8 +113,10 @@ db/server.sh start
 .venv/bin/streamlit run app.py
 ```
 
-The app reads `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from the environment. Streamlit deployments can
-set the same values under `[database]` in `.streamlit/secrets.toml` (`host`, `port`, `user`, `password`, `name`). The default
-settings target the project-local MariaDB bound to `127.0.0.1`.
+Streamlit Cloud installs only the lightweight app dependencies from `requirements.txt`; local pipeline and evaluation work
+uses `requirements-dev.txt`. The app reads `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from the environment.
+Streamlit deployments can set the same values under `[database]` in `.streamlit/secrets.toml` (`host`, `port`, `user`,
+`password`, `name`). The default settings target the project-local MariaDB bound to `127.0.0.1`; a hosted app needs a
+network-reachable MariaDB host configured in its secrets.
 
 Wikipedia text and everything derived from it is CC BY-SA 4.0.

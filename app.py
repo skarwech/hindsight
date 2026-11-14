@@ -12,7 +12,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
-import mariadb
+import pymysql
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
@@ -35,8 +35,8 @@ def _database_settings() -> dict[str, Any]:
     }
 
 
-def connect_db() -> mariadb.Connection:
-    connection = mariadb.connect(**_database_settings(), autocommit=True)
+def connect_db() -> pymysql.connections.Connection:
+    connection = pymysql.connect(**_database_settings(), autocommit=True, charset="utf8mb4", connect_timeout=10)
     connection.cursor().execute("SET time_zone = '+00:00'")
     return connection
 
@@ -73,8 +73,8 @@ def load_snapshot(page_id: int, as_of: str) -> dict[str, Any] | None:
         cursor = connection.cursor()
         cursor.execute(
             """SELECT title, rev_id, anon, is_revert, undone, row_start
-               FROM wikihistory.page_state FOR SYSTEM_TIME AS OF TIMESTAMP ?
-               WHERE page_id = ?""",
+               FROM wikihistory.page_state FOR SYSTEM_TIME AS OF TIMESTAMP %s
+               WHERE page_id = %s""",
             (timestamp, page_id),
         )
         state = cursor.fetchone()
@@ -82,8 +82,8 @@ def load_snapshot(page_id: int, as_of: str) -> dict[str, Any] | None:
             return None
 
         cursor.execute(
-            """SELECT claim_order FROM wikihistory.layout FOR SYSTEM_TIME AS OF TIMESTAMP ?
-               WHERE page_id = ?""",
+            """SELECT claim_order FROM wikihistory.layout FOR SYSTEM_TIME AS OF TIMESTAMP %s
+               WHERE page_id = %s""",
             (timestamp, page_id),
         )
         layout_row = cursor.fetchone()
@@ -95,15 +95,15 @@ def load_snapshot(page_id: int, as_of: str) -> dict[str, Any] | None:
 
         cursor.execute(
             """SELECT claim_id, section, exact_hash, n_refs
-               FROM wikihistory.claim FOR SYSTEM_TIME AS OF TIMESTAMP ?
-               WHERE page_id = ?""",
+               FROM wikihistory.claim FOR SYSTEM_TIME AS OF TIMESTAMP %s
+               WHERE page_id = %s""",
             (timestamp, page_id),
         )
         claim_rows = cursor.fetchall()
         texts: dict[int, str] = {}
         if claim_rows:
             hashes = [row[2] for row in claim_rows]
-            placeholders = ", ".join("?" for _ in hashes)
+            placeholders = ", ".join("%s" for _ in hashes)
             cursor.execute(
                 f"SELECT exact_hash, text FROM wikihistory.text_variant WHERE exact_hash IN ({placeholders})",
                 hashes,
@@ -184,8 +184,8 @@ st.info("This prototype reconstructs historical article snapshots. Question answ
 try:
     catalog = load_catalog()
     earliest, latest = load_date_bounds()
-except (mariadb.Error, RuntimeError, OSError) as error:
-    st.error("Hindsight could not load its article history. Start the local database with `db/server.sh start` and check the app setup notes in README.")
+except (pymysql.MySQLError, RuntimeError, OSError) as error:
+    st.error("Hindsight could not load its article history. Check the database connection and the app setup notes in README.")
     with st.expander("Technical details"):
         st.code(str(error))
     st.stop()
@@ -215,7 +215,7 @@ else:
     try:
         with st.spinner("Rebuilding the article snapshot…"):
             snapshot = load_snapshot(page_id, as_of)
-    except mariadb.Error as error:
+    except pymysql.MySQLError as error:
         st.error("The article snapshot could not be loaded. Check the database connection and try again.")
         with st.expander("Technical details"):
             st.code(str(error))
