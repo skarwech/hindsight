@@ -13,6 +13,7 @@ import duckdb
 from common import ROOT, connect
 
 CH, LIN = ROOT / "data/chunks", ROOT / "data/lineage"
+MUTATION_CODE_FILES = ("pipeline/load_claims.py", "eval/f6_lib.py", "eval/f6_check.py", "eval/f6_mutate.py")
 ONE_US = timedelta(microseconds=1)
 Rev = tuple[int, int, bool, datetime]           # (ord, rev_id, hidden, page_state row_start)
 
@@ -65,14 +66,30 @@ def expected_lists(revs: dict[int, list[Rev]]) -> dict[tuple[int, int], list[tup
     return out
 
 
+def chunk_count_audit() -> tuple[int, int]:
+    """Compare every revisions.parquet n_chunks with the emitted rev_chunks rows."""
+    d = duckdb.connect()
+    total, mismatches = d.execute(f"""WITH emitted AS (
+          SELECT page_id, ord, COUNT(*) AS n FROM '{CH}/rev_chunks.parquet' GROUP BY page_id, ord
+        )
+        SELECT COUNT(*), COUNT(*) FILTER (WHERE r.n_chunks <> COALESCE(e.n, 0))
+        FROM '{CH}/revisions.parquet' r LEFT JOIN emitted e USING (page_id, ord)""").fetchone()
+    return total, mismatches
+
+
+def period_overlap_count(cur, source: str, partition: str) -> int:
+    """Run the production period-overlap window query against a system-versioned table or fixture."""
+    cur.execute(f"""SELECT COUNT(*) FROM (SELECT row_end, LEAD(row_start) OVER (PARTITION BY {partition}
+                    ORDER BY row_start) nx FROM {source}) x WHERE nx < row_end""")
+    return cur.fetchone()[0]
+
+
 def integrity(schema: str) -> dict[str, int]:
     """Violations per kind, all in SQL over FOR SYSTEM_TIME ALL."""
     cur = connect(schema).cursor(); bad = {}
     q = lambda sql: (cur.execute(sql), cur.fetchone()[0])[1]
-    bad["claim periods overlap"] = q(f"""SELECT COUNT(*) FROM (SELECT row_end, LEAD(row_start) OVER (PARTITION BY page_id, claim_id
-                                         ORDER BY row_start) nx FROM {schema}.claim FOR SYSTEM_TIME ALL) x WHERE nx < row_end""")
-    bad["layout periods overlap"] = q(f"""SELECT COUNT(*) FROM (SELECT row_end, LEAD(row_start) OVER (PARTITION BY page_id
-                                          ORDER BY row_start) nx FROM {schema}.layout FOR SYSTEM_TIME ALL) x WHERE nx < row_end""")
+    bad["claim periods overlap"] = period_overlap_count(cur, f"{schema}.claim FOR SYSTEM_TIME ALL", "page_id, claim_id")
+    bad["layout periods overlap"] = period_overlap_count(cur, f"{schema}.layout FOR SYSTEM_TIME ALL", "page_id")
     bad["layout gaps (a page's order must be continuous)"] = q(
         f"""SELECT COUNT(*) FROM (SELECT row_end, LEAD(row_start) OVER (PARTITION BY page_id ORDER BY row_start) nx
             FROM {schema}.layout FOR SYSTEM_TIME ALL) x WHERE nx IS NOT NULL AND nx <> row_end""")

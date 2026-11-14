@@ -1,6 +1,6 @@
 # What's left
 
-Status on 2026-11-14. Validation status per feature: `docs/dashboard.html`; decisions and measurements: `docs/findings.md`.
+Status on 2026-11-15. Validation status per feature: `docs/dashboard.html`; decisions and measurements: `docs/findings.md`.
 
 ## Where things stand
 
@@ -8,16 +8,16 @@ Status on 2026-11-14. Validation status per feature: `docs/dashboard.html`; deci
 |---|---|---|
 | 0–3 | F1–F4: environment, `page_state`, chunker, lineage resolver | validated |
 | 4 | F5 embeddings and `chunk` store; F4S semantic lineage | validated: F5.6 (the plan's probe check) and the semantic-link gate fail as specified, so the semantic pass is not adopted |
-| 5 | F6 deep layer: `claim`, `layout`, `text_variant` | built, every F6 check passes; **awaiting validation** |
-| 6–12 | F7–F17 | not started |
+| 5 | F6 deep layer: `claim`, `layout`, `text_variant` | all programmatic F6 checks pass; **awaiting user review** |
+| 6–8 | F7–F13: retrieval, answers, then/now, insight, audit | not started |
+| 9 | F14 web UI | Streamlit historical snapshot prototype added; full UI and F14 validation remain |
+| 10–12 | F15–F17: benchmark, stretch features, ship | not started |
 
 ## Left in Step 5 (before asking for validation)
 
-1. **Fault injection detail (F6.7).** Report which sub-check catches each fault: split F6.3 into the integrity SQL and the independent rebuild, and make the overlap fault use valid `page_state` times, so it proves the overlap query by itself. Add two faults the review found uncovered: wrong text under a correct `text_variant` hash, and a layout row for every revision. (`eval/f6_mutate.py`)
-2. **Storage (F6.5).** Separate the two effects inside the 47×: markup the design never stores versus deduplication of unchanged paragraphs (add a "cleaned prose, full copy per version" baseline). Count the full-text index files, and say that chunk text is stored twice (`chunk.text` and `text_variant.text`). (`eval/f6_check.py`)
-3. **Latency (F6.6).** Gate the headline on the optimizer's own plan (what `reconstruct()` runs: p95 0.68 ms), not the forced key; show the key per timed query rather than one `EXPLAIN`.
-4. **Wording.** F6.3 should say why the independent rebuild replaces the plan's "row count = state openings in the event log" (states also open on citation, section and spelling changes). Cross-check each revision's chunk count against `revisions.n_chunks`.
-5. Re-run `f6_mutate.py`, `f6_check.py` and `render.py`, show the dashboard, and ask for validation.
+The review fixes are implemented and the full validation ran on 2026-11-15. F6.1–F6.4, F6.6 and F6.7 pass; F6.5 records storage as information. The 8 fault cases all produced their expected failing sub-checks. Fresh results are in `docs/validation/f6.json`, `docs/validation/evidence/f6_mutations.json` and `docs/dashboard.html`.
+
+Remaining Step 5 work: review the F6 results and accept the step. A Streamlit historical snapshot viewer is now available in `app.py`; it uses F6 history only. Retrieval, Q&A, then-versus-now comparison and the rest of F14 are still unimplemented.
 
 ## Open decisions (yours)
 

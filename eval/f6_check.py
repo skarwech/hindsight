@@ -73,16 +73,18 @@ def check_round_trip(revs: dict, exp: dict) -> None:
     sample_ok = sum(ok_at[x] for x in sample)
     big_n = sum(len(revs[p]) for p in big); big_ok = sum(ok_at[(p, r)] for p in big for _, r, _, _ in revs[p])
     name = titles()
+    revision_count, chunk_count_bad = L.chunk_count_audit()
     C.add("F6.1", "Round trip (main gate): every article rebuilt through AS OF equals the chunker's chunk list, exact spelling included",
           "invariant", "(a) the plan's 1,000 random revisions, here every revision at its own time and 1 µs before (the predecessor, or "
           "empty before the first); (b) every revision of the 3 largest pages; (c) 1,000 random instants that are not revision times, "
-          "against the revision page_state says is active: all 100%",
+          "against the revision page_state says is active: all 100%; every revisions.parquet n_chunks equals the emitted chunk count",
           f"(a) at revision time {res['at']['ok']:,}/{res['at']['n']:,} visible revisions, of which the plan's random 1,000: {sample_ok}/1000; "
           f"1 µs before {res['before']['ok']:,}/{res['before']['n']:,}; (b) the 3 largest pages ({', '.join(name.get(p, str(p)) for p in big)}): "
           f"{big_ok:,}/{big_n:,} revisions at and before; (c) random instants {res['instants']['ok']}/{res['instants']['n']}; hidden revisions "
-          f"(expected = the carried-over "
-          f"list, not an independent source) {res['hidden']['ok']}/{res['hidden']['n']}",
-          all(v["ok"] == v["n"] for v in res.values()), "\n".join(bad) or "no mismatch")
+          f"(expected = the carried-over list, not an independent source) {res['hidden']['ok']}/{res['hidden']['n']}; "
+          f"n_chunks cross-check {revision_count - chunk_count_bad:,}/{revision_count:,} revisions",
+          all(v["ok"] == v["n"] for v in res.values()) and chunk_count_bad == 0,
+          ("\n".join(bad) or "no round-trip mismatch") + (f"; n_chunks mismatches: {chunk_count_bad}" if chunk_count_bad else ""))
     C.add("F6.2", "Layout and claim set equality: at every reconstructed moment the ids in claim_order are exactly the claims alive",
           "invariant", "0 differences (the plan: 1,000 random t; here every reconstruction above)",
           f"{sets_bad} differences in {sum(v['n'] for v in res.values()):,} reconstructions", sets_bad == 0)
@@ -93,11 +95,15 @@ def check_integrity(revs: dict) -> None:
     bad = L.integrity("wikihistory")
     reb, sto = Counter(L.rebuilt_claim_rows(revs)), Counter(L.stored_claim_rows("wikihistory"))
     diff = sum((reb - sto).values()) + sum((sto - reb).values())
-    C.add("F6.3", "History integrity: no overlapping periods, at most one current row, rows = claim states rebuilt independently, "
-          "every time a page_state time of the same page", "invariant",
-          "0 violations of each kind; claim rows equal the states rebuilt from claim ids + chunks (not the states file the loader read)",
-          f"{sum(bad.values())} violations {dict((k, v) for k, v in bad.items() if v) or ''}; claim rows {sum(sto.values()):,}, rebuilt "
-          f"{sum(reb.values()):,}, differing {diff}", sum(bad.values()) == 0 and diff == 0, json.dumps(bad, indent=1))
+    C.add("F6.3a", "History integrity SQL: periods, current rows, page_state timestamps, metadata, hashes and layout changes",
+          "invariant", "0 SQL integrity violations",
+          f"{sum(bad.values())} violations {dict((k, v) for k, v in bad.items() if v) or ''}",
+          sum(bad.values()) == 0, json.dumps(bad, indent=1))
+    C.add("F6.3b", "Independent claim-history rebuild",
+          "invariant", "claim rows equal a rebuild from claim ids + chunks, not the states file the loader read",
+          f"claim rows {sum(sto.values()):,}, rebuilt {sum(reb.values()):,}, differing {diff}", diff == 0,
+          "The event log tracks lineage events, but a claim state also opens when exact spelling, citation count, or section changes. "
+          "Rebuilding from claim ids and chunk output covers those state changes independently.")
 
 
 # ---------- F6.4 idempotence ----------
@@ -122,6 +128,10 @@ def check_storage() -> None:
                if why.startswith("starter")]
     ids = ",".join(map(str, starter))
     full = D.execute(f"SELECT SUM(strlen(text)), COUNT(*) FROM '{ROOT}/data/m/versions-*.parquet' WHERE page_id IN ({ids})").fetchall()[0]
+    clean = D.execute(f"""SELECT SUM(strlen(v.text)) FROM '{ROOT}/data/chunks/rev_chunks.parquet' r
+                           JOIN '{ROOT}/data/chunks/chunk_variant.parquet' v USING (exact_hash)
+                           WHERE r.page_id IN ({ids})""").fetchone()[0] or 0
+    clean_versions = D.execute(f"SELECT COUNT(*) FROM '{ROOT}/data/chunks/revisions.parquet' WHERE page_id IN ({ids}) AND NOT hidden").fetchone()[0]
     cur = connect("wikihistory").cursor()
     q = lambda sql: (cur.execute(sql), cur.fetchone()[0])[1] or 0
     claim_b = q(f"""SELECT SUM(42 + COALESCE(LENGTH(section), 0) + COALESCE(LENGTH(editor), 0) + COALESCE(LENGTH(comment), 0))
@@ -134,24 +144,32 @@ def check_storage() -> None:
     n_vec = q(f"SELECT COUNT(DISTINCT text_hash) FROM claim FOR SYSTEM_TIME ALL WHERE page_id IN ({ids})")
     mb = lambda b: b / 2**20
     text_total = claim_b + layout_b + text_b + var_b
+    stored_text = text_b + var_b
     files = L.table_files_mb("wikihistory")
     vec_files = sum(f.stat().st_size for f in (ROOT / ".mariadb/data/wikihistory").glob("chunk#i#*.ibd")) / 2**20
-    C.table("Storage for the starter's 50 articles, logical bytes: full copies of every version vs this design",
+    fts_files = list((ROOT / ".mariadb/data/wikihistory").glob("FTS_*_INDEX_*.ibd"))
+    fts_mb = sum(f.stat().st_size for f in fts_files) / 2**20
+    C.table("Storage for the starter's 50 articles, logical bytes: full copies vs cleaned prose and this design",
             ["Part", "MiB", "Share of full copies"],
             [["Full copy of every version's wikitext (dataset M; the starter's 2,049 MB is decimal: 1,954 MiB)", round(mb(full[0]), 1), 1.0],
+             ["Cleaned paragraph text, full copy per visible revision", round(mb(clean), 1), round(clean / full[0], 4)],
              ["claim rows (ids, hashes, section, editor, comment)", round(mb(claim_b), 1), round(claim_b / full[0], 4)],
              ["layout rows (reading order)", round(mb(layout_b), 1), round(layout_b / full[0], 4)],
-             ["chunk text (one row per distinct text)", round(mb(text_b), 1), round(text_b / full[0], 4)],
-             ["text_variant (exact spellings)", round(mb(var_b), 1), round(var_b / full[0], 4)],
+             ["chunk.text (one row per normalized text)", round(mb(text_b), 1), round(text_b / full[0], 4)],
+             ["text_variant.text (exact spellings; text is stored in both tables)", round(mb(var_b), 1), round(var_b / full[0], 4)],
              ["text total", round(mb(text_total), 1), round(text_total / full[0], 4)],
-             ["vectors (4 KB per distinct text)", round(mb(n_vec * 4096), 1), round(n_vec * 4096 / full[0], 4)]])
+             ["vectors (4 KB per distinct text)", round(mb(n_vec * 4096), 1), round(n_vec * 4096 / full[0], 4)],
+             [f"FULLTEXT index ({len(fts_files)} physical files)", round(fts_mb, 1), round(fts_mb * 2**20 / full[0], 4)]])
     C.add("F6.5", "Storage: claims + layout + chunk text (+ vectors) against full copies of every version, same 50 articles",
           "oracle", "recorded; plan est. one to two orders of magnitude below full copies (2,049 MB wikitext, 1,202 MB compressed [S2]), "
-          "total dominated by vectors",
-          f"full copies {mb(full[0]):,.0f} MiB ({full[0] / 1e6:,.0f} MB, the starter's number) over {full[1]:,} versions; this design's text "
-          f"{mb(text_total):.1f} MiB ({full[0] / text_total:.0f}x smaller), vectors {mb(n_vec * 4096):.1f} MiB; on disk for all 60 pages: claim "
-          f"{files['claim']} MiB, layout {files['layout']} MiB, text_variant {files['text_variant']} MiB, chunk {files['chunk']} MiB + vector "
-          f"index {vec_files:.0f} MiB", None)
+          "separate markup removal from deduplication; count chunk.text and text_variant.text as two stored copies",
+          f"raw wikitext {mb(full[0]):,.0f} MiB over {full[1]:,} versions; cleaned prose {mb(clean):,.1f} MiB over {clean_versions:,} visible revisions "
+          f"({full[0] / clean:.1f}x smaller after markup/boilerplate removal); distinct paragraph strings {mb(stored_text):,.1f} MiB, "
+          f"including both chunk.text and text_variant.text ({clean / stored_text:.1f}x smaller than cleaned full copies); claim/layout metadata "
+          f"{mb(claim_b + layout_b):,.1f} MiB; total text {mb(text_total):,.1f} MiB ({full[0] / text_total:.1f}x below raw wikitext); "
+          f"vectors {mb(n_vec * 4096):.1f} MiB. On disk for all 60 pages: claim {files['claim']} MiB, layout {files['layout']} MiB, "
+          f"text_variant {files['text_variant']} MiB, chunk {files['chunk']} MiB, vector index {vec_files:.0f} MiB, "
+          f"FULLTEXT index {len(fts_files)} files / {fts_mb:.1f} MiB", None)
 
 
 # ---------- F6.6 latency ----------
@@ -166,33 +184,48 @@ def check_latency(revs: dict) -> None:
         old = i % 2 == 0
         span = (hi - lo) * (0.2 if old else 1.0)
         picks.append((p, lo + timedelta(microseconds=rnd.randrange(max(1, int(span.total_seconds() * 1e6)))), old, i >= 1000))
-    rows, explain = [], {}
+    rows, key_counts = [], {}
     variants = (("KEY(page_id, row_start) forced", f"FORCE INDEX ({key})"), ("optimizer's choice", ""),
                 ("without KEY(page_id, row_start)", f"IGNORE INDEX ({key})"))
     for name, hint in variants:
-        cur.execute(f"EXPLAIN SELECT claim_id, text_hash FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP '2015-01-01 00:00:00' {hint} WHERE page_id = 1275")
-        cols = [c[0] for c in cur.description]; explain[name] = cur.fetchall()[0][cols.index("key")]
         ms: dict[str, list[float]] = {"all": [], "largest 3 pages": [], "old dates (first 20% of a page's life)": []}
+        key_counts[name] = {part: {"layout": Counter(), "claim": Counter()} for part in ms}
         for p, t, old, is_big in picks:
-            s = L.ts_text(t); t0 = time.perf_counter()
+            s = L.ts_text(t)
+            cur.execute("EXPLAIN SELECT claim_order FROM layout FOR SYSTEM_TIME AS OF TIMESTAMP ? WHERE page_id = ?", (s, p))
+            layout_cols = [c[0] for c in cur.description]
+            layout_key = cur.fetchall()[0][layout_cols.index("key")]
+            cur.execute(f"EXPLAIN SELECT claim_id, text_hash, exact_hash FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP ? {hint} WHERE page_id = ?", (s, p))
+            claim_cols = [c[0] for c in cur.description]
+            claim_key = cur.fetchall()[0][claim_cols.index("key")]
+            part = "largest 3 pages" if is_big else "all"
+            key_counts[name][part]["layout"][layout_key or "(none)"] += 1
+            key_counts[name][part]["claim"][claim_key or "(none)"] += 1
+            if old:
+                key_counts[name]["old dates (first 20% of a page's life)"]["layout"][layout_key or "(none)"] += 1
+                key_counts[name]["old dates (first 20% of a page's life)"]["claim"][claim_key or "(none)"] += 1
+            t0 = time.perf_counter()
             cur.execute("SELECT claim_order FROM layout FOR SYSTEM_TIME AS OF TIMESTAMP ? WHERE page_id = ?", (s, p)); cur.fetchall()
-            cur.execute(f"SELECT claim_id, text_hash FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP ? {hint} WHERE page_id = ?", (s, p)); cur.fetchall()
+            cur.execute(f"SELECT claim_id, text_hash, exact_hash FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP ? {hint} WHERE page_id = ?", (s, p)); cur.fetchall()
             dt = 1000 * (time.perf_counter() - t0)
             (ms["largest 3 pages"] if is_big else ms["all"]).append(dt)
             if old:
                 ms["old dates (first 20% of a page's life)"].append(dt)
         for part, v in ms.items():
             q = statistics.quantiles(v, n=100)
-            rows.append([name, explain[name] or "(none)", part, len(v), round(statistics.median(v), 2), round(q[94], 2), round(max(v), 2)])
-    C.table("AS OF reconstruction latency (layout + claim query for one page), ms", ["Variant", "Key used (EXPLAIN)", "Queries",
-            "n", "p50", "p95", "max"], rows)
-    with_key = next(r for r in rows if r[0].startswith("KEY") and r[2] == "all")
-    worst = max(r[5] for r in rows if r[0].startswith("KEY"))
+            def fmt_keys(which: str) -> str:
+                return ", ".join(f"{k} {n}/{len(v)}" for k, n in sorted(key_counts[name][part][which].items()))
+            rows.append([name, part, len(v), fmt_keys("layout"), fmt_keys("claim"), round(statistics.median(v), 2), round(q[94], 2), round(max(v), 2)])
+    C.table("AS OF reconstruction latency and EXPLAIN key distribution for every timed query, ms", ["Variant", "Queries", "n",
+            "Layout keys", "Claim keys", "p50", "p95", "max"], rows)
+    optimizer = [r for r in rows if r[0] == "optimizer's choice"]
+    opt_all = next(r for r in optimizer if r[1] == "all")
+    opt_worst = max(r[6] for r in optimizer)
     C.add("F6.6", "Latency: AS OF for one page (both queries), with and without KEY(page_id, row_start), on random, largest and old pages",
-          "smoke", "p95 <= 10 ms with the key (plan); the no-key number recorded",
-          f"with the key: p95 {with_key[5]} ms on random pages, worst p95 {worst} ms over largest pages and old dates; the optimizer "
-          f"picks {explain[variants[1][0]]!r}; without the key see the table",
-          with_key[5] <= 10 and worst <= 10)
+          "smoke", "optimizer's actual plan has p95 <= 10 ms for the two queries reconstruct() runs; forced-key and no-key timings are recorded",
+          f"optimizer: p95 {opt_all[6]} ms on random pages, worst group p95 {opt_worst} ms; EXPLAIN keys recorded per timed query in the table; "
+          f"forced-key and no-key results are also shown",
+          opt_worst <= 10)
 
 
 # ---------- F6.7 fault injection ----------
@@ -200,13 +233,13 @@ def check_mutations() -> None:
     path = EV / "f6_mutations.json"
     doc = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"results": []}
     sha = lambda f: hashlib.sha256(f.read_bytes()).hexdigest()
-    fresh = (doc.get("code") == {n: sha(ROOT / n) for n in ("pipeline/load_claims.py", "eval/f6_lib.py", "eval/f6_mutate.py")}
+    fresh = (doc.get("code") == {n: sha(ROOT / n) for n in L.MUTATION_CODE_FILES}
              and doc.get("live_checksum") == L.checksum("wikihistory"))
     r = doc["results"]
-    C.table("Fault injection (eval/f6_mutate.py, on a copy in smoke): each check fails on its fault", ["Check", "Injected fault",
-            "Expected", "Got"], [[x["check"], x["fault"], x["expected"], x["status"]] for x in r])
-    C.add("F6.7", "Fault injection: round trip, set equality and integrity each fail on a single injected fault in a copy",
-          "invariant", "every outcome as expected; recorded for this loader, f6_lib and the loaded tables",
+    C.table("Fault injection (eval/f6_mutate.py, on a copy in smoke): targeted sub-checks", ["Fault", "Expected failing sub-checks",
+            "Observed failing sub-checks"], [[x["fault"], ", ".join(x["expected_failed"]) or "none", ", ".join(x["failed"]) or "none"] for x in r])
+    C.add("F6.7", "Fault injection: round trip, set equality, SQL integrity and independent rebuild respond to targeted faults",
+          "invariant", "each fault is caught by its specified sub-checks; evidence is bound to loader, checker, library and loaded tables",
           f"{sum(x['ok'] for x in r)} of {len(r)} as expected; fresh {fresh}", bool(r) and all(x["ok"] for x in r) and fresh)
 
 

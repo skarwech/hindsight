@@ -1,8 +1,9 @@
 {
  "code": {
   "pipeline/load_claims.py": "84a2e660452d8a38c8c44f7c2b11c2e4b84e72a3eb92a595ac5f9dcc257bfcb7",
-  "eval/f6_lib.py": "7b18d66913affbda79b328d4b6156e0b71232ac1d7c2235a0d69ed03de7bd0c0",
-  "eval/f6_mutate.py": "f5017badbdf5513148c2818616fd6d246d12085bfbc0e9d1eaa93e6847cba755"
+  "eval/f6_lib.py": "bb6b5bd31d1a08a5734a62f061fc6d5c9e836297cc65e7b20ca467817d4fd03c",
+  "eval/f6_check.py": "4e681ce5805fcd9e9922ebdb6f540f4af725f9262b1a2efdef84825d78c5f2ca",
+  "eval/f6_mutate.py": "6219a9653ebf120b65d027287fa95974323f3b27a3e5b2d113e2e6418c75789e"
  },
  "live_checksum": {
   "claim_rows": 52994,
@@ -16,81 +17,95 @@
   {
    "fault": "none (a clean copy)",
    "page": 1150,
-   "check": "F6.1",
-   "expected": "pass",
-   "status": "pass",
-   "ok": true
-  },
-  {
-   "fault": "none (a clean copy)",
-   "page": 1150,
-   "check": "F6.2",
-   "expected": "pass",
-   "status": "pass",
-   "ok": true
-  },
-  {
-   "fault": "none (a clean copy)",
-   "page": 1150,
-   "check": "F6.3",
-   "expected": "pass",
-   "status": "pass",
+   "expected_failed": [],
+   "failed": [],
    "ok": true
   },
   {
    "fault": "a claim row carries its neighbour's text",
    "page": 1150,
-   "check": "F6.1",
-   "expected": "fail",
-   "status": "fail",
-   "ok": true
-  },
-  {
-   "fault": "a claim row carries its neighbour's text",
-   "page": 1150,
-   "check": "F6.3",
-   "expected": "fail",
-   "status": "fail",
+   "expected_failed": [
+    "F6.1",
+    "F6.3b"
+   ],
+   "failed": [
+    "F6.1",
+    "F6.3b"
+   ],
    "ok": true
   },
   {
    "fault": "a claim closed 1 \u00b5s late",
    "page": 1150,
-   "check": "F6.3",
-   "expected": "fail",
-   "status": "fail",
+   "expected_failed": [
+    "F6.2",
+    "F6.3a",
+    "F6.3b"
+   ],
+   "failed": [
+    "F6.2",
+    "F6.3a",
+    "F6.3b"
+   ],
    "ok": true
   },
   {
    "fault": "the layout drops one claim id",
    "page": 1150,
-   "check": "F6.1",
-   "expected": "fail",
-   "status": "fail",
-   "ok": true
-  },
-  {
-   "fault": "the layout drops one claim id",
-   "page": 1150,
-   "check": "F6.2",
-   "expected": "fail",
-   "status": "fail",
+   "expected_failed": [
+    "F6.1",
+    "F6.2"
+   ],
+   "failed": [
+    "F6.1",
+    "F6.2"
+   ],
    "ok": true
   },
   {
    "fault": "a hidden revision blanks the page",
    "page": 1137,
-   "check": "F6.1",
-   "expected": "fail",
-   "status": "fail",
+   "expected_failed": [
+    "F6.1",
+    "F6.2"
+   ],
+   "failed": [
+    "F6.1",
+    "F6.2"
+   ],
    "ok": true
   },
   {
-   "fault": "an overlapping duplicate claim row",
+   "fault": "an overlapping claim period with valid page_state endpoints",
    "page": 1150,
-   "check": "F6.3",
-   "expected": "fail",
-   "status": "fail",
+   "expected_failed": [
+    "F6.3a"
+   ],
+   "failed": [
+    "F6.3a"
+   ],
+   "ok": true
+  },
+  {
+   "fault": "wrong text under a correct text_variant hash",
+   "page": null,
+   "expected_failed": [
+    "F6.3a"
+   ],
+   "failed": [
+    "F6.3a"
+   ],
+   "ok": true
+  },
+  {
+   "fault": "a layout row for every revision",
+   "page": 440,
+   "expected_failed": [
+    "F6.3a"
+   ],
+   "failed": [
+    "F6.3a"
+   ],
    "ok": true
   }
  ]

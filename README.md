@@ -13,7 +13,7 @@ Decisions and measured surprises: `docs/findings.md`.
 | 2 | F3 chunker and hashing | validated |
 | 3 | F4 lineage resolver | validated (golden-set labels are from two model judges, not humans) |
 | 4 | F5 embeddings and `chunk` store; F4S semantic lineage | validated (F5.6 and the semantic-link gate F4.3s fail as specified: the semantic pass is not adopted) |
-| 5 | F6 deep layer: `claim`, `layout`, `text_variant` history | awaiting validation |
+| 5 | F6 deep layer: `claim`, `layout`, `text_variant` history | programmatic checks pass; awaiting user review |
 
 Not in git (rebuilt by the commands below): `data/` (datasets and derived Parquet, ~560 MB), `.mariadb/` (the local
 database), `starters/` (the challenge's starter repositories, cloned), `.venv/`.
@@ -99,5 +99,22 @@ The semantic pass did not reach its precision bar (F4S), so Step 5 loads the cha
 (cd eval && ../.venv/bin/python f6_mutate.py)          # fault injection on a copy in the smoke schema, ~1 min
 (cd eval && ../.venv/bin/python f6_check.py; ../.venv/bin/python render.py)   # F6, ~1 min (every revision rebuilt through AS OF)
 ```
+
+## Streamlit app: historical article viewer
+
+The current UI reconstructs a selected hero article from `page_state`, `layout`, `claim`, and `text_variant`. It is a local
+prototype for the validated Step 5 history layer; question answering, then-versus-now comparison, and vandalism date
+snapping are part of the later retrieval steps and are not available yet.
+
+After the database and Steps 1–5 data are loaded:
+
+```sh
+db/server.sh start
+.venv/bin/streamlit run app.py
+```
+
+The app reads `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from the environment. Streamlit deployments can
+set the same values under `[database]` in `.streamlit/secrets.toml` (`host`, `port`, `user`, `password`, `name`). The default
+settings target the project-local MariaDB bound to `127.0.0.1`.
 
 Wikipedia text and everything derived from it is CC BY-SA 4.0.

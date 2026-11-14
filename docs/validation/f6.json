@@ -16,10 +16,10 @@
    "id": "F6.1",
    "name": "Round trip (main gate): every article rebuilt through AS OF equals the chunker's chunk list, exact spelling included",
    "kind": "invariant",
-   "expect": "(a) the plan's 1,000 random revisions, here every revision at its own time and 1 µs before (the predecessor, or empty before the first); (b) every revision of the 3 largest pages; (c) 1,000 random instants that are not revision times, against the revision page_state says is active: all 100%",
-   "got": "(a) at revision time 39,365/39,365 visible revisions, of which the plan's random 1,000: 1000/1000; 1 µs before 39,418/39,418; (b) the 3 largest pages (Suomen sisällissota, Carl Gustaf Emil Mannerheim, Urho Kekkonen): 8,141/8,141 revisions at and before; (c) random instants 1000/1000; hidden revisions (expected = the carried-over list, not an independent source) 53/53",
+   "expect": "(a) the plan's 1,000 random revisions, here every revision at its own time and 1 µs before (the predecessor, or empty before the first); (b) every revision of the 3 largest pages; (c) 1,000 random instants that are not revision times, against the revision page_state says is active: all 100%; every revisions.parquet n_chunks equals the emitted chunk count",
+   "got": "(a) at revision time 39,365/39,365 visible revisions, of which the plan's random 1,000: 1000/1000; 1 µs before 39,418/39,418; (b) the 3 largest pages (Suomen sisällissota, Carl Gustaf Emil Mannerheim, Urho Kekkonen): 8,141/8,141 revisions at and before; (c) random instants 1000/1000; hidden revisions (expected = the carried-over list, not an independent source) 53/53; n_chunks cross-check 39,418/39,418 revisions",
    "status": "pass",
-   "evidence": "no mismatch"
+   "evidence": "no round-trip mismatch"
   },
   {
    "id": "F6.2",
@@ -31,13 +31,22 @@
    "evidence": ""
   },
   {
-   "id": "F6.3",
-   "name": "History integrity: no overlapping periods, at most one current row, rows = claim states rebuilt independently, every time a page_state time of the same page",
+   "id": "F6.3a",
+   "name": "History integrity SQL: periods, current rows, page_state timestamps, metadata, hashes and layout changes",
    "kind": "invariant",
-   "expect": "0 violations of each kind; claim rows equal the states rebuilt from claim ids + chunks (not the states file the loader read)",
-   "got": "0 violations ; claim rows 52,994, rebuilt 52,994, differing 0",
+   "expect": "0 SQL integrity violations",
+   "got": "0 violations ",
    "status": "pass",
    "evidence": "{\n \"claim periods overlap\": 0,\n \"layout periods overlap\": 0,\n \"layout gaps (a page's order must be continuous)\": 0,\n \"pages without exactly one current layout row\": 0,\n \"claim.row_start not a page_state time of its page\": 0,\n \"claim.row_end not a page_state time of its page\": 0,\n \"layout.row_start not a page_state time of its page\": 0,\n \"layout.row_end not a page_state time of its page\": 0,\n \"claim rev_id or editor/anon/comment differs from page_state at row_start\": 0,\n \"layout row whose order equals the previous one (one row per change of order)\": 0,\n \"text_variant text that does not re-hash to its exact_hash and text_hash\": 0,\n \"layout rev_id differs from page_state at row_start\": 0,\n \"claim text_hash without a chunk row (the plan's F5 orphan query)\": 0,\n \"claim exact_hash without a text_variant of the same text_hash\": 0\n}"
+  },
+  {
+   "id": "F6.3b",
+   "name": "Independent claim-history rebuild",
+   "kind": "invariant",
+   "expect": "claim rows equal a rebuild from claim ids + chunks, not the states file the loader read",
+   "got": "claim rows 52,994, rebuilt 52,994, differing 0",
+   "status": "pass",
+   "evidence": "The event log tracks lineage events, but a claim state also opens when exact spelling, citation count, or section changes. Rebuilding from claim ids and chunk output covers those state changes independently."
   },
   {
    "id": "F6.4",
@@ -52,8 +61,8 @@
    "id": "F6.5",
    "name": "Storage: claims + layout + chunk text (+ vectors) against full copies of every version, same 50 articles",
    "kind": "oracle",
-   "expect": "recorded; plan est. one to two orders of magnitude below full copies (2,049 MB wikitext, 1,202 MB compressed [S2]), total dominated by vectors",
-   "got": "full copies 1,954 MiB (2,049 MB, the starter's number) over 31,848 versions; this design's text 41.7 MiB (47x smaller), vectors 103.7 MiB; on disk for all 60 pages: claim 25.0 MiB, layout 10.0 MiB, text_variant 36.0 MiB, chunk 176.0 MiB + vector index 92 MiB",
+   "expect": "recorded; plan est. one to two orders of magnitude below full copies (2,049 MB wikitext, 1,202 MB compressed [S2]), separate markup removal from deduplication; count chunk.text and text_variant.text as two stored copies",
+   "got": "raw wikitext 1,954 MiB over 31,848 versions; cleaned prose 1,206.1 MiB over 31,840 visible revisions (1.6x smaller after markup/boilerplate removal); distinct paragraph strings 34.9 MiB, including both chunk.text and text_variant.text (34.6x smaller than cleaned full copies); claim/layout metadata 6.8 MiB; total text 41.7 MiB (46.9x below raw wikitext); vectors 103.7 MiB. On disk for all 60 pages: claim 25.0 MiB, layout 10.0 MiB, text_variant 36.0 MiB, chunk 176.0 MiB, vector index 92 MiB, FULLTEXT index 6 files / 88.3 MiB",
    "status": "info",
    "evidence": ""
   },
@@ -61,17 +70,17 @@
    "id": "F6.6",
    "name": "Latency: AS OF for one page (both queries), with and without KEY(page_id, row_start), on random, largest and old pages",
    "kind": "smoke",
-   "expect": "p95 <= 10 ms with the key (plan); the no-key number recorded",
-   "got": "with the key: p95 0.36 ms on random pages, worst p95 0.62 ms over largest pages and old dates; the optimizer picks 'PRIMARY'; without the key see the table",
+   "expect": "optimizer's actual plan has p95 <= 10 ms for the two queries reconstruct() runs; forced-key and no-key timings are recorded",
+   "got": "optimizer: p95 0.44 ms on random pages, worst group p95 1.04 ms; EXPLAIN keys recorded per timed query in the table; forced-key and no-key results are also shown",
    "status": "pass",
    "evidence": ""
   },
   {
    "id": "F6.7",
-   "name": "Fault injection: round trip, set equality and integrity each fail on a single injected fault in a copy",
+   "name": "Fault injection: round trip, set equality, SQL integrity and independent rebuild respond to targeted faults",
    "kind": "invariant",
-   "expect": "every outcome as expected; recorded for this loader, f6_lib and the loaded tables",
-   "got": "10 of 10 as expected; fresh True",
+   "expect": "each fault is caught by its specified sub-checks; evidence is bound to loader, checker, library and loaded tables",
+   "got": "8 of 8 as expected; fresh True",
    "status": "pass",
    "evidence": ""
   }
@@ -79,7 +88,7 @@
  "findings": [],
  "tables": [
   {
-   "title": "Storage for the starter's 50 articles, logical bytes: full copies of every version vs this design",
+   "title": "Storage for the starter's 50 articles, logical bytes: full copies vs cleaned prose and this design",
    "cols": [
     "Part",
     "MiB",
@@ -92,6 +101,11 @@
      1.0
     ],
     [
+     "Cleaned paragraph text, full copy per visible revision",
+     1206.1,
+     0.6173
+    ],
+    [
      "claim rows (ids, hashes, section, editor, comment)",
      5.5,
      0.0028
@@ -102,12 +116,12 @@
      0.0006
     ],
     [
-     "chunk text (one row per distinct text)",
+     "chunk.text (one row per normalized text)",
      16.4,
      0.0084
     ],
     [
-     "text_variant (exact spellings)",
+     "text_variant.text (exact spellings; text is stored in both tables)",
      18.5,
      0.0094
     ],
@@ -120,16 +134,22 @@
      "vectors (4 KB per distinct text)",
      103.7,
      0.0531
+    ],
+    [
+     "FULLTEXT index (6 physical files)",
+     88.3,
+     0.0452
     ]
    ]
   },
   {
-   "title": "AS OF reconstruction latency (layout + claim query for one page), ms",
+   "title": "AS OF reconstruction latency and EXPLAIN key distribution for every timed query, ms",
    "cols": [
     "Variant",
-    "Key used (EXPLAIN)",
     "Queries",
     "n",
+    "Layout keys",
+    "Claim keys",
     "p50",
     "p95",
     "max"
@@ -137,158 +157,146 @@
    "rows": [
     [
      "KEY(page_id, row_start) forced",
-     "page_id",
      "all",
      1000,
-     0.15,
-     0.36,
-     0.75
-    ],
-    [
-     "KEY(page_id, row_start) forced",
-     "page_id",
-     "largest 3 pages",
-     500,
-     0.31,
-     0.62,
-     0.84
-    ],
-    [
-     "KEY(page_id, row_start) forced",
-     "page_id",
-     "old dates (first 20% of a page's life)",
-     750,
-     0.16,
-     0.37,
-     0.84
-    ],
-    [
-     "optimizer's choice",
-     "PRIMARY",
-     "all",
-     1000,
+     "PRIMARY 1000/1000",
+     "page_id 1000/1000",
      0.14,
-     0.43,
-     1.38
+     0.34,
+     0.71
     ],
     [
-     "optimizer's choice",
-     "PRIMARY",
+     "KEY(page_id, row_start) forced",
      "largest 3 pages",
      500,
-     0.57,
-     0.99,
-     1.44
+     "PRIMARY 500/500",
+     "page_id 500/500",
+     0.33,
+     0.64,
+     1.62
+    ],
+    [
+     "KEY(page_id, row_start) forced",
+     "old dates (first 20% of a page's life)",
+     750,
+     "PRIMARY 750/750",
+     "page_id 750/750",
+     0.16,
+     0.38,
+     0.55
     ],
     [
      "optimizer's choice",
-     "PRIMARY",
-     "old dates (first 20% of a page's life)",
-     750,
-     0.16,
-     0.68,
-     1.1
-    ],
-    [
-     "without KEY(page_id, row_start)",
-     "PRIMARY",
      "all",
      1000,
-     0.19,
-     0.71,
+     "PRIMARY 1000/1000",
+     "PRIMARY 688/1000, page_id 312/1000",
+     0.14,
+     0.44,
+     1.02
+    ],
+    [
+     "optimizer's choice",
+     "largest 3 pages",
+     500,
+     "PRIMARY 500/500",
+     "PRIMARY 253/500, page_id 247/500",
+     0.59,
+     1.04,
+     2.0
+    ],
+    [
+     "optimizer's choice",
+     "old dates (first 20% of a page's life)",
+     750,
+     "PRIMARY 750/750",
+     "PRIMARY 303/750, page_id 447/750",
+     0.16,
+     0.72,
      1.29
     ],
     [
      "without KEY(page_id, row_start)",
-     "PRIMARY",
-     "largest 3 pages",
-     500,
-     0.99,
-     1.21,
-     1.77
+     "all",
+     1000,
+     "PRIMARY 1000/1000",
+     "PRIMARY 1000/1000",
+     0.19,
+     0.69,
+     1.23
     ],
     [
      "without KEY(page_id, row_start)",
-     "PRIMARY",
+     "largest 3 pages",
+     500,
+     "PRIMARY 500/500",
+     "PRIMARY 500/500",
+     0.98,
+     1.17,
+     3.72
+    ],
+    [
+     "without KEY(page_id, row_start)",
      "old dates (first 20% of a page's life)",
      750,
-     0.25,
-     1.17,
-     1.75
+     "PRIMARY 750/750",
+     "PRIMARY 750/750",
+     0.24,
+     1.14,
+     2.04
     ]
    ]
   },
   {
-   "title": "Fault injection (eval/f6_mutate.py, on a copy in smoke): each check fails on its fault",
+   "title": "Fault injection (eval/f6_mutate.py, on a copy in smoke): targeted sub-checks",
    "cols": [
-    "Check",
-    "Injected fault",
-    "Expected",
-    "Got"
+    "Fault",
+    "Expected failing sub-checks",
+    "Observed failing sub-checks"
    ],
    "rows": [
     [
-     "F6.1",
      "none (a clean copy)",
-     "pass",
-     "pass"
+     "none",
+     "none"
     ],
     [
-     "F6.2",
-     "none (a clean copy)",
-     "pass",
-     "pass"
-    ],
-    [
-     "F6.3",
-     "none (a clean copy)",
-     "pass",
-     "pass"
-    ],
-    [
-     "F6.1",
      "a claim row carries its neighbour's text",
-     "fail",
-     "fail"
+     "F6.1, F6.3b",
+     "F6.1, F6.3b"
     ],
     [
-     "F6.3",
-     "a claim row carries its neighbour's text",
-     "fail",
-     "fail"
-    ],
-    [
-     "F6.3",
      "a claim closed 1 µs late",
-     "fail",
-     "fail"
+     "F6.2, F6.3a, F6.3b",
+     "F6.2, F6.3a, F6.3b"
     ],
     [
-     "F6.1",
      "the layout drops one claim id",
-     "fail",
-     "fail"
+     "F6.1, F6.2",
+     "F6.1, F6.2"
     ],
     [
-     "F6.2",
-     "the layout drops one claim id",
-     "fail",
-     "fail"
-    ],
-    [
-     "F6.1",
      "a hidden revision blanks the page",
-     "fail",
-     "fail"
+     "F6.1, F6.2",
+     "F6.1, F6.2"
     ],
     [
-     "F6.3",
-     "an overlapping duplicate claim row",
-     "fail",
-     "fail"
+     "an overlapping claim period with valid page_state endpoints",
+     "F6.3a",
+     "F6.3a"
+    ],
+    [
+     "wrong text under a correct text_variant hash",
+     "F6.3a",
+     "F6.3a"
+    ],
+    [
+     "a layout row for every revision",
+     "F6.3a",
+     "F6.3a"
     ]
    ]
   }
  ],
- "generated": "2026-11-14 19:40 UTC"
+ "generated": "2026-11-14 22:50 UTC"
 }

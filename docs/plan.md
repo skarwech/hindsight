@@ -699,18 +699,19 @@ Valid and correct when. Checks 1 to 3 and 8 pass, check 4 is at least 0.99, chec
 Does. Writes `claim` and `layout` history rows with real (bumped) times. It proves the store can rebuild any article at any moment and measures storage against full copies.
 
 Verifies. The reconstruction function is in Step 5.
-1. Round trip, the main gate. Three variants: (a) 1,000 random revisions, (b) every revision of the three largest pages, and (c) 1,000 random timestamps that are not revision times, compared with the revision active at t in the source. All must match exactly.
-2. Layout and claim set equality (invariant): for 1,000 random t, the ids in `claim_order` equal the ids alive in `claim`.
-3. History integrity (invariant): per claim, periods do not overlap, there is at most one current row, and the row count equals the number of state openings in the event log. Claims deleted and later revived legitimately have gaps, so do not require contiguity here.
-4. Idempotence (invariant): reloading on a clean database gives identical row counts and an identical checksum over (page_id, claim_id, text_hash, row_start, row_end).
-5. Oracle for storage: record MB for claim, layout, chunk text and chunk vectors. Compare with the full-copy baseline for the same 50 pages: 2,049 MB of wikitext, 1,202 MB on disk with compressed columns [S2].
-6. Latency: `AS OF` for one page has p95 at most 10 ms with `KEY(page_id, row_start)`. Record the without-key number too, because the starter found old dates slow without it [S2].
+1. Round trip, the main gate. Compare every revision at its own time and one microsecond before, plus 1,000 random instants, with the active revision in `page_state`. Cross-check every `revisions.n_chunks` against the rows emitted to `rev_chunks`. All must match exactly.
+2. Layout and claim set equality (invariant): at every reconstructed time, the ids in `claim_order` equal the ids alive in `claim`.
+3. History integrity (invariant): SQL checks periods, current rows, page-state timestamps, metadata, hashes and layout changes. Independently rebuild claim rows from `claim_ids` plus chunk output. This replaces the event-log opening count: claim states also open when exact spelling, citation count or section changes, which are not lineage events. Claims deleted and later revived legitimately have gaps, so do not require contiguity.
+4. Idempotence (invariant): reloading on a clean database gives identical row counts and checksums for claim, layout and `text_variant`.
+5. Oracle for storage: record MB for claim, layout, `chunk.text`, `text_variant.text`, vectors and FULLTEXT files. Compare raw wikitext with a cleaned-prose full-copy baseline and the deduplicated text stores separately for the same 50 pages.
+6. Latency: time the two queries used by `reconstruct()` and gate on the optimizer's plan at p95 <= 10 ms. Record each query's `EXPLAIN` key across the timed cases, plus forced-key and no-key timings.
+7. Fault injection: identify whether round trip, layout equality, SQL integrity or independent rebuild catches each loader fault, including a valid-time overlap, corrupt variant text and redundant layout rows.
 
 Expect. Roughly 1 to 3 claim row-versions per revision (est.), so tens of thousands of rows for 31,848 versions. Page-blanking vandalism inflates the number, because every claim is deleted and then revived: the toy history with 3% blank-and-restore episodes gave 2.40 per revision. Text storage should land one to two orders of magnitude below full copies (est.), and total size is dominated by vectors. Warning sign: a round trip that fails only on same-second revisions means the bump logic.
 
 Executed result (toy store, MariaDB 10.11, Appendix B). 1,242 synthetic revisions (357 needed the microsecond bump, 41 vandalism episodes) loaded into `page_state`, `claim` and `layout`. Round trip: 1,242 of 1,242 at revision times, 1,241 of 1,241 at 1 microsecond before, 1,000 of 1,000 at random instants. Chain breaks 0, overlapping claim periods 0, claim keys with more than one current row 0. Reconstruction took p50 0.9 ms and p95 1.45 ms for two queries on a toy table; the real number is yours to measure.
 
-Valid and correct when. The round trip is 100% in all three variants. Checks 2 to 4 show 0 violations, and storage and latency are measured and written down.
+Valid and correct when. F6.1 through F6.4 pass, all F6.7 faults are caught by their specified sub-checks, and storage plus optimizer-plan latency are measured and recorded.
 
 ## B. Retrieval and answers
 

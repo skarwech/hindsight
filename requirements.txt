@@ -6,6 +6,7 @@ pyarrow==26.0.1
 rapidfuzz==3.14.6
 requests==2.34.2
 scipy==1.18.1
+streamlit==1.50.0
 xxhash==4.1.0
 pytest==9.2.0
 # only for the embedding parity checks (F1 T5, F5.4)
