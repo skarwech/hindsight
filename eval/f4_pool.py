@@ -32,7 +32,7 @@ from resolver import LOOKBACK, T_EDIT, T_NEAR, T_SEM, similarity  # noqa: E402
 
 LIN, CH, EV = ROOT / "data/lineage", ROOT / "data/chunks", ROOT / "docs/validation/evidence"
 PER_STRATUM = 18
-SEEDS = {"char": 2028, "sem": 2030}                     # 2027 drew the pool the growth-only containment rule was tuned on
+SEEDS = {"char": 2028, "sem": 2031}   # 2027: the pool the containment rule was tuned on; 2030: semantic pool on copy vectors
 SEM_BANDS = [(0.88, 0.92), (0.92, 0.96), (0.96, 1.0)]
 MISS_BANDS = [(0.80, 0.84), (0.84, 0.88)]
 RATIO_BANDS = [(0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]

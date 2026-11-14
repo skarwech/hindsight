@@ -11,6 +11,7 @@ from collections import Counter, defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from itertools import groupby
 from datetime import datetime, timezone
+from pathlib import Path
 
 import argparse
 
@@ -357,16 +358,20 @@ def check_golden(texts: dict) -> None:
     n_in = Counter(x["stratum"] for x in pool.values())
     uncovered = [k for k in pops if k not in n_in]
     judges = lab.get("judges", []) if isinstance(lab, dict) else []
-    votes = defaultdict(dict)
+    votes = defaultdict(dict); malformed = 0
     for j in judges:
+        ids = [l.get("id") for l in j.get("labels") or []]
+        malformed += len(ids) != len(set(ids)) or not set(ids) <= set(pool)
         for l in j["labels"] or []:
-            votes[l["id"]][j["judge"]] = l["same"]
-    complete = len(judges) >= 2 and all(len(votes[i]) == len(judges) for i in pool)
+            malformed += not isinstance(l.get("same"), bool)
+            votes[l["id"]][j["judge"]] = l["same"] is True
+    complete = len(judges) >= 2 and not malformed and all(len(votes[i]) == len(judges) for i in pool)
     fresh = (bound and matches and not moved and not uncovered and meta["t_edit"] == T_EDIT
              and meta.get("t_sem", None) == (T_SEM if RUN == "sem" else None))
     if not (fresh and complete):
         C.add("F4.3", "Golden set", "golden", "labels bound to the blind pool; every pair still in its stratum in this run; 2 judges",
-              f"labels bound {bound}; blind = pool {matches}; pairs moved {moved[:10]}; strata not sampled {uncovered}; complete {complete}", False)
+              f"labels bound {bound}; blind = pool {matches}; pairs moved {moved[:10]}; strata not sampled {uncovered}; complete {complete} "
+              f"(malformed label sets {malformed})", False)
         return
     w = {i: pops[x["stratum"]] / n_in[x["stratum"]] for i, x in pool.items()}   # weights from the current run
     linked = {i for i, x in pool.items() if x["stratum"].startswith("linked")}
@@ -412,12 +417,23 @@ def check_golden(texts: dict) -> None:
               f"{sum(GAP.values()):,} added paragraphs: {GAP['0.75–0.90']:,} at 0.75–0.90, {GAP['0.60–0.75']:,} at 0.60–0.75; not judged", None)
         return
     sem_ids = [i for i in pool if pool[i]["stratum"].startswith("linked semantic")]
+    keys = [(p, o, a, b) for v in now.values() for p, o, a, b, _, _ in v]
+    overlap = sum(c > 1 for c in Counter(keys).values())
+    shape = lambda i: ("shrink (new < half of old)" if len(pool[i]["new"]) < 0.5 * len(pool[i]["old"]) else
+                       "growth (new > twice old)" if len(pool[i]["new"]) > 2 * len(pool[i]["old"]) else "similar length")
+    word = lambda i: "same" if agree.get(i) is True else "different" if agree.get(i) is False else "disputed"
+    C.table("Semantic links in the pool by shape: a third link a paragraph to a fragment under half its length, the shape the character "
+            "resolver rejects (containment is growth-only)", ["Shape", "Judged pairs", "Same", "Different", "Disputed"],
+            [[sh, n, *(sum(word(i) == w for i in sem_ids if shape(i) == sh) for w in ("same", "different", "disputed"))]
+             for sh in ("shrink (new < half of old)", "similar length", "growth (new > twice old)")
+             for n in [sum(shape(i) == sh for i in sem_ids)] if n])
     sp_w, _, splb_w, _ = metrics(sem_ids, True)
     sp_a, _, splb_a, _ = metrics(sem_ids, False)
     C.add("F4.3s", f"Semantic links: precision at the plan's fixed threshold (cosine >= {T_SEM}, same section), {len(sem_ids)} judged pairs",
           "golden", "precision >= 95% worst case (threshold fixed in advance); below that, Step 5 keeps the character-only lineage",
-          f"worst case: precision {sp_w:.1%} (95% lower bound {splb_w:.1%}); agreed only: {sp_a:.1%} (lower bound {splb_a:.1%})",
-          sp_w >= 0.95)
+          f"worst case: precision {sp_w:.1%} (95% lower bound {splb_w:.1%}); agreed only: {sp_a:.1%} (lower bound {splb_a:.1%}). Caveat: "
+          f"{overlap} (old, new) pairs sit in more than one stratum of this run (near misses that are also same-section or across-revision "
+          "non-links), so F4.3's population weights count them twice", sp_w >= 0.95)
     cross = [i for i in pool if pool[i]["stratum"].startswith("not linked, across")]
     C.add("F4.3c", "Non-links across revisions (an addition whose best match is a claim deleted up to "
           f"{LOOKBACK} revisions earlier at ratio 0.60–0.90), judged in this pool", "golden",
@@ -460,16 +476,27 @@ def check_merge_changes() -> None:
           f"labels bound to the blind file: {bound}", None if bound else False)
 
 
+def run_digests() -> dict[str, str]:
+    """What fault-injection evidence is bound to: the code, this run's events, its golden-set labels (and vectors)."""
+    sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    out = dict(resolver_sha256=sha(ROOT / "pipeline/resolver.py"), f4_check_sha256=sha(Path(__file__)),
+               events_sha256=sha(LIN / "events.parquet"), labels_sha256=sha(EV / f"{PRE}_labels.json"))
+    if RUN == "sem":
+        from embed_chunks import store_digest
+        out["vectors_sha256"] = store_digest()
+    return out
+
+
 def check_mutations() -> None:
     path = EV / f"{PRE}_mutations.json"
     doc = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"results": []}
-    fresh = (doc.get("resolver_sha256") == hashlib.sha256((ROOT / "pipeline/resolver.py").read_bytes()).hexdigest()
-             and doc.get("f4_check_sha256") == hashlib.sha256(open(__file__, "rb").read()).hexdigest())
+    fresh = all(doc.get(k) == v for k, v in run_digests().items())
     r = doc["results"]
     C.table("Fault injection (eval/f4_mutate.py): each guard fails on its fault, and legitimate cases pass",
             ["Check", "Injected fault", "Expected", "Got"], [[x["check"], x["mutation"], x["expected"], x["status"]] for x in r])
     C.add("F4.9", "Fault injection: F4.2, F4.2b, F4.3 and F4.5b each fail on a single injected fault and pass on the stored run",
-          "invariant", "every outcome as expected, recorded for this resolver.py and this f4_check.py",
+          "invariant", "every outcome as expected (an under-linking fault must trip its own guard), recorded for this resolver.py, this "
+          "f4_check.py, this run's events and labels" + (" and vectors" if RUN == "sem" else ""),
           f"{sum(x['ok'] for x in r)} of {len(r)} as expected; fresh {fresh}", bool(r) and all(x["ok"] for x in r) and fresh)
 
 

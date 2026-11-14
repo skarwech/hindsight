@@ -1,0 +1,1 @@
+{"started": "2026-11-14 20:09:39", "plan_sha256": "c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7", "seconds": 603.3, "rows_before": 12800, "model_embedded": 18146, "copies_written": 0, "rows_after": 30946, "model_rows": 30946, "copy_rows": 0, "model_rate": 30.1, "complete": true}

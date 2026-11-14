@@ -1,7 +1,9 @@
 {
  "run": "char",
  "resolver_sha256": "fe27b22372f41c8893a2dbc9ee86d2a43bf596281ffb30ebfdd61892b623b142",
- "f4_check_sha256": "96d9d502cf9f6eb5a201d100fb95083c4ad28d4c24e772565463543bab7c5dde",
+ "f4_check_sha256": "5a7da2c6c5aed77330d94959f9caeb095d64d4a1094ecf53e543a4c55ec4f6e7",
+ "events_sha256": "3cc8f43c31ee9dac11731eac09f34feef32f3d5f4955aca6672bf66605b2eb84",
+ "labels_sha256": "ac5d52ea86a1b35f5a730601202e3c7490a44a17654c32b599d25854628d6702",
  "results": [
   {
    "mutation": "none (the stored run)",
@@ -46,7 +48,7 @@
   {
    "mutation": "under-linking: a ratio edit split into delete + add",
    "check": "F4.5b",
-   "expected": "fail",
+   "expected": "fail via 'add beside a claim deleted in the same revision'",
    "status": "fail",
    "ok": true,
    "got": "2 violations in 55,583 events {'add beside a claim deleted in the same revision at >= t_edit': 1, 'edit ratio': 1}"
@@ -97,7 +99,7 @@
    "expected": "pass",
    "status": "pass",
    "ok": true,
-   "got": "worst case: precision 99.2% (95% lower bound 88.4%), recall 97.7% (lower bound 86.2%); agreed labels only: precision 99.4%, recall 98.0%; judges agree on 176 of 180; labels bound to the blind pool (4c3d0d1c1e3b…), all 180 pairs still decide"
+   "got": "worst case: precision 99.2% (95% lower bound 88.4%), recall 97.7% (lower bound 86.2%); agreed labels only: precision 99.4%, recall 98.0%; judges agree on 176 of 180; labels bound to the blind pool (4c3d0d1c1e3b…), all 180 pairs still decided as drawn"
   },
   {
    "mutation": "labels bound to another blind file",
@@ -105,7 +107,7 @@
    "expected": "fail",
    "status": "fail",
    "ok": true,
-   "got": "labels bound False; blind = pool True; pairs moved []; strata not sampled []; complete True"
+   "got": "labels bound False; blind = pool True; pairs moved []; strata not sampled []; complete True (malformed label sets 0)"
   },
   {
    "mutation": "one labelled pair moved to another stratum",
@@ -113,7 +115,7 @@
    "expected": "fail",
    "status": "fail",
    "ok": true,
-   "got": "labels bound True; blind = pool True; pairs moved [1]; strata not sampled []; complete True"
+   "got": "labels bound True; blind = pool True; pairs moved [1]; strata not sampled []; complete True (malformed label sets 0)"
   },
   {
    "mutation": "one pair's text changed in the blind file",
@@ -121,7 +123,7 @@
    "expected": "fail",
    "status": "fail",
    "ok": true,
-   "got": "labels bound False; blind = pool False; pairs moved []; strata not sampled []; complete True"
+   "got": "labels bound False; blind = pool False; pairs moved []; strata not sampled []; complete True (malformed label sets 0)"
   }
  ]
 }

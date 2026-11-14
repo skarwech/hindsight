@@ -1,0 +1,32 @@
+{
+ "kill_after_shard": 25,
+ "plan_sha256": "c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7",
+ "store_sha256": "37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be",
+ "code_sha256": "f89c7573bd245fd54286c3b226967739ab30df7e8fec4f62a88ba8f85763e385",
+ "delay_s": 8.2,
+ "at_kill": {
+  "shards": 25,
+  "tmp_files": []
+ },
+ "after_kill": {
+  "shards": 25,
+  "tmp_files": [],
+  "returncode": -9
+ },
+ "restart_returncode": 0,
+ "restart": {
+  "started": "2026-11-14 20:09:39",
+  "plan_sha256": "c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7",
+  "seconds": 603.3,
+  "rows_before": 12800,
+  "model_embedded": 18146,
+  "copies_written": 0,
+  "rows_after": 30946,
+  "model_rows": 30946,
+  "copy_rows": 0,
+  "model_rate": 30.1,
+  "complete": true
+ },
+ "stderr": "",
+ "seconds": 1082.2
+}

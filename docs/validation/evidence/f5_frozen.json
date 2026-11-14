@@ -1,0 +1,6 @@
+{
+ "f5_probes.json": "bb58b1824c3473fdba22b5f870fc04c0f3a7c377e6b0ead597565dff38aa2e98",
+ "f5_queries.json": "9aa9091c67c1662bb0796e2ab235845c989bfd6b604346a1c1cb169657877be4",
+ "note": "frozen before any retrieval was run; written by model agents (probes from target paragraphs, queries from general knowledge). f5_probes_fresh.json was written after the original probes' misses were diagnosed, on new targets, and frozen before it was run",
+ "f5_probes_fresh.json": "5c8288762a419843afcfd5fa5d804358cb2b24abcbfe45fddddb5f415b66ae45"
+}

@@ -1,0 +1,411 @@
+{
+ "feature": "F5",
+ "title": "Embedding pipeline and chunk store",
+ "gate": "H14",
+ "checks": [
+  {
+   "id": "F5.1",
+   "name": "Completeness: every chunk hash the chunker produced has exactly one row in `chunk`, with its text and the store's vector",
+   "kind": "invariant",
+   "expect": "0 orphans both ways; text = the embedded spelling and re-hashes to its key; store = plan (one row per hash, model/copy as planned, plan fresh); table vectors byte-identical to the store",
+   "got": "30,946 rows for 30,946 chunk hashes: 0 orphans, 0 extra; text matches 30,946, re-hashes 30,946; store = plan True (30,946 model, 0 copy); plan fresh True; vectors identical True",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F5.2",
+   "name": "Vector hygiene: no NaN or Inf, unit norms, no two chunks share a vector (no copies)",
+   "kind": "invariant",
+   "expect": "all finite; norms within 1e-3 of 1; distinct vectors = rows; the server's distance of each row to itself < 1e-06 (smoke: it is 0 for any non-zero vector)",
+   "got": "finite True; norms 0.999999–1.000001; 30,946 distinct vectors for 30,946 rows; max self distance 0.00e+00 over 30,946 rows",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F5.3",
+   "name": "Self-retrieval: 200 random chunks find themselves at rank 1 (exact duplicates at distance 0 would count as ties)",
+   "kind": "invariant",
+   "expect": "exact search (IGNORE INDEX) 200 of 200; HNSW >= 99%; EXPLAIN shows the vector index on the HNSW path only",
+   "got": "exact 200 of 200, HNSW 200 of 200 (ef 80); 0 queries had rank-1 ties; EXPLAIN key: HNSW 'emb', exact None",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F5.4",
+   "name": "T5 parity on real chunks: sentence-transformers bge-m3 (fp32, max_seq_length 8192) vs the stored Ollama vectors, 50 chunks (the 10 longest and 40 random)",
+   "kind": "oracle",
+   "expect": "min cosine >= 0.99",
+   "got": "min 0.99997, median 0.99999",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F5.5",
+   "name": "Copy shortcut oracle on all 10,180 would-be copies (plan: 200): a fresh embedding agrees with the copied vector",
+   "kind": "oracle",
+   "expect": "plan: cosine >= 0.98 for >= 99% of copies; recorded here because the result turned the shortcut off",
+   "got": "anchor rule (embed_plan: ratio to the chain's model row, copy its vector): 87.39% of 10,180 at >= 0.98 (min 0.7937, P1 0.9270); even at ratio >= 0.99 only 93.9%. Plan-literal rule (parent's vector, one hop): 89.27% of 11,210. Worst: name-swap vandalism that keeps 97% of the characters. Shortcut off (COPY_RATIO 1.01)",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F5.5b",
+   "name": "Vector provenance: every stored vector is the model's embedding of its own text (no copies)",
+   "kind": "invariant",
+   "expect": "0 copies in the plan and the store; 300 random rows re-embedded now match the stored vector (cosine >= 0.9999)",
+   "got": "0 copies in the plan of 30,946; store sources {'model': 30946}; re-embedded min cosine 0.999999",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F5.6",
+   "name": "Golden probes (the plan's check): 10 questions in fi, sv, en and fr find their paragraph in the top 5 of `chunk`",
+   "kind": "golden",
+   "expect": "at least 9 of 10 (HNSW over every chunk); probes frozen before retrieval; model-written, not hand-written; targets follow eval/f5_probe_targets.py",
+   "got": "HNSW 5 of 10, exact 5 of 10; frozen True; targets follow the rule True. Misses: older versions of other paragraphs fill the top 5 (history flooding), or a related page wins; see F5.6b",
+   "status": "fail",
+   "evidence": ""
+  },
+  {
+   "id": "F5.6b",
+   "name": "Probes under the plan's ranking and the design's (rank what is alive at the date): every target is a current paragraph, so no probe tests a past date",
+   "kind": "golden",
+   "expect": "recorded: which ranking the 9-of-10 bar needs; the time-slice numbers use exact cosine over the slice, which Step 6 must then also use",
+   "got": "All chunks, HNSW (the plan's check): original 5/10, fresh 27/40 (lower bound 52%); Distinct claims, all history: original 7/10, fresh 32/40 (lower bound 65%); Alive now, all 60 pages (exact): original 8/10, fresh 38/40 (lower bound 84%); Alive now, gold page only (oracle routing): original 9/10, fresh 39/40 (lower bound 87%)",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F5.7",
+   "name": "ANN recall@10 against exact search on 200 question-style queries (fi 50, sv 50, en 50, fr 50), M=16, ef_search 80 (db/vector_search.json, set before measuring)",
+   "kind": "oracle",
+   "expect": "recall >= 95% on the questions (the plan's gate); recorded: queries whose whole answer HNSW loses, and chunk-vector queries (near-trivial: the query is in the index)",
+   "got": "questions 96.80%; answer lost on 4 of 200 at ef 80, 2 at 160, 1 at 400 (the misses are a few topics asked in several languages, whose answers sit in tight clusters of paragraph versions); chunk vectors 100.00%; HNSW 5.0 ms vs exact 34.3 ms; queries unchanged since frozen: True",
+   "status": "pass",
+   "evidence": "answer lost at ef 80: fi: Keitä hakkapeliitat olivat ja mistä nimi tulee?; sv: När isolerades Nyland från resten av landet under coronapand; en: When did Finland close off the Uusimaa region during the COV; fr: Quand la région d'Uusimaa a-t-elle été isolée du reste de la"
+  },
+  {
+   "id": "F5.8",
+   "name": "Resumability: the real embedding job (from an empty store) and the real load (into an empty table) were each SIGKILLed mid-run and restarted; the evidence is bound to the current plan, store and code",
+   "kind": "invariant",
+   "expect": "both finish after the restart; evidence records this plan's sha256, this store's content digest and these jobs' code hashes; F5.1 checks the store and table (a torn shard write and its cleanup: pipeline/test_embed_chunks.py)",
+   "got": "embedding: killed after 25 whole shards (8.2 s into the next batch), restart resumed at 12,800 rows, complete True; load: killed at 14,000 rows, restart inserted 16,946, final 30,946; bound to plan/store/code: {'embedding': True, 'load': True}",
+   "status": "pass",
+   "evidence": "{\"embedding\": {\"kill_after_shard\": 25, \"plan_sha256\": \"c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7\", \"store_sha256\": \"37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be\", \"code_sha256\": \"f89c7573bd245fd54286c3b226967739ab30df7e8fec4f62a88ba8f85763e385\", \"delay_s\": 8.2, \"at_kill\": {\"shards\": 25, \"tmp_files\": []}, \"after_kill\": {\"shards\": 25, \"tmp_files\": [], \"returncode\": -9}, \"restart_returncode\": 0, \"restart\": {\"started\": \"2026-11-14 20:09:39\", \"plan_sha256\": \"c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7\", \"seconds\": 603.3, \"rows_before\": 12800, \"model_embedded\": 18146, \"copies_written\": 0, \"rows_after\": 30946, \"model_rows\": 30946, \"copy_rows\": 0, \"model_rate\": 30.1, \"complete\": true}, \"stderr\": \"\", \"seconds\": 1082.2}, \"load\": {\"kill_at_rows\": 14000, \"plan_sha256\": \"c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7\", \"store_sha256\": \"37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be\", \"code_sha256\": \"7ebc425ea9493beb606fddb5135b77e31ae6ed6da0064978a1a7196b51a38e6e\", \"after_kill\": {\"rows\": 14000, \"returncode\": -9}, \"restart_returncode\": 0, \"restart\": {\"started\": \"2026-11-14 20:26:40\", \"store_sha256\": \"37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be\", \"seconds\": 96.0, \"rows_before\": 14000, \"inserted\": 16946, \"rows_after\": 30946, \"complete\": true}, \"stderr\": \"\", \"seconds\": 151.0}}"
+  },
+  {
+   "id": "F5.9",
+   "name": "FULLTEXT index on chunk.text answers MATCH queries (the lexical signal R3 needs)",
+   "kind": "smoke",
+   "expect": "each of 5 terms returns rows (smoke: a token match always contains the term)",
+   "got": "Mannerheim: 50 rows, 50 contain it; Kekkonen: 50 rows, 50 contain it; rauhansopimus: 50 rows, 50 contain it; Moskovan: 50 rows, 50 contain it; eduskunta: 50 rows, 50 contain it",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F5.10",
+   "name": "Throughput and size (the final build)",
+   "kind": "smoke",
+   "expect": "~9 chunks/s (plan est.; < 3/s means the num_ctx trap); index build ~3.5 min per 28k vectors; 4 KB per vector",
+   "got": "restart run: 18,146 chunks at 30.1/s; whole job incl. the killed part 1082 s for 30,946 chunks (28.6/s with the restart); load 96 s for the restart half (vector index built during the inserts); files: data 176 MB, vector index 92 MB (3.0 KB per vector), full-text index files 88 MB",
+   "status": "info",
+   "evidence": "{\"embed\": [{\"started\": \"2026-11-14 20:09:39\", \"plan_sha256\": \"c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7\", \"seconds\": 603.3, \"rows_before\": 12800, \"model_embedded\": 18146, \"copies_written\": 0, \"rows_after\": 30946, \"model_rows\": 30946, \"copy_rows\": 0, \"model_rate\": 30.1, \"complete\": true}], \"load\": [{\"started\": \"2026-11-14 20:26:40\", \"store_sha256\": \"37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be\", \"seconds\": 96.0, \"rows_before\": 14000, \"inserted\": 16946, \"rows_after\": 30946, \"complete\": true}]}"
+  }
+ ],
+ "findings": [],
+ "tables": [
+  {
+   "title": "Copy shortcut (plan: copy the parent's vector at character ratio >= 0.97): cosine between each would-be copy's own fresh vector and its anchor's",
+   "cols": [
+    "Character ratio to the anchor",
+    "Would-be copies",
+    "cos >= 0.98",
+    "Share",
+    "Min cosine",
+    "Median"
+   ],
+   "rows": [
+    [
+     "0.97–0.98",
+     2554,
+     1998,
+     0.7823,
+     0.7937,
+     0.9919
+    ],
+    [
+     "0.98–0.99",
+     3117,
+     2666,
+     0.8553,
+     0.8148,
+     0.995
+    ],
+    [
+     "0.99–1.00",
+     4509,
+     4232,
+     0.9386,
+     0.8663,
+     0.998
+    ]
+   ]
+  },
+  {
+   "title": "Golden probes, original 10 (model-written, frozen before retrieval): rank of the target paragraph (any version)",
+   "cols": [
+    "#",
+    "Lang",
+    "Question",
+    "Target page",
+    "All chunks, HNSW",
+    "All chunks, exact",
+    "Alive now, 60 pages",
+    "Gold page (oracle)",
+    "HNSW top hit (start)"
+   ],
+   "rows": [
+    [
+     1,
+     "fi",
+     "Kuka edusti Suomea Pariisin rauhanneuvotteluissa vuonna 1919?",
+     "Suomen ulkopolitiikka",
+     "—",
+     "—",
+     2,
+     1,
+     "Rauhanneuvottelut alkoivat Viron Tartossa 12. kesäkuuta 1920. Suomen valtuuskuntaa johti J"
+    ],
+    [
+     2,
+     "fi",
+     "Kuka varoitti Ruotsia Venäjän tulevasta hyökkäyksestä ennen Suomen sodan alkua?",
+     "Suomen sota",
+     1,
+     1,
+     1,
+     1,
+     "Vaikka Venäjän johto epäröi sodan aloittamista Ruotsia vastaan, oltiin sotavalmisteluissa "
+    ],
+    [
+     3,
+     "fi",
+     "Onko Pekka Haavisto arvoiltaan liberaali vai konservatiivinen poliitikko?",
+     "Pekka Haavisto",
+     "—",
+     "—",
+     2,
+     2,
+     "Pekka Homo Haavisto (s. 23. maaliskuuta 1958 Helsinki) on suomalainen poliitikko, joka toi"
+    ],
+    [
+     4,
+     "sv",
+     "Vilket öknamn fick Svinhufvud av Lapporörelsens anhängare under Mäntsäläupproret?",
+     "Mäntsälän kapina",
+     "—",
+     "—",
+     3,
+     1,
+     "Sosialidemokraatit ja suuri osa maltillisista porvareista pitivät Svinhufvudin voittoa pre"
+    ],
+    [
+     5,
+     "sv",
+     "Hur mycket pengar samlade finländarna in till bygget av det nya barnsjukhuset i Helsingfors?",
+     "Anne Berner",
+     1,
+     1,
+     1,
+     1,
+     "Anne Berneristä tuli hankkeen kasvot ja ääni, kun HUS:n toimialajohtaja Jari Petäjä ja Uud"
+    ],
+    [
+     6,
+     "en",
+     "What languages could Juho Kusti Paasikivi speak?",
+     "Juho Kusti Paasikivi",
+     1,
+     1,
+     2,
+     2,
+     "Paasikivi puhui suomen lisäksi sujuvasti viittä eri kieltä: venäjää, ruotsia, ranskaa, sak"
+    ],
+    [
+     7,
+     "en",
+     "How many medals did Finland have taken away after the doping case at the 2001 ski world championships in Lahti?",
+     "Suomi 2000-vuosikymmenellä",
+     1,
+     1,
+     1,
+     1,
+     "Suomalaista urheilua ja suomalaisten käsityksiä urheilusankareistaan ravisutti Lahden MM-h"
+    ],
+    [
+     8,
+     "en",
+     "What did American newspapers say about the 1940 Moscow Peace Treaty that ended the Winter War?",
+     "Moskovan rauhansopimus (1940)",
+     1,
+     1,
+     2,
+     2,
+     "Ulkomaiset sanomalehdet julkaisivat omia arvioitaan Moskovan rauhasta jo 13. maaliskuuta. "
+    ],
+    [
+     9,
+     "fr",
+     "Quel rôle le Manifeste de février 1899 laissait-il à la Diète finlandaise dans l'adoption des lois ?",
+     "Helmikuun manifesti",
+     "—",
+     "—",
+     30,
+     25,
+     "Helmikuun manifesti eli Keisarillisen Majesteetin Armollinen Julistuskirja (AsK 3/1899) ol"
+    ],
+    [
+     10,
+     "fr",
+     "Comment la Finlande a-t-elle financé la réinstallation des réfugiés caréliens après la guerre ?",
+     "Siirtoväki",
+     "—",
+     "—",
+     97,
+     3,
+     "Kapinaa tukivat yleensä tavalliset talonpojat ja maakauppiaat, esivallalle uskollisina pys"
+    ]
+   ]
+  },
+  {
+   "title": "Probes in the top 5 under each ranking: original 10 (seen while diagnosing) and fresh 40 (written after, frozen before retrieval)",
+   "cols": [
+    "Ranking",
+    "Original /10",
+    "Fresh /40",
+    "Fresh share",
+    "Fresh 95% lower bound",
+    "All /50",
+    "All 95% lower bound",
+    "fi /10",
+    "sv /10",
+    "en /10",
+    "fr /10"
+   ],
+   "rows": [
+    [
+     "All chunks, HNSW (the plan's check)",
+     5,
+     27,
+     0.675,
+     0.52,
+     32,
+     0.501,
+     8,
+     7,
+     4,
+     8
+    ],
+    [
+     "Distinct claims, all history",
+     7,
+     32,
+     0.8,
+     0.652,
+     39,
+     0.648,
+     9,
+     9,
+     6,
+     8
+    ],
+    [
+     "Alive now, all 60 pages (exact)",
+     8,
+     38,
+     0.95,
+     0.835,
+     46,
+     0.812,
+     10,
+     9,
+     9,
+     10
+    ],
+    [
+     "Alive now, gold page only (oracle routing)",
+     9,
+     39,
+     0.975,
+     0.871,
+     48,
+     0.865,
+     10,
+     10,
+     9,
+     10
+    ]
+   ]
+  },
+  {
+   "title": "ANN recall@10 against exact search (tie-aware) by mhnsw_ef_search, one session; 'answer lost' = none of the claims behind the exact top 10 appears in the HNSW top 10",
+   "cols": [
+    "ef_search",
+    "Recall, 200 questions",
+    "Questions at 0% recall",
+    "Answer lost (claims)",
+    "Recall, 200 chunk vectors",
+    "HNSW ms",
+    "Exact ms"
+   ],
+   "rows": [
+    [
+     20,
+     0.896,
+     11,
+     10,
+     0.9945,
+     3.07,
+     34.6
+    ],
+    [
+     40,
+     0.9295,
+     8,
+     8,
+     0.9995,
+     3.72,
+     34.43
+    ],
+    [
+     80,
+     0.968,
+     5,
+     4,
+     1.0,
+     5.0,
+     34.34
+    ],
+    [
+     160,
+     0.981,
+     3,
+     2,
+     1.0,
+     7.44,
+     33.77
+    ],
+    [
+     400,
+     0.9925,
+     1,
+     1,
+     1.0,
+     14.93,
+     34.54
+    ]
+   ]
+  }
+ ],
+ "generated": "2026-11-14 18:28 UTC"
+}

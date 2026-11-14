@@ -7,7 +7,7 @@ fix must not fire on legitimate semantic links).
 Faults are injected into in-memory copies of the run, or into copies of the evidence files in a temporary directory;
 logs/lineage.json is the one file changed in place, and it is restored from a byte copy.
 """
-import argparse, copy, hashlib, json, shutil, tempfile
+import argparse, copy, json, shutil, tempfile
 from collections.abc import Callable
 from pathlib import Path
 
@@ -30,10 +30,13 @@ def relabel(events: dict, rule: str, fn: Callable[[tuple], tuple], kind: str | N
     evs = copy.deepcopy(events); key, j = first(evs, rule, kind); evs[key][j] = fn(evs[key][j]); return evs
 
 
-def run(results: list, name: str, check: str, expect: str, fn: Callable[[], None]) -> None:
+def run(results: list, name: str, check: str, expect: str, fn: Callable[[], None], needs: str = "") -> None:
+    """needs: text that must appear in the check's result, so a fault is caught by the guard meant for it."""
     F.C.doc["checks"].clear(); fn(); c = the_check(check)
     status = c["status"]
-    results.append(dict(mutation=name, check=check, expected=expect, status=status, ok=status == expect, got=c["got"][:240]))
+    ok = status == expect and needs in c["got"]
+    results.append(dict(mutation=name, check=check, expected=expect + (f" via '{needs}'" if needs else ""), status=status, ok=ok,
+                        got=c["got"][:400]))
     print(f"{'ok ' if status == expect else 'BAD'} {check:6s} {name:60s} -> {status}")
 
 
@@ -67,12 +70,14 @@ def move_pair(doc: dict) -> None:
 
 
 def wrong_log() -> None:
-    log = F.LOG; keep = log.read_bytes()
+    """The run's log with another resolver's hash, from a temporary copy: the real log is never touched."""
+    tmp = Path(tempfile.mkdtemp()); real = F.LOG
     try:
-        doc = json.loads(keep); doc["resolver_sha256"] = "0" * 64; log.write_text(json.dumps(doc), encoding="utf-8")
+        doc = json.loads(real.read_text(encoding="utf-8")); doc["resolver_sha256"] = "0" * 64
+        (tmp / real.name).write_text(json.dumps(doc), encoding="utf-8"); F.LOG = tmp / real.name
         F.check_replay()
     finally:
-        log.write_bytes(keep)
+        F.LOG = real; shutil.rmtree(tmp)
 
 
 def main() -> None:
@@ -90,14 +95,16 @@ def main() -> None:
     run(r, "a move relabelled as a revert", "F4.5b", "fail", rules(relabel(events, "move", lambda e: (e[0], e[1], e[2], "revert"))))
     run(r, "a containment edit relabelled as an exact revival", "F4.5b", "fail", rules(relabel(events, "contain", lambda e: ("revive", e[1], None, "exact"))))
     i2, e2 = under_link(ids, events)
-    run(r, "under-linking: a ratio edit split into delete + add", "F4.5b", "fail", lambda: F.check_rules(i2, e2))
+    run(r, "under-linking: a ratio edit split into delete + add", "F4.5b", "fail", lambda: F.check_rules(i2, e2),
+        needs="add beside a claim deleted in the same revision")
     if F.RUN == "sem":
         run(r, "a semantic link's cosine off by 0.01", "F4.5b", "fail",
             rules(relabel(events, "semantic", lambda e: (e[0], e[1], e[2] + 0.01, e[3]))))
         run(r, "a semantic link relabelled as a ratio edit", "F4.5b", "fail",
             rules(relabel(events, "semantic", lambda e: ("edit", e[1], e[2], "ratio"))))
         i3, e3 = under_link(ids, events, "semantic")
-        run(r, "under-linking: a semantic link split into delete + add", "F4.5b", "fail", lambda: F.check_rules(i3, e3))
+        run(r, "under-linking: a semantic link split into delete + add", "F4.5b", "fail", lambda: F.check_rules(i3, e3),
+            needs="add beside an unused same-section claim")
     run(r, "none (the stored run)", "F4.2", "pass", inv(events))
     run(r, "a live ratio edit relabelled semantic (legitimate: keeps the id)", "F4.2", "pass",
         inv(relabel(events, "ratio", lambda e: ("semantic", e[1], 0.9, "semantic"))))
@@ -114,10 +121,7 @@ def main() -> None:
         golden_with(texts, lambda d: edit_json(d / f"{pre}_pool.json", move_pair)))
     run(r, "one pair's text changed in the blind file", "F4.3", "fail",
         golden_with(texts, lambda d: edit_json(d / f"{pre}_pool_blind.json", lambda x: x[0].update(new=x[0]["new"] + " x"))))
-    sha = hashlib.sha256((F.ROOT / "pipeline/resolver.py").read_bytes()).hexdigest()
-    check_sha = hashlib.sha256(Path(F.__file__).read_bytes()).hexdigest()
-    out.write_text(json.dumps(dict(run=F.RUN, resolver_sha256=sha, f4_check_sha256=check_sha, results=r), ensure_ascii=False, indent=1),
-                   encoding="utf-8")
+    out.write_text(json.dumps(dict(run=F.RUN, **F.run_digests(), results=r), ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{sum(x['ok'] for x in r)} of {len(r)} as expected; wrote {out}")
 
 

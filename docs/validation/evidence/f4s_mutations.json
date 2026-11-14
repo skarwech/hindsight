@@ -1,0 +1,154 @@
+{
+ "run": "sem",
+ "resolver_sha256": "fe27b22372f41c8893a2dbc9ee86d2a43bf596281ffb30ebfdd61892b623b142",
+ "f4_check_sha256": "5a7da2c6c5aed77330d94959f9caeb095d64d4a1094ecf53e543a4c55ec4f6e7",
+ "events_sha256": "61a264d71a6546fc19cb009192388982c4a2f8391125d7084e4f898b799c9d38",
+ "labels_sha256": "9793432ea1fd4fbd62be3bd8c4ae9069a84485b159a0f872a49a1eb50de1ed10",
+ "vectors_sha256": "37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be",
+ "results": [
+  {
+   "mutation": "none (the stored run)",
+   "check": "F4.5b",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true,
+   "got": "0 violations in 55,400 events "
+  },
+  {
+   "mutation": "a ratio edit's similarity off by 0.01",
+   "check": "F4.5b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "1 violations in 55,400 events {'edit ratio': 1}"
+  },
+  {
+   "mutation": "a near revival relabelled as a ratio edit",
+   "check": "F4.5b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "1 violations in 55,400 events {'edit ratio': 1}"
+  },
+  {
+   "mutation": "a move relabelled as a revert",
+   "check": "F4.5b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "1 violations in 55,400 events {'edit revert': 1}"
+  },
+  {
+   "mutation": "a containment edit relabelled as an exact revival",
+   "check": "F4.5b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "1 violations in 55,400 events {'revive exact': 1}"
+  },
+  {
+   "mutation": "under-linking: a ratio edit split into delete + add",
+   "check": "F4.5b",
+   "expected": "fail via 'add beside a claim deleted in the same revision'",
+   "status": "fail",
+   "ok": true,
+   "got": "3 violations in 55,401 events {'add beside an unused same-section claim at cosine >= 0.88': 1, 'add beside a claim deleted in the same revision at >= t_edit': 1, 'edit ratio': 1}"
+  },
+  {
+   "mutation": "a semantic link's cosine off by 0.01",
+   "check": "F4.5b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "1 violations in 55,400 events {'semantic semantic': 1}"
+  },
+  {
+   "mutation": "a semantic link relabelled as a ratio edit",
+   "check": "F4.5b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "1 violations in 55,400 events {'edit ratio': 1}"
+  },
+  {
+   "mutation": "under-linking: a semantic link split into delete + add",
+   "check": "F4.5b",
+   "expected": "fail via 'add beside an unused same-section claim'",
+   "status": "fail",
+   "ok": true,
+   "got": "2 violations in 55,401 events {'add beside an unused same-section claim at cosine >= 0.88': 1, 'edit ratio': 1}"
+  },
+  {
+   "mutation": "none (the stored run)",
+   "check": "F4.2",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true,
+   "got": "0 violations "
+  },
+  {
+   "mutation": "a live ratio edit relabelled semantic (legitimate: keeps the id)",
+   "check": "F4.2",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true,
+   "got": "0 violations "
+  },
+  {
+   "mutation": "a near revival relabelled semantic (legitimate: brings the id back)",
+   "check": "F4.2",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true,
+   "got": "0 violations "
+  },
+  {
+   "mutation": "a semantic link to a claim deleted in that revision",
+   "check": "F4.2",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "2 violations {'semantic link to an id not in the revision': 1, 'two events for one id': 1}"
+  },
+  {
+   "mutation": "the run's log names another resolver",
+   "check": "F4.2b",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "60 of 60 identical; resolver_sha256 DIFFERS; t_edit matches; t_sem matches; vectors_sha256 matches"
+  },
+  {
+   "mutation": "none (the stored golden set)",
+   "check": "F4.3",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true,
+   "got": "worst case: precision 98.6% (95% lower bound 87.4%), recall 97.3% (lower bound 85.6%); agreed labels only: precision 99.9%, recall 97.8%; judges agree on 253 of 279; labels bound to the blind pool (cc6a0320bb6c…), all 279 pairs still decided as drawn"
+  },
+  {
+   "mutation": "labels bound to another blind file",
+   "check": "F4.3",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "labels bound False; blind = pool True; pairs moved []; strata not sampled []; complete True (malformed label sets 0)"
+  },
+  {
+   "mutation": "one labelled pair moved to another stratum",
+   "check": "F4.3",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "labels bound True; blind = pool True; pairs moved [1]; strata not sampled []; complete True (malformed label sets 0)"
+  },
+  {
+   "mutation": "one pair's text changed in the blind file",
+   "check": "F4.3",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true,
+   "got": "labels bound False; blind = pool False; pairs moved []; strata not sampled []; complete True (malformed label sets 0)"
+  }
+ ]
+}

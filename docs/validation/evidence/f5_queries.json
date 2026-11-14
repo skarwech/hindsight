@@ -1,0 +1,802 @@
+[
+ {
+  "lang": "fi",
+  "query": "Milloin eduskunta hyväksyi Suomen itsenäisyysjulistuksen ja kuka sen esitteli?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi talvisota syttyi?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitä alueita Suomi joutui luovuttamaan Moskovan rauhansopimuksessa maaliskuussa 1940?"
+ },
+ {
+  "lang": "fi",
+  "query": "Talvisodan ja jatkosodan erot"
+ },
+ {
+  "lang": "fi",
+  "query": "Miten jatkosota päättyi ja mitä välirauhan ehdot vaativat Suomelta?"
+ },
+ {
+  "lang": "fi",
+  "query": "Ryti–Ribbentrop-sopimus sisältö"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi Suomi joutui sotimaan entisiä aseveljiään saksalaisia vastaan Lapin sodassa ja mitä Rovaniemelle tapahtui?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuinka vahva Mannerheim-linja oikeasti oli verrattuna Maginot-linjaan?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuinka monta karjalaista siirtolaista asutettiin muualle Suomeen sotien jälkeen?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi Neuvostoliitto palautti Porkkalan vuokra-alueen Suomelle jo vuonna 1956?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitä Pariisin rauhansopimus 1947 määräsi Suomen puolustusvoimien koosta ja sotakorvauksista?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitä YYA-sopimus käytännössä velvoitti Suomea tekemään?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mistä termi suomettuminen on peräisin ja miksi se koettiin loukkaavana?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuinka kauan Urho Kekkonen toimi presidenttinä?"
+ },
+ {
+  "lang": "fi",
+  "query": "Paasikiven linja ulkopolitiikassa"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitkä rajat Tarton rauhassa 1920 sovittiin ja miten Petsamo liittyi siihen?"
+ },
+ {
+  "lang": "fi",
+  "query": "Pähkinäsaaren rauha vuosi ja raja"
+ },
+ {
+  "lang": "fi",
+  "query": "Mikä oli isoviha ja kuinka paljon Suomen väestö väheni sen aikana?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuka johti nuijasotaa?"
+ },
+ {
+  "lang": "fi",
+  "query": "Keitä hakkapeliitat olivat ja mistä nimi tulee?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitä Anjalan liiton upseerit vaativat Kustaa III:lta vuonna 1788?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miten Suomen sota 1808–1809 johti siihen, että Suomesta tuli osa Venäjän keisarikuntaa?"
+ },
+ {
+  "lang": "fi",
+  "query": "Millainen autonomia Suomen suuriruhtinaskunnalla oli Venäjän vallan alla, ja mitä Porvoon valtiopäivillä luvattiin?"
+ },
+ {
+  "lang": "fi",
+  "query": "Turun palo 1827 seuraukset yliopistolle"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitä Helmikuun manifesti muutti Suomen lainsäädännössä vuonna 1899?"
+ },
+ {
+  "lang": "fi",
+  "query": "Ensimmäisen ja toisen sortokauden erot"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi suomalaiset ylioppilaat lähtivät salaa Saksaan sotilaskoulutukseen ensimmäisen maailmansodan aikana ja mikä heidän merkityksensä oli sisällissodassa?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuka oli Axel Olof Freudenthal ja miksi häntä pidetään svekomanian isänä?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuinka moni kuoli vankileireillä Suomen sisällissodan jälkeen vuonna 1918?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuka yritti murhata Mannerheimin vuonna 1920 ja mitä tekijälle tapahtui?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi lapualaiset kyydittivät entisen presidentin K. J. Ståhlbergin vuonna 1930?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mäntsälän kapina 1932 miten se päättyi"
+ },
+ {
+  "lang": "fi",
+  "query": "Miten Kansainliitto ratkaisi Ahvenanmaan kysymyksen ja miksi saaret jäivät Suomelle eivätkä Ruotsille?"
+ },
+ {
+  "lang": "fi",
+  "query": "Missä Kuorsumaan torpparikapina tapahtui ja mihin torpparit olivat tyytymättömiä?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi työttömyys nousi Suomessa lähes 20 prosenttiin 1990-luvun alun laman aikana?"
+ },
+ {
+  "lang": "fi",
+  "query": "Millaista elämä Suomessa oli 1970-luvulla?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mitä kasinotalous tarkoitti 1980-luvun Suomessa?"
+ },
+ {
+  "lang": "fi",
+  "query": "Suuri muutto maalta kaupunkeihin ja Ruotsiin 1960-luvulla"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuinka suuren vaalivoiton perussuomalaiset saivat eduskuntavaaleissa 2011?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mistä vuoden 2008 vaalirahoituskohussa oli kyse ja ketkä poliitikot joutuivat eroamaan sen seurauksena?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi sähköisen äänestyksen kokeilu vuoden 2008 kunnallisvaaleissa johti vaalien uusimiseen kolmessa kunnassa?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miksi Juha Sipilän hallitus erosi maaliskuussa 2019?"
+ },
+ {
+  "lang": "fi",
+  "query": "Anne Berner ministerinä"
+ },
+ {
+  "lang": "fi",
+  "query": "Milloin Suomessa otettiin valmiuslaki käyttöön koronaviruspandemian vuoksi, miksi Uusimaa eristettiin muusta maasta keväällä 2020 ja kuinka kauan rajoitukset olivat voimassa?"
+ },
+ {
+  "lang": "fi",
+  "query": "Sanna Marinin hallituksen tärkeimmät päätökset"
+ },
+ {
+  "lang": "fi",
+  "query": "Miten Sauli Niinistö vaikutti Suomen Nato-jäsenyyteen?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuka voitti presidentinvaalin 2024 ja millä äänimäärällä Pekka Haavisto hävisi toisella kierroksella?"
+ },
+ {
+  "lang": "fi",
+  "query": "Mikä on Sinimusta Liike ja milloin se merkittiin puoluerekisteriin?"
+ },
+ {
+  "lang": "fi",
+  "query": "Kuinka kauan turvapaikanhakijoiden mielenosoitus Rautatientorilla kesti vuonna 2017?"
+ },
+ {
+  "lang": "fi",
+  "query": "Miten ja miksi Suomen ulkopolitiikka on muuttunut kylmän sodan puolueettomuudesta EU-jäsenyyden kautta Nato-jäsenyyteen, ja mikä rooli Venäjän hyökkäyksellä Ukrainaan oli tässä?"
+ },
+ {
+  "lang": "sv",
+  "query": "När undertecknades freden i Dorpat och var drogs gränsen mellan Finland och Sovjetryssland?"
+ },
+ {
+  "lang": "sv",
+  "query": "Ålandsfrågan Nationernas förbund 1921 beslut"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad var Anjalaförbundet och varför betraktades officerarnas agerande 1788 som förräderi?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vilken ministerpost hade Anne Berner i Sipiläs regering?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vem var Axel Olof Freudenthal?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vilket parti blev störst i riksdagsvalet 2011 och hur många mandat fick Sannfinländarna?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad innebar februarimanifestet 1899 för storfurstendömets autonomi?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur länge varade stora ofreden och hur drabbades befolkningen i Österbotten?"
+ },
+ {
+  "lang": "sv",
+  "query": "Varför lämnade Juha Sipiläs regering in sin avskedsansökan i mars 2019?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad menas med Paasikivi–Kekkonen-linjen?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur tog sig de finska jägarna till Tyskland och var utbildades de?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vem kidnappade president K. J. Ståhlberg 1930 och varför?"
+ },
+ {
+  "lang": "sv",
+  "query": "Karelens historia kort sammanfattning"
+ },
+ {
+  "lang": "sv",
+  "query": "Lapplandskriget orsaker och förstörelsen av Rovaniemi"
+ },
+ {
+  "lang": "sv",
+  "query": "Lapporörelsen och Mäntsäläupproret"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur stark var Mannerheimlinjen egentligen jämfört med Maginotlinjen i Frankrike?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vem försökte mörda Mannerheim 1920 och vad var motivet?"
+ },
+ {
+  "lang": "sv",
+  "query": "Moskvafreden 1940 villkor och avträdda områden"
+ },
+ {
+  "lang": "sv",
+  "query": "klubbekriget Jaakko Ilkka"
+ },
+ {
+  "lang": "sv",
+  "query": "Vilken roll hade P. E. Svinhufvud när självständighetsförklaringen antogs?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vilka krigsskadestånd och gränser fastställdes i Parisfreden 1947?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur stor andel av rösterna fick Pekka Haavisto mot Alexander Stubb i andra omgången av presidentvalet 2024?"
+ },
+ {
+  "lang": "sv",
+  "query": "När återlämnades Porkala till Finland och varför skedde det tidigare än avtalat?"
+ },
+ {
+  "lang": "sv",
+  "query": "Var gick gränsen enligt freden i Nöteborg 1323?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad lovade Ryti i avtalet med Ribbentrop 1944 och hur kom Finland ur det?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur gammal var Sanna Marin när hon blev statsminister?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vilken roll spelade Sauli Niinistö när Finland ansökte om Natomedlemskap?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur många karelska evakuerade bosattes om efter krigen och hur fick de mark?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad är Blåsvarta rörelsen och när blev den ett registrerat parti?"
+ },
+ {
+  "lang": "sv",
+  "query": "Varför blev 1990-talets lågkonjunktur i Finland så djup och hur hög var arbetslösheten som värst?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vilken sorts organisation är Finlands folk först?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vem läste upp självständighetsförklaringen i riksdagen den 6 december 1917?"
+ },
+ {
+  "lang": "sv",
+  "query": "När isolerades Nyland från resten av landet under coronapandemin?"
+ },
+ {
+  "lang": "sv",
+  "query": "När konstaterades det första coronafallet i Finland och hur utvecklades pandemin under 2020?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur många dog i finska inbördeskriget, inklusive fånglägren?"
+ },
+ {
+  "lang": "sv",
+  "query": "Varför förlorade Sverige Finland i finska kriget 1808–1809?"
+ },
+ {
+  "lang": "sv",
+  "query": "Borgå lantdag 1809 och storfurstendömets uppkomst"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur har Finlands utrikespolitik förändrats från neutralitet till Natomedlemskap?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad handlade valfinansieringsskandalen om och vilka politiker drabbades?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad betyder finlandisering?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur förändrades Finland på 1960-talet med urbanisering och utflyttning till Sverige?"
+ },
+ {
+  "lang": "sv",
+  "query": "Finland på 1970- och 1980-talen: oljekris, kasinoekonomi och Kekkonens sista år"
+ },
+ {
+  "lang": "sv",
+  "query": "Varför ogiltigförklarades kommunalvalet 2008 i kommunerna som provade elektronisk röstning?"
+ },
+ {
+  "lang": "sv",
+  "query": "Vad beslutades vid ståndslantdagen 1882?"
+ },
+ {
+  "lang": "sv",
+  "query": "Åbo brand 1827"
+ },
+ {
+  "lang": "sv",
+  "query": "Varför demonstrerade asylsökande på Järnvägstorget i Helsingfors 2017?"
+ },
+ {
+  "lang": "sv",
+  "query": "Hur länge var Urho Kekkonen president och varför avgick han?"
+ },
+ {
+  "lang": "sv",
+  "query": "VSB-avtalet 1948 innehåll och betydelse"
+ },
+ {
+  "lang": "sv",
+  "query": "Jag undrar hur Finland egentligen lyckades behålla sin självständighet under andra världskriget när så många andra små länder i närheten ockuperades, vad var avgörande?"
+ },
+ {
+  "lang": "sv",
+  "query": "Skillnaden mellan vinterkriget och fortsättningskriget"
+ },
+ {
+  "lang": "en",
+  "query": "When did Finland declare independence?"
+ },
+ {
+  "lang": "en",
+  "query": "Why did the Soviet Union invade Finland in November 1939, starting the Winter War?"
+ },
+ {
+  "lang": "en",
+  "query": "Moscow Peace Treaty 1940 territorial losses"
+ },
+ {
+  "lang": "en",
+  "query": "How did the Continuation War differ from the Winter War in its causes and outcome?"
+ },
+ {
+  "lang": "en",
+  "query": "Who fought in the Lapland War and why did Finland turn against German troops in 1944?"
+ },
+ {
+  "lang": "en",
+  "query": "What did Risto Ryti promise Germany in the Ryti-Ribbentrop Agreement of June 1944?"
+ },
+ {
+  "lang": "en",
+  "query": "When was the Porkkala naval base returned to Finland by the Soviet Union?"
+ },
+ {
+  "lang": "en",
+  "query": "Treaty of Noteborg 1323 border between Sweden and Novgorod"
+ },
+ {
+  "lang": "en",
+  "query": "What happened to Finland during the Greater Wrath Russian occupation in the early 18th century?"
+ },
+ {
+  "lang": "en",
+  "query": "Cudgel War peasant uprising 1596 causes"
+ },
+ {
+  "lang": "en",
+  "query": "Who were the Hakkapeliitta?"
+ },
+ {
+  "lang": "en",
+  "query": "How did the February Manifesto of 1899 threaten the autonomy of the Grand Duchy of Finland?"
+ },
+ {
+  "lang": "en",
+  "query": "Years of oppression Russification Finland Bobrikov"
+ },
+ {
+  "lang": "en",
+  "query": "What was the Anjala League and why did Finnish officers contact Catherine the Great in 1788?"
+ },
+ {
+  "lang": "en",
+  "query": "How did the Finnish War of 1808-1809 lead to Finland becoming a Russian grand duchy?"
+ },
+ {
+  "lang": "en",
+  "query": "Did the Great Fire of Turku in 1827 cause the university to move to Helsinki?"
+ },
+ {
+  "lang": "en",
+  "query": "Why did Finnish Jagers train in Germany during World War I?"
+ },
+ {
+  "lang": "en",
+  "query": "What was the 2017 asylum seekers' protest in Helsinki and how did groups like Finland First respond?"
+ },
+ {
+  "lang": "en",
+  "query": "Who planned the assassination attempt against Mannerheim in 1920?"
+ },
+ {
+  "lang": "en",
+  "query": "What was Mannerheim's role in the Finnish Civil War and later as president?"
+ },
+ {
+  "lang": "en",
+  "query": "Why did the Lapua Movement kidnap former president Stahlberg in 1930?"
+ },
+ {
+  "lang": "en",
+  "query": "How was the Mantsala rebellion of 1932 ended, and what did President Svinhufvud say in his famous radio speech to the rebels?"
+ },
+ {
+  "lang": "en",
+  "query": "What was the Blue-and-Black Movement and why was it considered fascist?"
+ },
+ {
+  "lang": "en",
+  "query": "Was the Mannerheim Line as strong as Soviet propaganda claimed?"
+ },
+ {
+  "lang": "en",
+  "query": "What did Finland gain in the Treaty of Tartu, including Petsamo?"
+ },
+ {
+  "lang": "en",
+  "query": "How did the League of Nations resolve the Aland Islands question in 1921?"
+ },
+ {
+  "lang": "en",
+  "query": "What was the Kuorsumaa crofters' rebellion?"
+ },
+ {
+  "lang": "en",
+  "query": "Axel Olof Freudenthal Swedish-speaking nationalism in Finland"
+ },
+ {
+  "lang": "en",
+  "query": "What issues were debated at the 1882 Diet of the Estates in Finland?"
+ },
+ {
+  "lang": "en",
+  "query": "How much war reparations did Finland have to pay under the 1947 Paris Peace Treaty?"
+ },
+ {
+  "lang": "en",
+  "query": "What were the main obligations of the 1948 Finno-Soviet YYA treaty?"
+ },
+ {
+  "lang": "en",
+  "query": "Finlandization meaning explained"
+ },
+ {
+  "lang": "en",
+  "query": "How did Urho Kekkonen stay in power for 25 years, and was the 1973 law extending his term legitimate?"
+ },
+ {
+  "lang": "en",
+  "query": "Paasikivi line Finnish foreign policy after World War II"
+ },
+ {
+  "lang": "en",
+  "query": "How many Karelian evacuees were resettled in Finland after the wars, and where did they go?"
+ },
+ {
+  "lang": "en",
+  "query": "Main causes of Finland's early 1990s recession and banking crisis"
+ },
+ {
+  "lang": "en",
+  "query": "Why did so many Finns emigrate to Sweden in the 1960s?"
+ },
+ {
+  "lang": "en",
+  "query": "Helsinki Accords 1975 significance for Finland"
+ },
+ {
+  "lang": "en",
+  "query": "Overview of major political events in Finland in the 2000s"
+ },
+ {
+  "lang": "en",
+  "query": "When did Finland join the European Union and adopt the euro?"
+ },
+ {
+  "lang": "en",
+  "query": "What was Finland's 2008 election funding scandal about and which politicians were implicated?"
+ },
+ {
+  "lang": "en",
+  "query": "Why were the 2008 electronic voting trial results annulled in three municipalities?"
+ },
+ {
+  "lang": "en",
+  "query": "How did the True Finns achieve their big win in the 2011 parliamentary election?"
+ },
+ {
+  "lang": "en",
+  "query": "Why did Juha Sipila's government resign in March 2019?"
+ },
+ {
+  "lang": "en",
+  "query": "What controversy surrounded Anne Berner as transport minister?"
+ },
+ {
+  "lang": "en",
+  "query": "How old was Sanna Marin when she became prime minister?"
+ },
+ {
+  "lang": "en",
+  "query": "What role did Sauli Niinisto play in Finland's NATO application?"
+ },
+ {
+  "lang": "en",
+  "query": "Who won the 2024 Finnish presidential election, Stubb or Haavisto, and by what margin?"
+ },
+ {
+  "lang": "en",
+  "query": "When did Finland close off the Uusimaa region during the COVID-19 pandemic?"
+ },
+ {
+  "lang": "en",
+  "query": "What restrictions and emergency powers did Finland use against the coronavirus in 2020?"
+ },
+ {
+  "lang": "fr",
+  "query": "Comment la Société des Nations a-t-elle tranché la question des îles Åland en 1921 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi des officiers finlandais ont-ils formé la conjuration d'Anjala contre Gustave III en 1788 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Anne Berner ministre des Transports"
+ },
+ {
+  "lang": "fr",
+  "query": "Mannerheim régent de Finlande"
+ },
+ {
+  "lang": "fr",
+  "query": "Quel parti a fait une percée historique aux élections législatives finlandaises de 2011 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Qui étaient les Hakkapeliitat dans l'armée suédoise pendant la guerre de Trente Ans ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Que prévoyait le manifeste de février 1899 signé par Nicolas II ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Grande Colère occupation russe Finlande 1713-1721"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi la Finlande a-t-elle repris la guerre contre l'URSS aux côtés de l'Allemagne en 1941 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi le gouvernement de Juha Sipilä a-t-il démissionné en mars 2019 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Différence entre la ligne Paasikivi et la ligne Kekkonen"
+ },
+ {
+  "lang": "fr",
+  "query": "Comment les chasseurs finlandais ont-ils été entraînés secrètement en Allemagne pendant la Première Guerre mondiale ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Qui fut le premier président de la République de Finlande ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Quelle part de la Carélie la Finlande a-t-elle perdue au profit de l'Union soviétique ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi la Finlande a-t-elle dû chasser les troupes allemandes de Laponie en 1944 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Quels étaient les objectifs et les méthodes du mouvement de Lapua au début des années 1930 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "La ligne Mannerheim était-elle vraiment aussi solide que le prétendait la propagande soviétique ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Qui a tenté d'assassiner Mannerheim en 1920 et où ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Quels territoires la Finlande a-t-elle cédés à l'URSS par le traité de Moscou de mars 1940 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Comment s'est terminée la rébellion de Mäntsälä en 1932 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "causes de la guerre des Massues 1596"
+ },
+ {
+  "lang": "fr",
+  "query": "Svinhufvud a-t-il été déporté en Sibérie avant de devenir chef du Sénat ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Montant des réparations de guerre imposées à la Finlande par le traité de Paris de 1947"
+ },
+ {
+  "lang": "fr",
+  "query": "Pekka Haavisto score second tour présidentielle 2024"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi l'Union soviétique a-t-elle restitué la base navale de Porkkala à la Finlande en 1956 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Que promettait le président Ryti à Ribbentrop dans l'accord de juin 1944 et pourquoi a-t-il démissionné ensuite ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Sanna Marin âge lors de sa nomination comme Première ministre"
+ },
+ {
+  "lang": "fr",
+  "query": "Combien de mandats Sauli Niinistö a-t-il exercés en tant que président de la Finlande ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Comment la Finlande a-t-elle réinstallé plus de 400 000 Caréliens évacués après les guerres ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Qu'est-ce que le parti d'extrême droite Sinimusta Liike et pourquoi a-t-on voulu l'interdire ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Quelle différence entre la première et la seconde période d'oppression russe en Finlande ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Quelles ont été les causes de la grave récession finlandaise du début des années 1990 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Qu'est-ce que le groupe nationaliste Suomen Kansa Ensin ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Date déclaration d'indépendance Finlande"
+ },
+ {
+  "lang": "fr",
+  "query": "Quand la région d'Uusimaa a-t-elle été isolée du reste de la Finlande pendant la pandémie de Covid-19 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Comment la politique étrangère finlandaise est-elle passée de la neutralité à l'adhésion à l'OTAN ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Quel rôle Matti Vanhanen a-t-il joué dans le scandale du financement électoral de 2008 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Que signifie le terme finlandisation et pourquoi est-il péjoratif ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi tant de Finlandais ont-ils émigré en Suède dans les années 1960 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "économie finlandaise années 1980 boom"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi les résultats du vote électronique dans trois communes aux municipales de 2008 ont-ils été annulés ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi l'URSS a-t-elle attaqué la Finlande en novembre 1939 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Le traité de Tartu de 1920 a-t-il donné Petsamo à la Finlande ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Conséquences du grand incendie de Turku en 1827 pour l'université"
+ },
+ {
+  "lang": "fr",
+  "query": "Pourquoi des demandeurs d'asile ont-ils manifesté pendant des mois à Helsinki en 2017 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Combien de temps Urho Kekkonen est-il resté président ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Que stipulait le traité YYA de 1948 entre la Finlande et l'URSS ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Comment la guerre de Finlande de 1808-1809 a-t-elle fait passer le pays de la Suède à la Russie ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Combien de personnes sont mortes dans les camps de prisonniers après la guerre civile de 1918 ?"
+ },
+ {
+  "lang": "fr",
+  "query": "Finlande années 2000"
+ }
+]

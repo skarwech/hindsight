@@ -12,7 +12,8 @@ Reads data/chunks/ and writes data/lineage/ (built in data/lineage.tmp, moved in
 Hidden revisions (text suppressed, 53) are skipped: their claims carry over unchanged. --semantic adds the resolver's
 semantic pass with the vectors of data/embed/store (Step 4) and writes data/lineage_sem/ and logs/lineage_sem.json, so the
 character run (which the embedding plan's parents come from) stays as it is. The log records t_edit, t_sem, the
-resolver's sha256 and the vector store's content digest, which F4 checks.
+resolver's sha256 and the vector store's content digest, which F4 checks. Step 4 measured the semantic pass and did not
+adopt it (F4S: precision of its links 65.5% worst case, far below 95%): Step 5 loads the character run.
 """
 import argparse, hashlib, json, shutil, time
 from collections import Counter, defaultdict
@@ -119,6 +120,11 @@ def main() -> None:
     ap.add_argument("--t-sem", type=float, default=T_SEM)
     args = ap.parse_args()
     OUT, TMP, LOG = paths(args.semantic)
+    if args.semantic:                                      # a partial store would silently skip pairs: refuse it
+        have = set(vectors())
+        need = {h for (h,) in duckdb.connect().execute(f"SELECT DISTINCT text_hash FROM '{CH}/rev_chunks.parquet'").fetchall()}
+        if need - have:
+            raise SystemExit(f"vector store lacks {len(need - have):,} chunk hashes: finish pipeline/embed_chunks.py first")
     pages = [p for (p,) in duckdb.connect().execute(f"SELECT page_id FROM '{CH}/revisions.parquet' GROUP BY 1 ORDER BY COUNT(*) DESC").fetchall()]
     shutil.rmtree(TMP, ignore_errors=True); parts = TMP / "parts"; parts.mkdir(parents=True)
     t0 = time.time()

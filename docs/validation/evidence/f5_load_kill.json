@@ -1,0 +1,22 @@
+{
+ "kill_at_rows": 14000,
+ "plan_sha256": "c4ca4c72062feb54454d818746781b4d4f56460d2f8ac7061c8321b8b1863ba7",
+ "store_sha256": "37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be",
+ "code_sha256": "7ebc425ea9493beb606fddb5135b77e31ae6ed6da0064978a1a7196b51a38e6e",
+ "after_kill": {
+  "rows": 14000,
+  "returncode": -9
+ },
+ "restart_returncode": 0,
+ "restart": {
+  "started": "2026-11-14 20:26:40",
+  "store_sha256": "37d19b3afa659bf1d14b0f8d4851692c797b8a7a4671fc1f238efa073718e4be",
+  "seconds": 96.0,
+  "rows_before": 14000,
+  "inserted": 16946,
+  "rows_after": 30946,
+  "complete": true
+ },
+ "stderr": "",
+ "seconds": 151.0
+}

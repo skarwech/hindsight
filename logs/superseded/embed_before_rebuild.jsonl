@@ -1,0 +1,2 @@
+{"started": "2026-11-14 18:13:01", "seconds": 308.1, "rows_before": 10240, "model_embedded": 10526, "copies_written": 10180, "rows_after": 30946, "model_rows": 20766, "copy_rows": 10180, "model_rate": 34.2, "complete": true}
+{"started": "2026-11-14 19:18:20", "seconds": 361.0, "rows_before": 20766, "model_embedded": 10180, "copies_written": 0, "rows_after": 30946, "model_rows": 30946, "copy_rows": 0, "model_rate": 28.2, "complete": true}

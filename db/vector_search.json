@@ -1,0 +1,9 @@
+{
+ "table": "chunk",
+ "index": "VECTOR INDEX (emb) M=16 DISTANCE=cosine",
+ "M": 16,
+ "distance": "cosine",
+ "mhnsw_ef_search": 80,
+ "note": "mhnsw_ef_search 80 was set before measuring (the starter's value) and is the value F5.7 gates: recall 96.8% on 200 frozen questions. It is not enough on its own: at ef 80 HNSW loses the whole answer on ~2% of questions (4 of 200; 1 at ef 400), where the answer sits in a tight cluster of paragraph versions. Step 6 recommendation (docs/findings.md, Step 4): rank with exact cosine over the paragraphs alive at the chosen date, and use HNSW only to route, at ef >= 400. Set per session: SET mhnsw_ef_search = N.",
+ "recommended_ef_for_routing": 400
+}

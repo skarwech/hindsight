@@ -10,7 +10,7 @@
    "expect": "every case passes; the rewrite keeps its id via the semantic pass (cosine >= 0.88)",
    "got": "24 of 24 passed (exit 0); rewrite cosine 0.931, linked True",
    "status": "pass",
-   "evidence": "........................                                                 [100%]\n24 passed in 0.66s\n"
+   "evidence": "........................                                                 [100%]\n24 passed in 0.32s\n"
   },
   {
    "id": "F4.2",
@@ -124,7 +124,7 @@
    "id": "F4.9",
    "name": "Fault injection: F4.2, F4.2b, F4.3 and F4.5b each fail on a single injected fault and pass on the stored run",
    "kind": "invariant",
-   "expect": "every outcome as expected, recorded for this resolver.py and this f4_check.py",
+   "expect": "every outcome as expected (an under-linking fault must trip its own guard), recorded for this resolver.py, this f4_check.py, this run's events and labels",
    "got": "15 of 15 as expected; fresh True",
    "status": "pass",
    "evidence": ""
@@ -600,7 +600,7 @@
     [
      "F4.5b",
      "under-linking: a ratio edit split into delete + add",
-     "fail",
+     "fail via 'add beside a claim deleted in the same revision'",
      "fail"
     ],
     [
@@ -660,5 +660,5 @@
    ]
   }
  ],
- "generated": "2026-11-14 16:46 UTC"
+ "generated": "2026-11-14 18:35 UTC"
 }

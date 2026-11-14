@@ -11,7 +11,7 @@ PLAN = [  # plan section 12: feature, pass condition, gate
     ("F2", "862,076 versions, 19,742 pages, 0 broken chains, starter's 31,848/3,357/2,143/328 matched", "H5"),
     ("F3", "Median ≤ 2 and P90 ≤ 6 changed hashes per edit; N recorded", "H8"),
     ("F4", "9 of 9 unit cases, precision ≥ 95%, recall ≥ 80%, vandalism oracle 20 of 20", "H12"),
-    ("F4S", "F4 re-run with the semantic pass (Step 4): every F4 check holds; semantic links precision ≥ 95%", "H14"),
+    ("F4S", "F4 re-run with the semantic pass (Step 4): adopt only if every F4 check holds and semantic links reach precision ≥ 95%", "H14"),
     ("F5", "0 orphans, 200 of 200 self-retrieval, ANN recall ≥ 95%", "H14"),
     ("F6", "Round trip 100% in all three variants", "H14"),
     ("F7", "0 time-filter violations, 100 of 100 appear/disappear, non-inferior to the starter", "H14"),

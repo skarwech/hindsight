@@ -12,11 +12,10 @@ Decisions and measured surprises: `docs/findings.md`.
 | 1 | F2 corpus layer `page_state` and hero set | validated |
 | 2 | F3 chunker and hashing | validated |
 | 3 | F4 lineage resolver | validated (golden-set labels are from two model judges, not humans) |
-| 4 | F5 embeddings and `chunk` store, semantic lineage | in progress, not in this repository yet |
+| 4 | F5 embeddings and `chunk` store; F4S semantic lineage | validated (F5.6 and the semantic-link gate F4.3s fail as specified: the semantic pass is not adopted) |
 
 Not in git (rebuilt by the commands below): `data/` (datasets and derived Parquet, ~560 MB), `.mariadb/` (the local
-database), `starters/` (the challenge's starter repositories, cloned), `.venv/`. `pipeline/lineage.py --semantic` and
-`eval/f4_check.py --run sem` belong to Step 4 and need its files.
+database), `starters/` (the challenge's starter repositories, cloned), `.venv/`.
 
 The database user and password in `db/bootstrap.sql`, `db/server.sh` and `eval/common.py` (`hindsight`/`hindsight`) are
 local development credentials for a server bound to 127.0.0.1 only (`eval/common.py` reads `DB_USER` / `DB_PASSWORD` if
@@ -74,5 +73,22 @@ mkdir -p logs
 (cd eval && ../.venv/bin/python f4_mutate.py)          # fault injection, ~1.5 min (re-run after changing the resolver or f4_check)
 (cd eval && ../.venv/bin/python f4_check.py; ../.venv/bin/python render.py)   # F4, ~1 min (replays all 60 pages)
 ```
+
+## Step 4: embeddings, `chunk` store, semantic lineage (measured, not adopted)
+
+```sh
+.venv/bin/python pipeline/embed_plan.py                # model vs copy per distinct chunk (the plan's copy shortcut is off: F5.5)
+.venv/bin/python pipeline/embed_chunks.py              # bge-m3 via Ollama, resumable -> data/embed/store/ (~16 min)
+.venv/bin/python pipeline/load_chunks.py               # `chunk` with HNSW + FULLTEXT, resumable, verifies existing rows
+.venv/bin/python eval/f5_kill.py                       # F5.8 evidence: SIGKILL the real embedding mid-run, restart (empty store only)
+.venv/bin/python eval/f5_kill.py --load                # ... and the real load (empty table only)
+(cd pipeline && ../.venv/bin/python -m pytest -q)      # includes the embedding job's resume tests
+(cd eval && ../.venv/bin/python f5_check.py)           # F5, ~6 min
+.venv/bin/python pipeline/lineage.py --semantic        # lineage with the semantic pass -> data/lineage_sem/ (data/lineage/ untouched)
+.venv/bin/python eval/f4_pool.py --run sem             # its golden-set pool (then two judges: f4s_labels.json)
+(cd eval && ../.venv/bin/python f4_mutate.py --run sem; ../.venv/bin/python f4_check.py --run sem; ../.venv/bin/python render.py)
+```
+
+The semantic pass did not reach its precision bar (F4S), so Step 5 loads the character-only lineage in `data/lineage/`.
 
 Wikipedia text and everything derived from it is CC BY-SA 4.0.

@@ -1,0 +1,28 @@
+{
+ "kill_after_shard": 20,
+ "delay_s": 8.2,
+ "at_kill": {
+  "shards": 20,
+  "tmp_files": []
+ },
+ "after_kill": {
+  "shards": 20,
+  "tmp_files": [],
+  "returncode": -9
+ },
+ "restart_returncode": 0,
+ "restart": {
+  "started": "2026-11-14 18:13:01",
+  "seconds": 308.1,
+  "rows_before": 10240,
+  "model_embedded": 10526,
+  "copies_written": 10180,
+  "rows_after": 30946,
+  "model_rows": 20766,
+  "copy_rows": 10180,
+  "model_rate": 34.2,
+  "complete": true
+ },
+ "stderr": "",
+ "seconds": 631.2
+}
