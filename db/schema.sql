@@ -26,6 +26,7 @@ CREATE TABLE claim (                           -- one row per claim lineage; eac
   page_id   INT UNSIGNED NOT NULL,
   claim_id  INT UNSIGNED NOT NULL,
   text_hash BIGINT UNSIGNED NOT NULL,
+  exact_hash BIGINT UNSIGNED NOT NULL,         -- the exact spelling (text_variant), so a revision is quoted as it was
   section   VARCHAR(255),
   rev_id    INT UNSIGNED NOT NULL,             -- revision that wrote this state
   editor    VARCHAR(255) COLLATE utf8mb4_bin, anon BOOL NOT NULL,
@@ -47,6 +48,13 @@ CREATE TABLE layout (                          -- reading order, one tiny row pe
   row_end   TIMESTAMP(6) GENERATED ALWAYS AS ROW END   INVISIBLE,
   PERIOD FOR SYSTEM_TIME (row_start, row_end)
 ) WITH SYSTEM VERSIONING;
+
+CREATE TABLE text_variant (                    -- every exact spelling of a chunk (Step 2: punctuation, case, spacing differ)
+  exact_hash BIGINT UNSIGNED PRIMARY KEY,      -- xxh64 of the exact text
+  text_hash  BIGINT UNSIGNED NOT NULL,         -- its normalised hash: the chunk row (and vector) it belongs to
+  text       TEXT NOT NULL,
+  KEY (text_hash)
+);
 
 CREATE TABLE claim_stats (                     -- plain table: signals and summaries per claim
   page_id INT UNSIGNED NOT NULL, claim_id INT UNSIGNED NOT NULL,

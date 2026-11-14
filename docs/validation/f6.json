@@ -1,0 +1,294 @@
+{
+ "feature": "F6",
+ "title": "Deep-layer load and reconstruction",
+ "gate": "H14",
+ "checks": [
+  {
+   "id": "F6.0",
+   "name": "Provenance: the load read the character-only lineage that F4 validated, and its inputs have not changed since",
+   "kind": "invariant",
+   "expect": "the load log's input digests equal the current files; data/lineage is the character run (no semantic pass)",
+   "got": "inputs unchanged {'states.parquet': True, 'claim_ids.parquet': True, 'revisions.parquet': True, 'chunk_variant.parquet': True}; character run True (resolver fe27b22372f4…); 1 load run(s) since --fresh: 60 pages, 52,994 claim rows, 6,088 layout rows",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F6.1",
+   "name": "Round trip (main gate): every article rebuilt through AS OF equals the chunker's chunk list, exact spelling included",
+   "kind": "invariant",
+   "expect": "(a) the plan's 1,000 random revisions, here every revision at its own time and 1 µs before (the predecessor, or empty before the first); (b) every revision of the 3 largest pages; (c) 1,000 random instants that are not revision times, against the revision page_state says is active: all 100%",
+   "got": "(a) at revision time 39,365/39,365 visible revisions, of which the plan's random 1,000: 1000/1000; 1 µs before 39,418/39,418; (b) the 3 largest pages (Suomen sisällissota, Carl Gustaf Emil Mannerheim, Urho Kekkonen): 8,141/8,141 revisions at and before; (c) random instants 1000/1000; hidden revisions (expected = the carried-over list, not an independent source) 53/53",
+   "status": "pass",
+   "evidence": "no mismatch"
+  },
+  {
+   "id": "F6.2",
+   "name": "Layout and claim set equality: at every reconstructed moment the ids in claim_order are exactly the claims alive",
+   "kind": "invariant",
+   "expect": "0 differences (the plan: 1,000 random t; here every reconstruction above)",
+   "got": "0 differences in 79,836 reconstructions",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F6.3",
+   "name": "History integrity: no overlapping periods, at most one current row, rows = claim states rebuilt independently, every time a page_state time of the same page",
+   "kind": "invariant",
+   "expect": "0 violations of each kind; claim rows equal the states rebuilt from claim ids + chunks (not the states file the loader read)",
+   "got": "0 violations ; claim rows 52,994, rebuilt 52,994, differing 0",
+   "status": "pass",
+   "evidence": "{\n \"claim periods overlap\": 0,\n \"layout periods overlap\": 0,\n \"layout gaps (a page's order must be continuous)\": 0,\n \"pages without exactly one current layout row\": 0,\n \"claim.row_start not a page_state time of its page\": 0,\n \"claim.row_end not a page_state time of its page\": 0,\n \"layout.row_start not a page_state time of its page\": 0,\n \"layout.row_end not a page_state time of its page\": 0,\n \"claim rev_id or editor/anon/comment differs from page_state at row_start\": 0,\n \"layout row whose order equals the previous one (one row per change of order)\": 0,\n \"text_variant text that does not re-hash to its exact_hash and text_hash\": 0,\n \"layout rev_id differs from page_state at row_start\": 0,\n \"claim text_hash without a chunk row (the plan's F5 orphan query)\": 0,\n \"claim exact_hash without a text_variant of the same text_hash\": 0\n}"
+  },
+  {
+   "id": "F6.4",
+   "name": "Idempotence: a fresh reload into a clean schema (smoke) gives identical rows; re-running it adds nothing",
+   "kind": "invariant",
+   "expect": "identical row counts and sha256 over claim (page_id, claim_id, text_hash, exact_hash, row_start, row_end) and layout (page_id, rev_id, claim_order, row_start, row_end); the re-run loads 0 pages",
+   "got": "claim 52,994 rows, layout 6,088; fresh copy identical True; re-run loaded 0 pages, unchanged True",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F6.5",
+   "name": "Storage: claims + layout + chunk text (+ vectors) against full copies of every version, same 50 articles",
+   "kind": "oracle",
+   "expect": "recorded; plan est. one to two orders of magnitude below full copies (2,049 MB wikitext, 1,202 MB compressed [S2]), total dominated by vectors",
+   "got": "full copies 1,954 MiB (2,049 MB, the starter's number) over 31,848 versions; this design's text 41.7 MiB (47x smaller), vectors 103.7 MiB; on disk for all 60 pages: claim 25.0 MiB, layout 10.0 MiB, text_variant 36.0 MiB, chunk 176.0 MiB + vector index 92 MiB",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F6.6",
+   "name": "Latency: AS OF for one page (both queries), with and without KEY(page_id, row_start), on random, largest and old pages",
+   "kind": "smoke",
+   "expect": "p95 <= 10 ms with the key (plan); the no-key number recorded",
+   "got": "with the key: p95 0.36 ms on random pages, worst p95 0.62 ms over largest pages and old dates; the optimizer picks 'PRIMARY'; without the key see the table",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F6.7",
+   "name": "Fault injection: round trip, set equality and integrity each fail on a single injected fault in a copy",
+   "kind": "invariant",
+   "expect": "every outcome as expected; recorded for this loader, f6_lib and the loaded tables",
+   "got": "10 of 10 as expected; fresh True",
+   "status": "pass",
+   "evidence": ""
+  }
+ ],
+ "findings": [],
+ "tables": [
+  {
+   "title": "Storage for the starter's 50 articles, logical bytes: full copies of every version vs this design",
+   "cols": [
+    "Part",
+    "MiB",
+    "Share of full copies"
+   ],
+   "rows": [
+    [
+     "Full copy of every version's wikitext (dataset M; the starter's 2,049 MB is decimal: 1,954 MiB)",
+     1953.9,
+     1.0
+    ],
+    [
+     "claim rows (ids, hashes, section, editor, comment)",
+     5.5,
+     0.0028
+    ],
+    [
+     "layout rows (reading order)",
+     1.2,
+     0.0006
+    ],
+    [
+     "chunk text (one row per distinct text)",
+     16.4,
+     0.0084
+    ],
+    [
+     "text_variant (exact spellings)",
+     18.5,
+     0.0094
+    ],
+    [
+     "text total",
+     41.7,
+     0.0213
+    ],
+    [
+     "vectors (4 KB per distinct text)",
+     103.7,
+     0.0531
+    ]
+   ]
+  },
+  {
+   "title": "AS OF reconstruction latency (layout + claim query for one page), ms",
+   "cols": [
+    "Variant",
+    "Key used (EXPLAIN)",
+    "Queries",
+    "n",
+    "p50",
+    "p95",
+    "max"
+   ],
+   "rows": [
+    [
+     "KEY(page_id, row_start) forced",
+     "page_id",
+     "all",
+     1000,
+     0.15,
+     0.36,
+     0.75
+    ],
+    [
+     "KEY(page_id, row_start) forced",
+     "page_id",
+     "largest 3 pages",
+     500,
+     0.31,
+     0.62,
+     0.84
+    ],
+    [
+     "KEY(page_id, row_start) forced",
+     "page_id",
+     "old dates (first 20% of a page's life)",
+     750,
+     0.16,
+     0.37,
+     0.84
+    ],
+    [
+     "optimizer's choice",
+     "PRIMARY",
+     "all",
+     1000,
+     0.14,
+     0.43,
+     1.38
+    ],
+    [
+     "optimizer's choice",
+     "PRIMARY",
+     "largest 3 pages",
+     500,
+     0.57,
+     0.99,
+     1.44
+    ],
+    [
+     "optimizer's choice",
+     "PRIMARY",
+     "old dates (first 20% of a page's life)",
+     750,
+     0.16,
+     0.68,
+     1.1
+    ],
+    [
+     "without KEY(page_id, row_start)",
+     "PRIMARY",
+     "all",
+     1000,
+     0.19,
+     0.71,
+     1.29
+    ],
+    [
+     "without KEY(page_id, row_start)",
+     "PRIMARY",
+     "largest 3 pages",
+     500,
+     0.99,
+     1.21,
+     1.77
+    ],
+    [
+     "without KEY(page_id, row_start)",
+     "PRIMARY",
+     "old dates (first 20% of a page's life)",
+     750,
+     0.25,
+     1.17,
+     1.75
+    ]
+   ]
+  },
+  {
+   "title": "Fault injection (eval/f6_mutate.py, on a copy in smoke): each check fails on its fault",
+   "cols": [
+    "Check",
+    "Injected fault",
+    "Expected",
+    "Got"
+   ],
+   "rows": [
+    [
+     "F6.1",
+     "none (a clean copy)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F6.2",
+     "none (a clean copy)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F6.3",
+     "none (a clean copy)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F6.1",
+     "a claim row carries its neighbour's text",
+     "fail",
+     "fail"
+    ],
+    [
+     "F6.3",
+     "a claim row carries its neighbour's text",
+     "fail",
+     "fail"
+    ],
+    [
+     "F6.3",
+     "a claim closed 1 µs late",
+     "fail",
+     "fail"
+    ],
+    [
+     "F6.1",
+     "the layout drops one claim id",
+     "fail",
+     "fail"
+    ],
+    [
+     "F6.2",
+     "the layout drops one claim id",
+     "fail",
+     "fail"
+    ],
+    [
+     "F6.1",
+     "a hidden revision blanks the page",
+     "fail",
+     "fail"
+    ],
+    [
+     "F6.3",
+     "an overlapping duplicate claim row",
+     "fail",
+     "fail"
+    ]
+   ]
+  }
+ ],
+ "generated": "2026-11-14 19:40 UTC"
+}

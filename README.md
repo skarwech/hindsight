@@ -13,6 +13,7 @@ Decisions and measured surprises: `docs/findings.md`.
 | 2 | F3 chunker and hashing | validated |
 | 3 | F4 lineage resolver | validated (golden-set labels are from two model judges, not humans) |
 | 4 | F5 embeddings and `chunk` store; F4S semantic lineage | validated (F5.6 and the semantic-link gate F4.3s fail as specified: the semantic pass is not adopted) |
+| 5 | F6 deep layer: `claim`, `layout`, `text_variant` history | awaiting validation |
 
 Not in git (rebuilt by the commands below): `data/` (datasets and derived Parquet, ~560 MB), `.mariadb/` (the local
 database), `starters/` (the challenge's starter repositories, cloned), `.venv/`.
@@ -90,5 +91,13 @@ mkdir -p logs
 ```
 
 The semantic pass did not reach its precision bar (F4S), so Step 5 loads the character-only lineage in `data/lineage/`.
+
+## Step 5: the deep layer (`claim`, `layout`, `text_variant`)
+
+```sh
+.venv/bin/python pipeline/load_claims.py --fresh       # claim and layout history rows on page_state's bumped times, ~2 s; resumable without --fresh
+(cd eval && ../.venv/bin/python f6_mutate.py)          # fault injection on a copy in the smoke schema, ~1 min
+(cd eval && ../.venv/bin/python f6_check.py; ../.venv/bin/python render.py)   # F6, ~1 min (every revision rebuilt through AS OF)
+```
 
 Wikipedia text and everything derived from it is CC BY-SA 4.0.

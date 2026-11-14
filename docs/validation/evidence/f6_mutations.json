@@ -1,0 +1,97 @@
+{
+ "code": {
+  "pipeline/load_claims.py": "84a2e660452d8a38c8c44f7c2b11c2e4b84e72a3eb92a595ac5f9dcc257bfcb7",
+  "eval/f6_lib.py": "7b18d66913affbda79b328d4b6156e0b71232ac1d7c2235a0d69ed03de7bd0c0",
+  "eval/f6_mutate.py": "f5017badbdf5513148c2818616fd6d246d12085bfbc0e9d1eaa93e6847cba755"
+ },
+ "live_checksum": {
+  "claim_rows": 52994,
+  "claim_sha256": "7347604b50e840d363fdfe0ecdc9475a4917d12ebac7bfb6a378cc4f891f0060",
+  "layout_rows": 6088,
+  "layout_sha256": "d1535d5f236aed3ed00cbf39998128c5288337a7c07ac56a6cf0abd205c0c451",
+  "text_variant_rows": 34378,
+  "text_variant_sha256": "a95ec94d7de5280ba59c6c7df9d53bbf126cc3f70963f7a0b27744f940070bc3"
+ },
+ "results": [
+  {
+   "fault": "none (a clean copy)",
+   "page": 1150,
+   "check": "F6.1",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true
+  },
+  {
+   "fault": "none (a clean copy)",
+   "page": 1150,
+   "check": "F6.2",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true
+  },
+  {
+   "fault": "none (a clean copy)",
+   "page": 1150,
+   "check": "F6.3",
+   "expected": "pass",
+   "status": "pass",
+   "ok": true
+  },
+  {
+   "fault": "a claim row carries its neighbour's text",
+   "page": 1150,
+   "check": "F6.1",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  },
+  {
+   "fault": "a claim row carries its neighbour's text",
+   "page": 1150,
+   "check": "F6.3",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  },
+  {
+   "fault": "a claim closed 1 \u00b5s late",
+   "page": 1150,
+   "check": "F6.3",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  },
+  {
+   "fault": "the layout drops one claim id",
+   "page": 1150,
+   "check": "F6.1",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  },
+  {
+   "fault": "the layout drops one claim id",
+   "page": 1150,
+   "check": "F6.2",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  },
+  {
+   "fault": "a hidden revision blanks the page",
+   "page": 1137,
+   "check": "F6.1",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  },
+  {
+   "fault": "an overlapping duplicate claim row",
+   "page": 1150,
+   "check": "F6.3",
+   "expected": "fail",
+   "status": "fail",
+   "ok": true
+  }
+ ]
+}

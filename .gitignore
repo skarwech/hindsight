@@ -15,3 +15,4 @@ __pycache__/
 # machine-local logs
 logs/mariadb.err
 logs/ollama.log
+logs/load_claims_smoke.json

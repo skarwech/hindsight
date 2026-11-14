@@ -147,7 +147,7 @@ def check_t4(C: Checks) -> None:
     cur.executemany("INSERT INTO chunk (text_hash, text, emb) VALUES (?, ?, VEC_FromText(?))",
                     [(h[t], t, json.dumps(vec[t].tolist())) for t in texts])
     for p, c, t, s, e in states:
-        cols, vals = "page_id, claim_id, text_hash, section, rev_id, editor, anon, row_start", [p, c, h[t], "lead", 1, "x", 0, s]
+        cols, vals = "page_id, claim_id, text_hash, exact_hash, section, rev_id, editor, anon, row_start", [p, c, h[t], h[t], "lead", 1, "x", 0, s]
         if e:
             cols += ", row_end"; vals.append(e)
         cur.execute(f"INSERT INTO claim ({cols}) VALUES ({','.join('?' * len(vals))})", vals)
