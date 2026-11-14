@@ -1,0 +1,72 @@
+[
+ {
+  "id": 1,
+  "case": 0,
+  "role": "dead"
+ },
+ {
+  "id": 2,
+  "case": 2,
+  "role": "live"
+ },
+ {
+  "id": 3,
+  "case": 0,
+  "role": "live"
+ },
+ {
+  "id": 4,
+  "case": 1,
+  "role": "live"
+ },
+ {
+  "id": 5,
+  "case": 2,
+  "role": "dead"
+ },
+ {
+  "id": 6,
+  "case": 4,
+  "role": "dead"
+ },
+ {
+  "id": 7,
+  "case": 6,
+  "role": "live"
+ },
+ {
+  "id": 8,
+  "case": 4,
+  "role": "live"
+ },
+ {
+  "id": 9,
+  "case": 3,
+  "role": "dead"
+ },
+ {
+  "id": 10,
+  "case": 5,
+  "role": "dead"
+ },
+ {
+  "id": 11,
+  "case": 1,
+  "role": "dead"
+ },
+ {
+  "id": 12,
+  "case": 6,
+  "role": "dead"
+ },
+ {
+  "id": 13,
+  "case": 3,
+  "role": "live"
+ },
+ {
+  "id": 14,
+  "case": 5,
+  "role": "live"
+ }
+]

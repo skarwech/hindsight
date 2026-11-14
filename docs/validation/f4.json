@@ -1,0 +1,664 @@
+{
+ "feature": "F4",
+ "title": "Lineage resolver",
+ "gate": "H12",
+ "checks": [
+  {
+   "id": "F4.1",
+   "name": "Unit cases: the plan's 9 (rewrite via the semantic pass with real bge-m3 vectors), simulation, and the review's cases",
+   "kind": "invariant",
+   "expect": "every case passes; the rewrite keeps its id via the semantic pass (cosine >= 0.88)",
+   "got": "24 of 24 passed (exit 0); rewrite cosine 0.931, linked True",
+   "status": "pass",
+   "evidence": "........................                                                 [100%]\n24 passed in 0.66s\n"
+  },
+  {
+   "id": "F4.2",
+   "name": "Invariants on all 39,365 non-hidden revisions: events and id changes match both ways",
+   "kind": "invariant",
+   "expect": "0 violations of each kind",
+   "got": "0 violations ",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F4.2b",
+   "name": "Replay: re-running the resolver on all 60 pages reproduces ids, events and states exactly; the stored run was made by this resolver.py, t_edit",
+   "kind": "invariant",
+   "expect": "60 of 60 pages identical; resolver.py, t_edit match the run's log",
+   "got": "60 of 60 identical; resolver_sha256 matches; t_edit matches",
+   "status": "pass",
+   "evidence": "all identical"
+  },
+  {
+   "id": "F4.4",
+   "name": "Vandalism oracle: after each vandalism episode (undone-flagged revisions, then an exact restore) every claim id returns",
+   "kind": "oracle",
+   "expect": "plan: 20 of 20; here every episode in the hero pages",
+   "got": "2,053 of 2,053 identical",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F4.4b",
+   "name": "Every exact restore, vandalism or not: claim ids equal those of the restored revision",
+   "kind": "oracle",
+   "expect": "recorded; tests restore bookkeeping (the graveyard), not whether ids follow the right paragraph (that is F4.3)",
+   "got": "4,817 of 4,820 identical (99.94%)",
+   "status": "info",
+   "evidence": "page 440: rev 15412362 -> 15412530\npage 440: rev 15412511 -> 15412542\npage 1275: rev 14790277 -> 14819760"
+  },
+  {
+   "id": "F4.5",
+   "name": "Accounting: each claim new to a revision has one add/revive/semantic event, each changed text one edit, nothing else",
+   "kind": "invariant",
+   "expect": "0 violations",
+   "got": "0 violations ",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F4.5b",
+   "name": "Rule consistency: every event meets the condition of the rule that decided it, recomputed from the texts",
+   "kind": "invariant",
+   "expect": "0 violations: move = same text; revert / exact revival = a text the claim had before; near revival = ratio >= 0.9 to its last text, deleted <= 10 revisions earlier; ratio edit = ratio >= 0.6; containment = grown >= 2x, old >= 80 chars, partial >= 0.9; sims recomputed exactly; and no add is left beside an unused deleted claim the rules would link (>= 0.6 same revision, >= 0.9 within 10 revisions)",
+   "got": "0 violations in 55,582 events ",
+   "status": "pass",
+   "evidence": "{\"edit ratio\": 23321, \"delete\": 11246, \"add\": 9973, \"edit revert\": 5037, \"revive exact\": 4848, \"edit contain\": 674, \"edit move\": 440, \"revive near\": 43}"
+  },
+  {
+   "id": "F4.7",
+   "name": "Claim states (Step 5's history rows): rebuilt independently from ids + chunks, no overlaps, every revision reconstructs",
+   "kind": "invariant",
+   "expect": "states identical to the rebuild; 0 overlaps; every visible revision's exact text list reconstructs",
+   "got": "rebuild identical: True (52,994 states); 0 overlaps; 0 of 39,365 revisions fail to reconstruct",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F4.3",
+   "name": "Golden set: precision and recall of the similarity-based decisions, 180 real transitions, weighted by this run",
+   "kind": "golden",
+   "expect": "precision >= 95%, recall >= 80% (plan), worst case (disagreements count against); two model judges, not humans",
+   "got": "worst case: precision 99.2% (95% lower bound 88.4%), recall 97.7% (lower bound 86.2%); agreed labels only: precision 99.4%, recall 98.0%; judges agree on 176 of 180; labels bound to the blind pool (4c3d0d1c1e3b…), all 180 pairs still decided as drawn",
+   "status": "pass",
+   "evidence": "Resolver disagrees with the agreed label:\n#3 not linked, other section >= 0.45 score 0.5616: judged same | OLD 'Lapuan liike päätti näyttää voimansa maanantaina 7. heinäkuuta antaakseen pontta joukkovoimallaan lopuillekin sen vaatim' | NEW 'Antaakseen pontta vaatimuksilleen Lapuan liike päätti näyttää joukkovoimaansa Helsinkiin tehdyllä talonpoikaismarssilla.'\n#6 not linked, same section 0.45–0.60 score 0.4866: judged same | OLD 'Pekka Olavi Haavisto (s. 23. maaliskuuta 1958, Helsinki) toimi Vihreän liiton kansanedustajana vuosina 1987–1995. Vaikka' | NEW 'Pekka Olavi Haavisto (s. 23. maaliskuuta 1958, Helsinki) on poliitikko, joka on toiminut Vihreän liiton kansanedustajana'\n#11 not linked, other section >= 0.45 score 0.5261: judged same | OLD 'Joidenkin maltillisten mielestä SDP:n sisäinen kriisi olisi pitänyt ratkaista puolueen hajoamisella ts. radikaalin ainek' | NEW 'Ilmeistä on, että SDP:n kentällä, erityisesti maaseudulla maltillisilla vallankumouksen vastustajilla oli puolueessa sel'\n#12 not linked, other section >= 0.45 score 0.5859: judged same | OLD 'Sotaministeri Vannovski oli tehnyt vuonna 1891 Aleksanteri III:lle ehdotuksen Suomen sotaväen sulauttamisesta Venäjän ar' | NEW 'Keisarin vaihduttua ja iäkkään Heidenin jätettyä tehtävänsä perustettiin asiaa selvittämään vuosina 1896–1897 Vannovskin'\n#13 not linked, other section >= 0.45 score 0.5627: judged same | OLD 'Sittemmin suomalainen Jarl Gallén ja tanskalainen John Lind esittivät, että sopimukseen sisältyi kaksi rajalinjaa, joist' | NEW 'Tämän teorian esittivät suomalainen Jarl Gallén ja tanskalainen John Lind joiden mukaan itäisempi raja kulkisi Vienanmer'\n#14 not linked, same section 0.45–0.60 score 0.4673: judged same | OLD 'Neuvostoliiton läntinen puskurivyöhyke sai pahan repeämän Saksan anneksoitua Itävallan maaliskuussa 1938. Neuvostoliitto' | NEW 'Adolf Hitlerin valtaan nousu 1930-luvun alussa ja sen jälkeen sotilaallisesti nopeasti vahvistuneen Saksan anneksoitua I'\n#15 not linked, same section 0.45–0.60 score 0.5613: judged same | OLD '2.6.2008 Ilta-Sanomat : Vasemmistoliitolla oli \"oma KMS\" eli Ohjelmatyö ry. http://www.iltasanomat.fi/uutiset/kotimaa/uu' | NEW '30.5.2008 Arto Merisalon sähköposti 9.5. kerrotaan, liikemiehet peruvat tapaamisen Vapaavuoren kanssa, eduskuntavaalien '\n#37 linked ratio 0.60–0.70 score 0.6281: judged different | OLD 'Haavisto on toiminut Vihreän liiton kansanedustajana 1987–1995 ja 2007–, Vihreän liiton puheenjohtajana 1993–1995, ympär' | NEW 'Vuosina 1995–1999 Haavisto oli ympäristö- ja kehitysyhteistyöministeri Lipposen I hallituksessa. Hän on toiminut myös YK'\n#47 not linked, same section 0.00–0.30 score 0.1907: judged same | OLD 'Lapuan taistelu\\nRuonan taistelu\\nOravaisten taistelu\\nSävarin taistelu' | NEW 'Pyhäjoen Yppärin taistelu -- 16. huhtikuuta 1808\\nSiikajoen taistelu -- 18. huhtikuuta 1808\\nRevonlahden taistelu -- 27. h'\n#50 not linked, same section 0.45–0.60 score 0.4885: judged same | OLD 'Kansallinen Kokoomus: Marja Tiura 20 000 €, Jyri Häkämies 10 000 €, Ilkka Kanerva 10 000 €, Jyrki Katainen 10 000 €, Pet' | NEW 'Keskusta: Hannu Hoskonen 2 000 €, Liisa Hyssälä 5 000 €, Timo Kalli 10 000 €, Anne Kalmari  5 000 €, Oiva Kaltiokumpu 5 '\n#52 linked ratio 0.60–0.70 score 0.6069: judged different | OLD 'Mannerheim valmistui ratsuväkikoulusta 1889. Hänen päättötodistuksensa oli hyvä, ja erityisesti hänen arvosanansa olivat' | NEW 'Mannerheim suunnitteli uraa arvostetussa chevalierkaartissa, mutta kaartista ei myönnetty hänelle paikkaa. Kaiken varalt'\n#56 not linked, same section 0.45–0.60 score 0.5714: judged same | OLD 'Sinimusta liike on nationalistinen puolue.' | NEW 'Sinimusta liike on suomalainen nationalistinen puolue, joka merkittiin puoluerekisteriin kesäkuussa 2022.'\n#57 not linked, other section >= 0.45 score 0.4871: judged same | OLD 'Pohjoisen toista kapinaa lietsottiin myös Etelä-Pohjanmaalta. Ilkan ja muiden nuijapäälliköiden teloituksen oli tarkoitu' | NEW 'Tammikuun 1597 alkupuolella maakuntaan saapui Ruotsista Kaarle-herttuan kilpailevaksi Pohjanmaan voudiksi nimittämä Isra'\n#62 not linked, other section >= 0.45 score 0.593: judged same | OLD 'Ensimmäinen sortokausi huipentui Eugen Schaumanin ampuessa Bobrikovin 1904. Schauman toimi yksin, joskin aktivistien tie' | NEW 'Schauman toimi yksin, joskin aktivistien tietäen ja määräajalla, ja aktivistitkin surmasivat mm. venäläismielisen prokur'\n#64 not linked, same section 0.00–0.30 score 0.0651: judged same | OLD 'Solmittiin 2. helmikuuta 1920.' | NEW 'Solmittiin 2. helmikuuta 1920. Tuossa rauhassa määriteltiin Virolle kuuluvaksi myös niin sanottu Viron Inkerinmaa, minkä'\n#65 not linked, same section 0.45–0.60 score 0.5688: judged same | OLD '11. maaliskuuta Oulussa järjestettiin tukimielenosoitus Rautatientorin Oikeus elää-mielenosoitukselle. Oulun mielenilmai' | NEW '11. maaliskuuta Oulussa järjestettiin tukimielenosoitus Rautatientorin Oikeus elää-mielenosoitukselle. Oulun mielenilmai'\n#67 not linked, same section 0.45–0.60 score 0.5198: judged same | OLD 'Kesken oikeudenkäynnin lapuanliikkeen kannattajat pahoinpitelivät todistajana paikalle kutsutun Työn Äänen faktorin Eino' | NEW 'Kesken oikeudenkäynnin mielenosoitus yltyi väkivallaksi. Lapuanliikkeen kannattajat pahoinpitelivät todistajana paikalle'\n#72 not linked, other section >= 0.45 score 0.5891: judged same | OLD 'Tarton rauhansopimus hyväksyttiin Suomen eduskunnassa 1. joulukuuta 1920 äänin 163–27. Presidentti Ståhlberg vahvisti pä' | NEW 'Rauhansopimus hyväksyttiin eduskunnassa 1. joulukuuta 1920 äänin 163–27. Presidentti Ståhlberg vahvisti päätöksen ja rat'\n#78 linked ratio 0.60–0.70 score 0.6455: judged different | OLD 'Toinen maailmansota oli alkanut kolme kuukautta aikaisemmin Saksan ja Neuvostoliiton miehitettyä Puolan. Koska länsirint' | NEW 'Nimitys talvisota tuli käyttöön vasta jatkosodan aikana, muun muassa Mannerheimin päiväkäskyssä n:o 1 kesäkuussa 1941, m'\n#86 not linked, same section 0.30–0.45 score 0.3867: judged same | OLD 'Ruotujakoarmeija\\nUudenmaan Jalkaväkirykmentti' | NEW 'Uudenmaan Jalkaväkirykmentti\\nHämeen Jalkaväkirykmentti\\nPorin Jalkaväkirykmentti\\nTurun läänin Jalkaväkirykmentti\\nSavon Ja'\n#90 not linked, other section >= 0.45 score 0.5254: judged same | OLD 'Aloittaessaan operaatio Barbarossan eli hyökkäyksen Neuvostoliittoon 22.6.1941 Saksa käytti Suomen aluetta hyväkseen. Ra' | NEW 'Valmistelut saksalaisjoukkojen saapumiselle aloitettiin heti. Järjestelyt hoidettiin kauttakulun organisoinnin varjolla,'\n#97 not linked, same section 0.00–0.30 score 0.2625: judged same | OLD 'Argentiina teki aloitteen Neuvostoliiton erottamisesta Kansainliitosta.' | NEW 'Argentiina teki aloitteen Neuvostoliiton erottamisesta Kansainliitosta. Yhdistyneessa kuningaskunnassa käytiin alahuonee'\n#127 not linked, same section 0.30–0.45 score 0.4153: judged same | OLD 'Saksan valtakunta ja Neuvostoliitto olivat vielä liitossa keskenään, mutta Yhdistyneen kuningaskunnan Saksan valtakuntaa' | NEW 'Neuvostoliitto ja Adolf Hitlerin johtama natsi-Saksa olivat liitossa keskenään elokuussa 1939 solmitulla Molotov–Ribbent'\n#140 not linked, other section >= 0.45 score 0.4503: judged same | OLD 'Hallitus aikoin 27. huhtikuuta lopetata poikkeusolot.' | NEW 'Hallitus kumosi 27. huhtikuuta poikkeusolot. Se katsoi, että terveydenhuollon kantokyky riittää, koska taudin leviäminen'\n#141 not linked, same section 0.45–0.60 score 0.4817: judged same | OLD 'Rockmusiikissa Zero Nine oli Suomen ensimmäisiä vakavasti otettavia heavy rockin tekijöitä. Hanoi Rocksin lupaavasti alk' | NEW 'Hanoi Rocks oli 1980-luvun merkittävin suomalainen yhtye ulkomailla, jonka lupaavasti alkanut ulkomaanvalloitus katkesi '\n#150 not linked, same section 0.00–0.30 score 0.277: judged same | OLD 'Artikkeli käsittelee Suomea 1990-luvulla.' | NEW 'Artikkeli käsittelee Suomea 1990-luvulla. Politiikassa merkittävimpiä tapahtumia olivat Suomen ja Neuvostoliiton välisen'\n#154 not linked, other section >= 0.45 score 0.5491: judged same | OLD 'Joulukuussa 2015 Helsingin Sanomat uutisoi, että Finavian hallituksen puheenjohtaja Riitta Tiuraniemi on eronnut protest' | NEW 'Joulukuussa 2015 Helsingin Sanomat uutisoi, että Finavian hallituksen puheenjohtaja Riitta Tiuraniemi on eronnut protest'\n#163 not linked, same section 0.30–0.45 score 0.3949: judged same | OLD 'Pääartikkeli: Karjalan historia' | NEW 'left|150 px|thumb|Suomen Karjala vuoteen 1940: vaaleammalla Neuvostoliiton miehittämät alueet.\\nPääartikkeli: Karjalan hi'\n#165 not linked, same section 0.00–0.30 score 0.252: judged same | OLD 'Li Andersson, opetusministeri 2019–2020, 2021–; kansanedustaja 2015–; vasemmistoliiton puheenjohtaja 2016–\\nPaavo Arhinmä' | NEW 'Li Andersson,\\nPaavo Arhinmäki,\\nMerja Kyllönen,\\nSilvia Modig,\\nHanna Sarkkinen,'\n#170 not linked, same section 0.30–0.45 score 0.4252: judged same | OLD 'Tämä  kappale otettava pois' | NEW 'Tämä  kappale otettava pois: Ei tarpeellista tekstiä tähän artikkeliin, päällekkäisyyksien karsintaa'\n#171 not linked, same section 0.30–0.45 score 0.3941: judged same | OLD 'Taisto Tammi (1945–1979), iskelmälaulaja' | NEW 'Taisto Tammi (1945–1979), iskelmälaulaja\\nEster Toivonen (1914–1979), Miss Eurooppa 1934\\nToivo Mäkelä (1909–1979), näytte'"
+  },
+  {
+   "id": "F4.3b",
+   "name": "Hard decisions only: ratio links below 0.80, containment links and every non-link (126 pairs)",
+   "kind": "golden",
+   "expect": "recorded, not gated: the plan's recall is dominated by 17k near-identical typo fixes; this is the number that can move",
+   "got": "worst case: precision 94.6% (lower bound 83.8%), recall 85.1% (lower bound 73.4%); agreed only: precision 95.7% (lower bound 85.2%), recall 86.6% (lower bound 75.0%)",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F4.3c",
+   "name": "Not measured: non-links across revisions (an added paragraph whose best match is a claim deleted up to 10 revisions earlier, below the 0.9 near-revival threshold)",
+   "kind": "golden",
+   "expect": "recorded: the pool's non-link strata compare a revision's deletions with its own additions only; Step 4's golden set covers these",
+   "got": "78 added paragraphs: 35 at 0.75–0.90, 43 at 0.60–0.75; not judged",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F4.3d",
+   "name": "The 7 decisions the merged assignment changed, judged blind (2 pairs each: the revived claim and the live claim the old code chose)",
+   "kind": "golden",
+   "expect": "recorded: the merged choice should be judged the same paragraph",
+   "got": "merged choice judged same by both judges in 7 of 7; the old choice: 2 different, 2 disputed, 3 same (duplicates: either id is defensible); labels bound to the blind file: True",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F4.6",
+   "name": "Sizes and speed: claims ever vs alive, events per revision, history rows, resolver time",
+   "kind": "smoke",
+   "expect": "0–2 events per ordinary revision; claims ever <= 20x alive (warning sign); est. ~1 min for a 3,357-version page",
+   "got": "9,973 claims ever, 6,116 lived more than one revision (1.7x the 3,618 alive at dataset end); worst page Urho Kekkonen 36.5x; events per revision median 1, P90 2; 52,994 states (1.34 per revision); all 60 pages in 13.9 s, slowest page 13.13 s",
+   "status": "info",
+   "evidence": "[[\"edit ratio\", 23321], [\"delete\", 11246], [\"add\", 9973], [\"edit revert\", 5037], [\"revive exact\", 4848], [\"edit contain\", 674], [\"edit move\", 440], [\"revive near\", 43]]"
+  },
+  {
+   "id": "F4.9",
+   "name": "Fault injection: F4.2, F4.2b, F4.3 and F4.5b each fail on a single injected fault and pass on the stored run",
+   "kind": "invariant",
+   "expect": "every outcome as expected, recorded for this resolver.py and this f4_check.py",
+   "got": "15 of 15 as expected; fresh True",
+   "status": "pass",
+   "evidence": ""
+  }
+ ],
+ "findings": [],
+ "tables": [
+  {
+   "title": "Golden set by stratum: population in this run (and when drawn), sampled, judged same / different / judges disagree",
+   "cols": [
+    "Stratum",
+    "Population",
+    "At draw",
+    "Sampled",
+    "Same",
+    "Different",
+    "Disagree"
+   ],
+   "rows": [
+    [
+     "linked contain",
+     674,
+     678,
+     18,
+     17,
+     0,
+     1
+    ],
+    [
+     "linked near-duplicate revival",
+     43,
+     36,
+     18,
+     18,
+     0,
+     0
+    ],
+    [
+     "linked ratio 0.60–0.70",
+     864,
+     864,
+     18,
+     15,
+     3,
+     0
+    ],
+    [
+     "linked ratio 0.70–0.80",
+     1811,
+     1811,
+     18,
+     18,
+     0,
+     0
+    ],
+    [
+     "linked ratio 0.80–0.90",
+     3492,
+     3493,
+     18,
+     18,
+     0,
+     0
+    ],
+    [
+     "linked ratio 0.90–1.00",
+     17154,
+     17155,
+     18,
+     18,
+     0,
+     0
+    ],
+    [
+     "not linked, other section >= 0.45",
+     181,
+     181,
+     18,
+     10,
+     8,
+     0
+    ],
+    [
+     "not linked, same section 0.00–0.30",
+     246,
+     246,
+     18,
+     5,
+     12,
+     1
+    ],
+    [
+     "not linked, same section 0.30–0.45",
+     394,
+     394,
+     18,
+     5,
+     13,
+     0
+    ],
+    [
+     "not linked, same section 0.45–0.60",
+     474,
+     473,
+     18,
+     8,
+     8,
+     2
+    ]
+   ]
+  },
+  {
+   "title": "Decisions changed by the last resolver change: a near-duplicate of a just-deleted claim now beats a weaker live match (both judges, blind)",
+   "cols": [
+    "Page",
+    "Revision",
+    "Merged: near revival",
+    "Judged",
+    "Pre-merge link",
+    "Score",
+    "Judged"
+   ],
+   "rows": [
+    [
+     "Suomen sisällissota",
+     214,
+     0.9132,
+     "same",
+     "edit contain",
+     0.8963,
+     "disputed"
+    ],
+    [
+     "Suomen sisällissota",
+     993,
+     0.9522,
+     "same",
+     "edit contain",
+     0.8375,
+     "disputed"
+    ],
+    [
+     "Karjala",
+     551,
+     0.9409,
+     "same",
+     "edit ratio",
+     0.8846,
+     "same"
+    ],
+    [
+     "Suomen suuriruhtinaskunta",
+     1025,
+     0.981,
+     "same",
+     "edit ratio",
+     0.6919,
+     "same"
+    ],
+    [
+     "Helmikuun manifesti",
+     32,
+     0.9628,
+     "same",
+     "edit contain",
+     0.836,
+     "different"
+    ],
+    [
+     "Axel Olof Freudenthal",
+     241,
+     0.9766,
+     "same",
+     "edit ratio",
+     0.9064,
+     "same"
+    ],
+    [
+     "Suomen lähetyskunta",
+     831,
+     0.9566,
+     "same",
+     "edit contain",
+     0.8906,
+     "different"
+    ]
+   ]
+  },
+  {
+   "title": "Events by kind and deciding rule",
+   "cols": [
+    "Event",
+    "Count"
+   ],
+   "rows": [
+    [
+     "edit ratio",
+     23321
+    ],
+    [
+     "delete",
+     11246
+    ],
+    [
+     "add",
+     9973
+    ],
+    [
+     "edit revert",
+     5037
+    ],
+    [
+     "revive exact",
+     4848
+    ],
+    [
+     "edit contain",
+     674
+    ],
+    [
+     "edit move",
+     440
+    ],
+    [
+     "revive near",
+     43
+    ]
+   ]
+  },
+  {
+   "title": "Largest hero pages: claims ever seen, alive at dataset end, claim states",
+   "cols": [
+    "Page",
+    "Revisions",
+    "Claims ever",
+    "Alive",
+    "Ratio",
+    "States"
+   ],
+   "rows": [
+    [
+     "Suomen sisällissota",
+     3357,
+     440,
+     165,
+     2.7,
+     5475
+    ],
+    [
+     "Carl Gustaf Emil Mannerheim",
+     2400,
+     440,
+     121,
+     3.6,
+     3479
+    ],
+    [
+     "Urho Kekkonen",
+     2384,
+     2774,
+     76,
+     36.5,
+     5893
+    ],
+    [
+     "Sauli Niinistö",
+     2257,
+     195,
+     52,
+     3.8,
+     2168
+    ],
+    [
+     "Talvisota",
+     2143,
+     519,
+     123,
+     4.2,
+     3596
+    ],
+    [
+     "Jatkosota",
+     1671,
+     277,
+     123,
+     2.3,
+     2120
+    ],
+    [
+     "Suomen lähetyskunta",
+     1339,
+     117,
+     45,
+     2.6,
+     955
+    ],
+    [
+     "Lapuanliike",
+     1200,
+     311,
+     123,
+     2.5,
+     2612
+    ],
+    [
+     "Pekka Haavisto",
+     1165,
+     121,
+     54,
+     2.2,
+     1191
+    ],
+    [
+     "Suomen suuriruhtinaskunta",
+     1099,
+     224,
+     142,
+     1.6,
+     1683
+    ],
+    [
+     "Sanna Marin",
+     1059,
+     145,
+     50,
+     2.9,
+     1129
+    ],
+    [
+     "Lapin sota",
+     847,
+     117,
+     62,
+     1.9,
+     767
+    ]
+   ]
+  },
+  {
+   "title": "Talvisota, claim 246: its 68 states (the claim with the most distinct texts)",
+   "cols": [
+    "From",
+    "Editor",
+    "Refs",
+    "Text (start)"
+   ],
+   "rows": [
+    [
+     "2009-12-06",
+     "Peltimikko",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Talvisota alkoi Neuvostoliiton hyökkäyksellä il…"
+    ],
+    [
+     "2010-11-04",
+     "Nironen",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Talvisota alkoi Neuvostoliiton hyökkäyksellä il…"
+    ],
+    [
+     "2011-03-10",
+     "MindStorM",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Talvisota alkoi Neuvostoliiton sodanjulistukset…"
+    ],
+    [
+     "2011-03-11",
+     "Otrfan",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Talvisota alkoi Neuvostoliiton hyökkäyksellä il…"
+    ],
+    [
+     "2011-03-11",
+     "MindStorM",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Talvisota alkoi  sodanjulistuksetta Neuvostolii…"
+    ],
+    [
+     "2011-08-12",
+     "anonymous",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Ryssän välillä käyty sota. Talvisota alkoi sodanjulistuksetta mädättäjien kavalall…"
+    ],
+    [
+     "2011-08-12",
+     "Riisipuuro",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Talvisota alkoi  sodanjulistuksetta Neuvostolii…"
+    ],
+    [
+     "2013-07-03",
+     "Eichmann",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Neuvostoliitto aloitti talvisodan hyökkäämällä …"
+    ],
+    [
+     "2014-05-07",
+     "anonymous",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Neuvostoliito aloitti talvisodan hyökkäämällä i…"
+    ],
+    [
+     "2014-05-07",
+     "anonymous",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Neuvostoliitto aloitti talvisodan hyökkäämällä …"
+    ],
+    [
+     "2015-07-30",
+     "Höyhens",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Neuvostoliitto aloitti talvisodan hyökkäämällä …"
+    ],
+    [
+     "2016-09-02",
+     "anonymous",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja ryssien välillä käyty sota. Neuvostoliitto aloitti talvisodan hyökkäämällä ilman s…"
+    ],
+    [
+     "2016-09-02",
+     "Otrfan",
+     0,
+     "Talvisota oli 30. marraskuuta 1939 – 13. maaliskuuta 1940 Suomen ja Neuvostoliiton välillä käyty sota. Neuvostoliitto aloitti talvisodan hyökkäämällä …"
+    ],
+    [
+     "2016-12-13",
+     "anonymous",
+     0,
+     "Talvisota oli 30. marraskuuta 2016 – 13. maaliskuuta 2017 Suomen ja [Ekin|]Ekin] välillä käyty sota. Eki aloitti talvisodan hyökkäämällä ilman sodanju…"
+    ]
+   ]
+  },
+  {
+   "title": "Fault injection (eval/f4_mutate.py): each guard fails on its fault, and legitimate cases pass",
+   "cols": [
+    "Check",
+    "Injected fault",
+    "Expected",
+    "Got"
+   ],
+   "rows": [
+    [
+     "F4.5b",
+     "none (the stored run)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F4.5b",
+     "a ratio edit's similarity off by 0.01",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.5b",
+     "a near revival relabelled as a ratio edit",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.5b",
+     "a move relabelled as a revert",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.5b",
+     "a containment edit relabelled as an exact revival",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.5b",
+     "under-linking: a ratio edit split into delete + add",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.2",
+     "none (the stored run)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F4.2",
+     "a live ratio edit relabelled semantic (legitimate: keeps the id)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F4.2",
+     "a near revival relabelled semantic (legitimate: brings the id back)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F4.2",
+     "a semantic link to a claim deleted in that revision",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.2b",
+     "the run's log names another resolver",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.3",
+     "none (the stored golden set)",
+     "pass",
+     "pass"
+    ],
+    [
+     "F4.3",
+     "labels bound to another blind file",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.3",
+     "one labelled pair moved to another stratum",
+     "fail",
+     "fail"
+    ],
+    [
+     "F4.3",
+     "one pair's text changed in the blind file",
+     "fail",
+     "fail"
+    ]
+   ]
+  }
+ ],
+ "generated": "2026-11-14 16:46 UTC"
+}

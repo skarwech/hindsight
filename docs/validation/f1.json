@@ -1,0 +1,205 @@
+{
+ "feature": "F1",
+ "title": "Environment and smoke tests",
+ "gate": "H2",
+ "checks": [
+  {
+   "id": "F1.1a",
+   "name": "Dataset M files match SHA256SUMS, and SHA256SUMS matches the release asset",
+   "kind": "invariant",
+   "expect": "17 of 17 OK; sums file = release digest",
+   "got": "17 of 17 OK; sums file = release: True",
+   "status": "pass",
+   "evidence": "versions-01.parquet: OK\nversions-02.parquet: OK\nversions-03.parquet: OK\nversions-04.parquet: OK\nversions-05.parquet: OK\nversions-06.parquet: OK\nversions-07.parquet: OK\nversions-08.parquet: OK\nversions-09.parquet: OK\nversions-10.parquet: OK\nversions-11.parquet: OK\nversions-12.parquet: OK\nversions-13.parquet: OK\nversions-14.parquet: OK\nversions-15.parquet: OK\nversions-16.parquet: OK\nREADME.md: OK\n"
+  },
+  {
+   "id": "F1.1b",
+   "name": "RAG starter's copy of S equals the S release (s-2026-10)",
+   "kind": "oracle",
+   "expect": "every file byte-identical or row-identical to a verified release file",
+   "got": "identical",
+   "status": "pass",
+   "evidence": "S SHA256SUMS = release digest: True\nREADME.md: not used by the starter\narticle-categories-fi.tsv: byte-identical to S\narticles-en.parquet: bytes differ (re-encoded); 5254 rows, all columns, 0 rows differ\narticles-fi.parquet: bytes differ (re-encoded); 19285 rows, all columns, 0 rows differ\narticles-sv.parquet: bytes differ (re-encoded); 4921 rows, all columns, 0 rows differ\ncategory-links-fi.tsv: byte-identical to S\nvectors-bge-m3-en.parquet: byte-identical to S\nvectors-bge-m3-fi.parquet: byte-identical to S\nvectors-bge-m3-sv.parquet: byte-identical to S"
+  },
+  {
+   "id": "F1.2a",
+   "name": "S articles per language",
+   "kind": "invariant",
+   "expect": "{'fi': 19285, 'sv': 4921, 'en': 5254}",
+   "got": "{'en': 5254, 'fi': 19285, 'sv': 4921}",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F1.2b",
+   "name": "S vectors per language, every article has one",
+   "kind": "invariant",
+   "expect": "{'fi': 19285, 'sv': 4921, 'en': 5254}, 0 missing, 0 orphans",
+   "got": "{'en': 5254, 'fi': 19285, 'sv': 4921}, 0 missing, 0 orphans",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F1.2c",
+   "name": "Vector model label and truncated articles",
+   "kind": "oracle",
+   "expect": "bge-m3; 290 truncated [S1]",
+   "got": "bge-m3; 290 truncated",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F1.2d",
+   "name": "Loaded vectors equal the release vectors byte for byte (1024 x float32)",
+   "kind": "oracle",
+   "expect": "29460 of 29460 equal; unit norms",
+   "got": "29460 of 29460 equal; norms 1.00000–1.00000 (sample)",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F1.2e",
+   "name": "S load time with the starter's setup.sh --local",
+   "kind": "oracle",
+   "expect": "about 3 min [S3]",
+   "got": "4 min 5 s",
+   "status": "info",
+   "evidence": "1/4  Python packages\n\n[notice] A new release of pip is available: 25.2 -> 26.3\n[notice] To update, run: /Users/skarwech/Library/Application Support/Claude/scratch-workspaces/f37a048b-93eb-4dd4-8d14-b72e9b4ab4b0/ae9e7859-7c52-4b55-ba4e-d3a289851b61/scratch-2026-11-13-b64058/starters/mariadb-vector-wikipedia-rag/.venv/bin/python3 -m pip install --upgrade pip\n2/4  Embedding model bge-m3 (1.2 GB, once)\n3/4  The tables, in your own MariaDB\nTables in wikirag on port 3306: article, article_category, article_vector, category_link\n4/4  Articles, categories and vectors (downloads 110 MB the first time)\ndata/articles-en.parquet: 5254 articles\ndata/articles-fi.parquet: 19285 articles\ndata/articles-sv.parquet: 4921 articles\nArticles in the table: {'en': 5254, 'fi': 19285, 'sv': 4921}\nCategory links: 1760. Article-category pairs: {'en': 7060, 'fi': 25138, 'sv': 6839}\nDownloading data/vectors-bge-m3-en.parquet ...\ndata/vectors-bge-m3-en.parquet: 5254 vectors, 13 s\nDownloading data/vectors-bge-m3-fi.parquet ...\ndata/vectors-bge-m3-fi.parquet: 19285 vectors, 149 s\nDownloading data/vectors-bge-m3-sv.parquet ...\ndata/vectors-bge-m3-sv.parquet: 4921 vectors, 50 s\nVectors in the table: {'en': 5254, 'fi': 19285, 'sv': 4921}\n\nReady. Start the search page:  .venv/bin/python app.py   then open http://localhost:8000\n./setup.sh --local 2>&1  5.09s user 1.69s system 2% cpu 4:04.71 total\ntail -25  0.00s user 0.00s system 0% cpu 4:04.71 total\n\n[exited with code 0]\n"
+  },
+  {
+   "id": "F1.3a",
+   "name": "Starter evaluate.py (ANN), vector search, 37 questions vs published",
+   "kind": "oracle",
+   "expect": "plan F1: within 3 pp of 57/76/86%, MRR 0.65",
+   "got": "57/76/86%, MRR 0.65; every row identical: True; misses differing: 0",
+   "status": "pass",
+   "evidence": "evaluate.py exit 0, connected to: 12.3.3-MariaDB 3306 wikirag hindsight@localhost\n\nmisses only on one side:\n\n\n\n## vector search — 37 questions, 3 runs each\n\n| Questions | n | hit@1 | hit@5 | hit@10 | MRR |\n|---|---|---|---|---|---|\n| all |  37 |   57% |   76% |   86% | 0.65 |\n| in en |  13 |   54% |   69% |   77% | 0.61 |\n| in sv |  11 |   82% |   82% |  100% | 0.84 |\n| in fi |  13 |   38% |   77% |   85% | 0.52 |\n| answer only in Finnish |   4 |  100% |  100% |  100% | 1.00 |\n\nEmbedding the question: median 74 ms, slowest 88 ms\nSQL query: median 10.4 ms, slowest 18.0 ms\n\nNot in the top 5:\n- [en] The 1918 war between the Reds and the Whites in Finland → expected Suomen sisällissota, rank >10, top result: Battle of Vilppula\n- [en] Finland as an autonomous part of the Russian Empire → expected Suomen suuriruhtinaskunta, rank 8, top result: Finlands historia\n- [sv] Kriget då Sverige förlorade Finland till Ryssland 1808–1809 → expected Suomen sota, rank 9, top result: Battle of Lapua\n- [sv] Området nära Helsingfors som arrenderades ut till Sovjetunionen efter kriget → expected Porkkalan vuokra-alue, rank 7, top result: Moscow Armistice\n- [fi] Karjalasta evakuoidut ihmiset sotien jälkeen → expected Siirtoväki, rank 6, top result: Luovutettu Karjala\n- [fi] Keisarin julistus vuonna 1899, joka rajoitti Suomen autonomiaa → expected Helmikuun manifesti, rank >10, top result: Rauhoitusreskripti\n- [en] Who was the president of Finland from 1956 to 1982? → expected Urho Kekkonen, rank >10, top result: Presidentvalet i Finland 1982\n- [en] Who led the Senate that declared Finland independent in 1917? → expected P. E. Svinhufvud, rank >10, top result: Senate of Finland\n- [fi] Kuka johti Suomen armeijaa talvisodassa ja jatkosodassa? → expected Carl Gustaf Emil Mannerheim, rank >10, top result: Jatkosodan hyökkäysvaihe\n\n## keyword search — 37 questions, 3 runs each\n\n| Questions | n | hit@1 | hit@5 | hit@10 | MRR |\n|---|---|---|---|---|---|\n| all |  37 |   11% |   16% |   38% | 0.15 |\n| in en |  13 |   15% |   15% |   46% | 0.20 |\n| in sv |  11 |    0% |    9% |   36% | 0.05 |\n| in fi |  13 |   15% |   23% |   31% | 0.18 |\n| answer only in Finnish |   4 |    0% |    0% |    0% | 0.00 |\n\nSQL query: median 23.0 ms, slowest 51.8 ms\n\nNot in the top 5:\n- [en] When did Finland declare its independence? → expected Suomen itsenäisyysjulistus, rank >10, top result: Finland at the 1912 Summer Olympics\n- [en] Which peace treaty ended the Winter War? → expected Moskovan rauhansopimus (1940), rank >10, top result: Winter War\n- [en] Defensive line on the Karelian Isthmus named after the commander-in-chief → expected Mannerheim-linja, rank 7, top result: Winter War\n- [en] Finland as an autonomous part of the Russian Empire → expected Suomen suuriruhtinaskunta, rank 8, top result: Anti-Russian sentiment\n- [en] The Russian occupation of Finland during the Great Northern War → expected Isoviha, rank >10, top result: Anti-Russian sentiment\n- [en] Peasant uprising in Ostrobothnia in the 1590s → expected Nuijasota, rank 7, top result: Peasant\n- [en] The attempt to assassinate Mannerheim in 1920 → expected Mannerheimin murhayritys 1920, rank >10, top result: Carl Gustaf Emil Mannerheim\n- [en] A revolt of crofters at Kuorsumaa → expected Kuorsumaan torpparikapina, rank >10, top result: Kronstadt rebellion\n- [en] Trial of electronic voting in the 2008 municipal elections → expected Sähköisen äänestyksen kokeilu kunnallisvaaleissa 2008, rank >10, top result: Suomen vaalirahoituskohu\n- [sv] Kriget mot de tyska trupperna i Lappland 1944–1945 → expected Lapin sota, rank 8, top result: Slaget vid Helsingborg\n- [sv] Fredsavtalet mellan Finland och Sovjetryssland i Dorpat 1920 → expected Tarton rauha, rank >10, top result: Slaget vid Poltava\n- [sv] Tvisten om Ålands ställning i Nationernas förbund → expected Ahvenanmaan kysymys, rank >10, top result: Ålands historia\n- [sv] Avtalet om vänskap, samarbete och ömsesidigt bistånd med Sovjetunionen → expected YYA-sopimus, rank 8, top result: Georg Carl von Döbeln\n- [sv] Kriget då Sverige förlorade Finland till Ryssland 1808–1809 → expected Suomen sota, rank 8, top result: Georg Carl von Döbeln\n- [sv] Det finska kavalleriet under trettioåriga kriget → expected Hakkapeliitat, rank >10, top result: Slaget vid Poltava\n- [sv] Den stora branden i Åbo 1827 → expected Turun palo, rank >10, top result: Georg Carl von Döbeln\n- [sv] Ståndslantdagen 1882 → expected Säätyvaltiopäivät 1882, rank >10, top result: Luettelo Suomen senaattoreista\n- [sv] Området nära Helsingfors som arrenderades ut till Sovjetunionen efter kriget → expected Porkkalan vuokra-alue, rank >10, top result: Georg Carl von Döbeln\n- [fi] Suomen talouskriisi 1990-luvun alussa → expected Suomen 1990-luvun alun lama, rank >10, top result: Suomi 1990-luvulla\n- [fi] Karjalasta evakuoidut ihmiset sotien jälkeen → expected Siirtoväki, rank >10, top result: Karjalan historia\n- [fi] Venäläistämisen ajat 1800-luvun lopulla ja 1900-luvun alussa → expected Sortovuodet, rank >10, top result: Suomen suuriruhtinaskunta\n- [fi] Saksassa koulutetut suomalaiset vapaaehtoiset ensimmäisen maailmansodan aikana → expected Jääkäriliike, rank >10, top result: Talvisodan vapaaehtoiset\n- [fi] Ruotsin ja Novgorodin välinen rauha vuonna 1323 → expected Pähkinäsaaren rauha, rank 7, top result: Luettelo Ruotsin sodista\n- [fi] Upseerien salaliitto Kustaa III:n Venäjän-sodan aikana → expected Anjalan liitto, rank >10, top result: Suomen suuriruhtinaskunta\n- [fi] Suomen ja Saksan välinen sopimus kesällä 1944 → expected Ryti–Ribbentrop-sopimus, rank >10, top result: Jatkosota\n- [fi] Toisen maailmansodan jälkeinen rauhansopimus, jossa Suomi menetti alueita → expected Pariisin rauhansopimus (1947), rank >10, top result: Yle Sámi Radio\n- [en] Who was the president of Finland from 1956 to 1982? → expected Urho Kekkonen, rank 6, top result: President of Finland\n- [en] Who led the Senate that declared Finland independent in 1917? → expected P. E. Svinhufvud, rank >10, top result: Finnish Civil War\n- [sv] Vem var Finlands första president? → expected K. J. Ståhlberg, rank >10, top result: List of international presidential trips made by Sauli Niinistö\n- [fi] Kuka johti Suomen armeijaa talvisodassa ja jatkosodassa? → expected Carl Gustaf Emil Mannerheim, rank >10, top result: Talvisota\n- [fi] Sodan jälkeinen presidentti, joka loi uuden linjan suhteessa Neuvostoliittoon → expected Juho Kusti Paasikivi, rank >10, top result: Luettelo presidentti Niinistön ulkomaanmatkoista\n"
+  },
+  {
+   "id": "F1.3b",
+   "name": "Starter evaluate.py (ANN), keyword search, 37 questions vs published",
+   "kind": "oracle",
+   "expect": "plan F1: within 3 pp of 11/16/41%, MRR 0.15 (not gated in F1; F15's oracle)",
+   "got": "11/16/38%, MRR 0.15; every row identical: False; misses differing: 2",
+   "status": "info",
+   "evidence": "evaluate.py exit 0, connected to: 12.3.3-MariaDB 3306 wikirag hindsight@localhost\n\nmisses only on one side:\n[fi] Suomen talouskriisi 1990-luvun alussa → expected Suomen 1990-luvun alun lama, rank 10\n[fi] Suomen talouskriisi 1990-luvun alussa → expected Suomen 1990-luvun alun lama, rank >10\n\n\n## vector search — 37 questions, 3 runs each\n\n| Questions | n | hit@1 | hit@5 | hit@10 | MRR |\n|---|---|---|---|---|---|\n| all |  37 |   57% |   76% |   86% | 0.65 |\n| in en |  13 |   54% |   69% |   77% | 0.61 |\n| in sv |  11 |   82% |   82% |  100% | 0.84 |\n| in fi |  13 |   38% |   77% |   85% | 0.52 |\n| answer only in Finnish |   4 |  100% |  100% |  100% | 1.00 |\n\nEmbedding the question: median 74 ms, slowest 88 ms\nSQL query: median 10.4 ms, slowest 18.0 ms\n\nNot in the top 5:\n- [en] The 1918 war between the Reds and the Whites in Finland → expected Suomen sisällissota, rank >10, top result: Battle of Vilppula\n- [en] Finland as an autonomous part of the Russian Empire → expected Suomen suuriruhtinaskunta, rank 8, top result: Finlands historia\n- [sv] Kriget då Sverige förlorade Finland till Ryssland 1808–1809 → expected Suomen sota, rank 9, top result: Battle of Lapua\n- [sv] Området nära Helsingfors som arrenderades ut till Sovjetunionen efter kriget → expected Porkkalan vuokra-alue, rank 7, top result: Moscow Armistice\n- [fi] Karjalasta evakuoidut ihmiset sotien jälkeen → expected Siirtoväki, rank 6, top result: Luovutettu Karjala\n- [fi] Keisarin julistus vuonna 1899, joka rajoitti Suomen autonomiaa → expected Helmikuun manifesti, rank >10, top result: Rauhoitusreskripti\n- [en] Who was the president of Finland from 1956 to 1982? → expected Urho Kekkonen, rank >10, top result: Presidentvalet i Finland 1982\n- [en] Who led the Senate that declared Finland independent in 1917? → expected P. E. Svinhufvud, rank >10, top result: Senate of Finland\n- [fi] Kuka johti Suomen armeijaa talvisodassa ja jatkosodassa? → expected Carl Gustaf Emil Mannerheim, rank >10, top result: Jatkosodan hyökkäysvaihe\n\n## keyword search — 37 questions, 3 runs each\n\n| Questions | n | hit@1 | hit@5 | hit@10 | MRR |\n|---|---|---|---|---|---|\n| all |  37 |   11% |   16% |   38% | 0.15 |\n| in en |  13 |   15% |   15% |   46% | 0.20 |\n| in sv |  11 |    0% |    9% |   36% | 0.05 |\n| in fi |  13 |   15% |   23% |   31% | 0.18 |\n| answer only in Finnish |   4 |    0% |    0% |    0% | 0.00 |\n\nSQL query: median 23.0 ms, slowest 51.8 ms\n\nNot in the top 5:\n- [en] When did Finland declare its independence? → expected Suomen itsenäisyysjulistus, rank >10, top result: Finland at the 1912 Summer Olympics\n- [en] Which peace treaty ended the Winter War? → expected Moskovan rauhansopimus (1940), rank >10, top result: Winter War\n- [en] Defensive line on the Karelian Isthmus named after the commander-in-chief → expected Mannerheim-linja, rank 7, top result: Winter War\n- [en] Finland as an autonomous part of the Russian Empire → expected Suomen suuriruhtinaskunta, rank 8, top result: Anti-Russian sentiment\n- [en] The Russian occupation of Finland during the Great Northern War → expected Isoviha, rank >10, top result: Anti-Russian sentiment\n- [en] Peasant uprising in Ostrobothnia in the 1590s → expected Nuijasota, rank 7, top result: Peasant\n- [en] The attempt to assassinate Mannerheim in 1920 → expected Mannerheimin murhayritys 1920, rank >10, top result: Carl Gustaf Emil Mannerheim\n- [en] A revolt of crofters at Kuorsumaa → expected Kuorsumaan torpparikapina, rank >10, top result: Kronstadt rebellion\n- [en] Trial of electronic voting in the 2008 municipal elections → expected Sähköisen äänestyksen kokeilu kunnallisvaaleissa 2008, rank >10, top result: Suomen vaalirahoituskohu\n- [sv] Kriget mot de tyska trupperna i Lappland 1944–1945 → expected Lapin sota, rank 8, top result: Slaget vid Helsingborg\n- [sv] Fredsavtalet mellan Finland och Sovjetryssland i Dorpat 1920 → expected Tarton rauha, rank >10, top result: Slaget vid Poltava\n- [sv] Tvisten om Ålands ställning i Nationernas förbund → expected Ahvenanmaan kysymys, rank >10, top result: Ålands historia\n- [sv] Avtalet om vänskap, samarbete och ömsesidigt bistånd med Sovjetunionen → expected YYA-sopimus, rank 8, top result: Georg Carl von Döbeln\n- [sv] Kriget då Sverige förlorade Finland till Ryssland 1808–1809 → expected Suomen sota, rank 8, top result: Georg Carl von Döbeln\n- [sv] Det finska kavalleriet under trettioåriga kriget → expected Hakkapeliitat, rank >10, top result: Slaget vid Poltava\n- [sv] Den stora branden i Åbo 1827 → expected Turun palo, rank >10, top result: Georg Carl von Döbeln\n- [sv] Ståndslantdagen 1882 → expected Säätyvaltiopäivät 1882, rank >10, top result: Luettelo Suomen senaattoreista\n- [sv] Området nära Helsingfors som arrenderades ut till Sovjetunionen efter kriget → expected Porkkalan vuokra-alue, rank >10, top result: Georg Carl von Döbeln\n- [fi] Suomen talouskriisi 1990-luvun alussa → expected Suomen 1990-luvun alun lama, rank >10, top result: Suomi 1990-luvulla\n- [fi] Karjalasta evakuoidut ihmiset sotien jälkeen → expected Siirtoväki, rank >10, top result: Karjalan historia\n- [fi] Venäläistämisen ajat 1800-luvun lopulla ja 1900-luvun alussa → expected Sortovuodet, rank >10, top result: Suomen suuriruhtinaskunta\n- [fi] Saksassa koulutetut suomalaiset vapaaehtoiset ensimmäisen maailmansodan aikana → expected Jääkäriliike, rank >10, top result: Talvisodan vapaaehtoiset\n- [fi] Ruotsin ja Novgorodin välinen rauha vuonna 1323 → expected Pähkinäsaaren rauha, rank 7, top result: Luettelo Ruotsin sodista\n- [fi] Upseerien salaliitto Kustaa III:n Venäjän-sodan aikana → expected Anjalan liitto, rank >10, top result: Suomen suuriruhtinaskunta\n- [fi] Suomen ja Saksan välinen sopimus kesällä 1944 → expected Ryti–Ribbentrop-sopimus, rank >10, top result: Jatkosota\n- [fi] Toisen maailmansodan jälkeinen rauhansopimus, jossa Suomi menetti alueita → expected Pariisin rauhansopimus (1947), rank >10, top result: Yle Sámi Radio\n- [en] Who was the president of Finland from 1956 to 1982? → expected Urho Kekkonen, rank 6, top result: President of Finland\n- [en] Who led the Senate that declared Finland independent in 1917? → expected P. E. Svinhufvud, rank >10, top result: Finnish Civil War\n- [sv] Vem var Finlands första president? → expected K. J. Ståhlberg, rank >10, top result: List of international presidential trips made by Sauli Niinistö\n- [fi] Kuka johti Suomen armeijaa talvisodassa ja jatkosodassa? → expected Carl Gustaf Emil Mannerheim, rank >10, top result: Talvisota\n- [fi] Sodan jälkeinen presidentti, joka loi uuden linjan suhteessa Neuvostoliittoon → expected Juho Kusti Paasikivi, rank >10, top result: Luettelo presidentti Niinistön ulkomaanmatkoista\n"
+  },
+  {
+   "id": "F1.3c",
+   "name": "Exact search (IGNORE INDEX) on the starter's 37 questions = published numbers (deterministic oracle)",
+   "kind": "oracle",
+   "expect": "57/76/86%, MRR 0.65 exactly",
+   "got": "exact 57/76/86%, MRR 0.65; ANN ef 80 now 57/76/86%, MRR 0.65; 0 questions where ANN rank != exact rank",
+   "status": "pass",
+   "evidence": "ANN = exact on all 37"
+  },
+  {
+   "id": "F1.4-T1",
+   "name": "T1 backdated history rows as an ordinary user; AS OF boundaries (exactly one row each)",
+   "kind": "invariant",
+   "expect": "old / new / old / 0",
+   "got": "old / new / old / 0",
+   "status": "pass",
+   "evidence": "T1 mid: old (1 row) — expected old\nT1 at boundary: new (1 row) — expected new\nT1 boundary-1us: old (1 row) — expected old\nT1 before first: 0 (1 row) — expected 0"
+  },
+  {
+   "id": "F1.4-P",
+   "name": "pitfalls.sql (Appendix C) + pitfalls_extra.sql on 12.3: values, row counts and error codes",
+   "kind": "oracle",
+   "expect": "31 of 31 as expected",
+   "got": "31 of 31 as expected",
+   "status": "pass",
+   "evidence": "ok  T1 mid: old (1 row) — expected old\nok  T1 at boundary: new (1 row) — expected new\nok  T1 boundary-1us: old (1 row) — expected old\nok  T1 before first: 0 (1 row) — expected 0\nok  LIFE 2011-06: 7,8 (1 row) — expected 7,8\nok  LIFE 2012-06 gap: 8 (1 row) — expected 8\nok  LIFE 2013-06 revived: 7,8 (1 row) — expected 7,8\nok  LIFE 2014-06: 7:222,8:333 (1 row) — expected 7:222,8:333\nok  LIFE 2016: 7 (1 row) — expected 7\nok  LIFE current rows per PK: 0 (1 row) — expected 0\nok  ZERO-LEN accepted?: 0 (1 row) — expected 0\nok  ALIAS after clause: 8 (1 row) — expected 8\nok  LIMIT wrapped: 1 (1 row) — expected 1\nok  CHAIN broken: 0 (1 row) — expected 0\nok  KEEP: rows: 2,0 (1 row) — expected 2,0\nok  KEEP: periods: 2010-01-01|2012-01-01 (1 row) — expected 2010-01-01|2012-01-01\nok  secure_timestamp: NO (1 row) — expected NO\nok  '2012-01-01 00:00:00','2012-01-01 00:00:00': ERROR 4112 — expected {4112, 1525}\nok  FROM c AS k FOR SYSTEM_TIME: ERROR 1064 — expected {1064}\nok  SELECT 'LIMIT direct': ERROR 1235 — expected {1235}\nok  CREATE TEMPORARY TABLE: ERROR 4137 — expected {4137}\nok  ALTER TABLE c ADD COLUMN extra: ERROR 4119 — expected {4119}\nok  ALTER TABLE c MODIFY COLUMN extra: ERROR 4119 — expected {4119}\nok  ALTER TABLE px MODIFY COLUMN v: ERROR 4119 — expected {4119}\nok  ALTER TABLE c ADD KEY (rev_id): accepted — expected accepted\nok  ALTER TABLE px ADD COLUMN extra: accepted — expected accepted\nok  unexpected SQL errors: 0\nok  FLIPS: {20: 3, 21: 1} — expected {20: 3, 21: 1}\nok  CTE + AS OF + IN + join: [8, 7] — expected [8, 7]\nok  SQL PREPARE, bare date and full datetime: [2, 2] — expected [2, 2]\nok  UPDATE writes a history row stamped now: 3 -> 4 rows, start 2026-11-13 20:18:02.207345"
+  },
+  {
+   "id": "F1.4-P2",
+   "name": "AS OF TIMESTAMP ? through the Python connector: bare date vs full datetime",
+   "kind": "smoke",
+   "expect": "full datetime works (plan: always pass 'YYYY-MM-DD HH:MM:SS')",
+   "got": "'2011-06-01': ERROR 1525; '2011-06-01 00:00:00': n=1",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F1.4-T2",
+   "name": "T2 HNSW + FULLTEXT on one table (4 rows): MATCH and vector query",
+   "kind": "invariant",
+   "expect": "MATCH 1,2; vector top-2 1,2; EXPLAIN uses index e",
+   "got": "MATCH 1,2; vector 1,2; index e",
+   "status": "pass",
+   "evidence": "SET time_zone='+00:00' -> None\nDROP TABLE IF EXISTS t2 -> None\nCREATE TABLE t2 (h BIGINT UNSIGNED PRIMARY KEY, txt TEXT, e VECTOR(4) NOT NULL,\n  VECTOR I -> None\nINSERT INTO t2 VALUES (1,'Mannerheim johti puolustusvoimia', VEC_FromText('[1,0,0,0]')),\n  -> None\nSELECT 'T2 MATCH mannerheim* (expect 1,2)' t, GROUP_CONCAT(h ORDER BY h) ids\n  FROM t2 WHE -> [['T2 MATCH mannerheim* (expect 1,2)', '1,2']]\nSELECT 'T2 VECTOR top2 near [1,0,0,0] (expect 1,2)' t, GROUP_CONCAT(h ORDER BY d) ids FROM -> [['T2 VECTOR top2 near [1,0,0,0] (expect 1,2)', '1,2']]\nEXPLAIN SELECT h FROM t2 ORDER BY VEC_DISTANCE_COSINE(e, VEC_FromText('[1,0,0,0]')) LIMIT  -> [[1, 'SIMPLE', 't2', 'index', None, 'e', '18', None, '2', '']]\nDROP TABLE IF EXISTS t3 -> None\nCREATE TABLE t3 (id INT PRIMARY KEY, e VECTOR(4) NOT NULL,\n  VECTOR INDEX (e) DISTANCE=cos -> None\nINSERT INTO t3 (id, e) SELECT seq, VEC_FromText(CONCAT('[', 1 + seq % 7, ',', 1 + seq % 5, -> None\nDO SLEEP(0.05) -> None\nSET @before = NOW(6) -> None\nDO SLEEP(0.05) -> None\nUPDATE t3 SET e = VEC_FromText(CONCAT('[', id, ',1,1,1]')) WHERE id <= 8 -> None\nDELETE FROM t3 WHERE id BETWEEN 9 AND 13 -> None\nSELECT 'T3 all row-versions (expect 28 = 20 + 8 updated)' t, COUNT(*) n FROM t3 FOR SYSTEM -> [['T3 all row-versions (expect 28 = 20 + 8 updated)', 28]]\nSELECT 'T3 current, ANN LIMIT 5 (expect 5)' t, COUNT(*) n FROM (\n  SELECT id FROM t3 ORDER -> [['T3 current, ANN LIMIT 5 (expect 5)', 5]]\nSELECT 'T3 current, ANN LIMIT 15 (expect 15)' t, COUNT(*) n FROM (\n  SELECT id FROM t3 ORD -> [['T3 current, ANN LIMIT 15 (expect 15)', 15]]\nSELECT 'T3 AS OF before, LIMIT 5 (expect 5)' t, COUNT(*) n FROM (\n  SELECT id FROM t3 FOR  -> [['T3 AS OF before, LIMIT 5 (expect 5)', 5]]\nSELECT 'T3 AS OF before, LIMIT 20 (expect 20)' t, COUNT(*) n FROM (\n  SELECT id FROM t3 FO -> [['T3 AS OF before, LIMIT 20 (expect 20)', 20]]\nSELECT 'T3 AS OF before, exact top5 vs ANN top5 equal? (expect 1)' t,\n  (SELECT GROUP_CONC -> [['T3 AS OF before, exact top5 vs ANN top5 equal? (expect 1)', 1]]\nEXPLAIN SELECT id FROM t3 ORDER BY VEC_DISTANCE_COSINE(e, VEC_FromText('[1,1,1,1]')) LIMIT -> [[1, 'SIMPLE', 't3', 'index', None, 'e', '18', None, '5', 'Using where']]\nEXPLAIN SELECT id FROM t3 FOR SYSTEM_TIME AS OF TIMESTAMP @before ORDER BY VEC_DISTANCE_CO -> [[1, 'SIMPLE', 't3', 'index', None, 'e', '18', None, '5', 'Using where']]"
+  },
+  {
+   "id": "F1.4-T3",
+   "name": "T3 HNSW on a system-versioned table creates and answers (toy: 20 rows, so the graph is fully visited)",
+   "kind": "smoke",
+   "expect": "creates; LIMIT k returns k now and AS OF; ANN = exact; EXPLAIN uses e now and AS OF; no SQL errors",
+   "got": "[28, 5, 15, 5, 20, 1]; index now e, AS OF e; errors 0",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F1.4-T3b",
+   "name": "T3 at scale: 20,000 rows dim 64, churned; plus 8,000 ids x 3 backdated versions. ANN LIMIT 30 vs exact",
+   "kind": "smoke",
+   "expect": "outcome recorded (plan: may succeed, fail, or return fewer rows)",
+   "got": "this run: 0 short sets, 0 duplicate ids, min recall versioned 0.8 vs plain 0.97; review run: versioned AS OF, 6 of 54 LIMIT 30 queries short (min 0 rows), min recall 0.00",
+   "status": "info",
+   "evidence": "versioned: 28222 row-versions after 18,500 updates and 3,000 deletes\nversioned: EXPLAIN key of the AS OF ANN query: ['e']\nplain control: 17000 row-versions after 18,500 updates and 3,000 deletes\nplain control: EXPLAIN key of the ANN query: ['e']\nversioned AS OF, ef 20: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 1.0, 'mean_recall': 1.0, 'dups': 0}\nversioned now, ef 20: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 0.93, 'mean_recall': 0.99, 'dups': 0}\nversioned AS OF, ef 80: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 1.0, 'mean_recall': 1.0, 'dups': 0}\nversioned now, ef 80: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 0.93, 'mean_recall': 0.99, 'dups': 0}\nplain control now, ef 20: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 0.97, 'mean_recall': 0.99, 'dups': 0}\nplain control now, ef 80: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 0.97, 'mean_recall': 1.0, 'dups': 0}\nbackdated AS OF 2011, ef 20: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 0.8, 'mean_recall': 0.91, 'dups': 0}\nbackdated AS OF 2011, ef 80: {'n': 20, 'short': 0, 'min_rows': 30, 'min_recall': 0.87, 'mean_recall': 0.96, 'dups': 0}\n\nAdversarial review run (docs/validation/evidence/t3_review_*_20k.json, eval/repro/t3_review_lib.py):\nversioned AS OF, 6 of 54 LIMIT 30 queries short (min 0 rows), min recall 0.00"
+  },
+  {
+   "id": "F1.4-T4",
+   "name": "T4 headline query (verbatim) across schemas: each routing leg alone, AS OF vs an independent oracle",
+   "kind": "invariant",
+   "expect": "R1 routes Kekkonen; one page only via R2, one only via R3; 0 rows outside [row_start, row_end); ranked result = Python oracle at every boundary ±1 µs (≤ 8 live claims, so LIMIT 8 never cuts); EXPLAIN uses embedding (R1) and emb (R2)",
+   "got": "legs ok True; 33 dates, 96 rows, 0 period violations, 0 oracle mismatches; index keys ['PRIMARY', 'distinct_key', 'emb', 'embedding', 'text', 'text_hash']",
+   "status": "pass",
+   "evidence": "R1=[752, 1275, 5985, 41737, 94833, 94920, 205499, 495698, 556284, 986620, 1065090, 1699006]\nR2-only page 29 in R2: True, in R1/R3: False\nR3-only page 30 in R3: True, in R1/R2: False\n220 filler chunks (dead claims on page 62)\n2005-01-01 00:00:00: []\n2004-12-31 23:59:59.999999: []\n2005-01-01 00:00:00.000001: []\n2008-01-01 00:00:00: [(1275, 3), (1275, 1), (1275, 2)]\n2007-12-31 23:59:59.999999: []\n2008-01-01 00:00:00.000001: [(1275, 3), (1275, 1), (1275, 2)]\n2009-01-01 00:00:00: [(1275, 3), (1275, 1), (1275, 2)]\n2008-12-31 23:59:59.999999: [(1275, 3), (1275, 1), (1275, 2)]\n2009-01-01 00:00:00.000001: [(1275, 3), (1275, 1), (1275, 2)]\n2010-01-01 00:00:00: [(1275, 1), (1275, 2)]\n2009-12-31 23:59:59.999999: [(1275, 3), (1275, 1), (1275, 2)]\n2010-01-01 00:00:00.000001: [(1275, 1), (1275, 2)]\n2010-05-05 12:00:00.123456: [(29, 1), (1275, 1), (1275, 2)]\n2010-05-05 12:00:00.123455: [(1275, 1), (1275, 2)]\n2010-05-05 12:00:00.123457: [(29, 1), (1275, 1), (1275, 2)]\n2011-06-01 00:00:00: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2011-05-31 23:59:59.999999: [(29, 1), (1275, 1), (1275, 2)]\n2011-06-01 00:00:00.000001: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2012-03-01 00:00:00: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2012-02-29 23:59:59.999999: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2012-03-01 00:00:00.000001: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2014-01-01 00:00:00: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2013-12-31 23:59:59.999999: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2014-01-01 00:00:00.000001: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2016-01-01 00:00:00: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2015-12-31 23:59:59.999999: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2016-01-01 00:00:00.000001: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2019-01-01 00:00:00: [(29, 1), (1275, 1), (1275, 2)]\n2018-12-31 23:59:59.999999: [(29, 1), (1275, 1), (1275, 2), (30, 1)]\n2019-01-01 00:00:00.000001: [(29, 1), (1275, 1), (1275, 2)]\n2020-01-01 00:00:00: [(29, 1), (1275, 1), (1275, 2)]\n2019-12-31 23:59:59.999999: [(29, 1), (1275, 1), (1275, 2)]\n2020-01-01 00:00:00.000001: [(29, 1), (1275, 1), (1275, 2)]"
+  },
+  {
+   "id": "F1.4-T4c",
+   "name": "R1 cost: vector index with and without the language filter",
+   "kind": "smoke",
+   "expect": "plan F7: R1 ~5 ms, hundreds of rows read",
+   "got": "lang='fi' (as in the headline query): 95 ms, 7478 handler reads; no filter: 10 ms, 1932 handler reads",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F1.4-T5",
+   "name": "T5 Ollama vs sentence-transformers bge-m3 parity, 50 Finnish paragraphs (ST max_seq_length 8192)",
+   "kind": "oracle",
+   "expect": "min cosine >= 0.99 (plan); real parity ~0.9999",
+   "got": "min 0.99989, median 0.99999",
+   "status": "pass",
+   "evidence": "ST max_seq_length 512 (plan's F5 snippet): min 0.99989 — inputs over 512 tokens are cut\nOllama 33.0 texts/s; sentence-transformers MPS fp32 32.0 texts/s"
+  },
+  {
+   "id": "F1.4-T5b",
+   "name": "Ollama today reproduces S's stored vectors (10 fi articles by length, 2 truncated; title + text)",
+   "kind": "oracle",
+   "expect": "min cosine >= 0.999",
+   "got": "min 0.999979, median 0.999999",
+   "status": "pass",
+   "evidence": "  12132 chars, truncated=False: 0.999979\n   2011 chars, truncated=False: 0.999999\n 284276 chars, truncated=True: 0.999996\n   2861 chars, truncated=False: 0.999999\n   4648 chars, truncated=False: 0.999999\n   1428 chars, truncated=False: 0.999999\n    743 chars, truncated=False: 1.000000\n    408 chars, truncated=False: 1.000000\n   1055 chars, truncated=False: 1.000000\n 359148 chars, truncated=True: 0.999996"
+  },
+  {
+   "id": "F1.5",
+   "name": "Server: version >= 11.7, insert_history by an ordinary user, max_allowed_packet >= 64 MB",
+   "kind": "invariant",
+   "expect": ">= 11.7; 1 as non-root; >= 64 MB",
+   "got": "12.3.3-MariaDB; 1 as hindsight@localhost (ordinary: True, secure_timestamp NO); 256 MB",
+   "status": "pass",
+   "evidence": "GRANT USAGE ON *.* TO `hindsight`@`localhost` IDENTIFIED BY PASSWORD <redacted>\nGRANT ALL PRIVILEGES ON `wikirag`.* TO `hindsight`@`localhost`\nGRANT ALL PRIVILEGES ON `wikihistory`.* TO `hindsight`@`localhost`\nGRANT ALL PRIVILEGES ON `smoke`.* TO `hindsight`@`localhost`\nGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, EVENT, TRIGGER, DELETE HISTORY, SHOW CREATE ROUTINE ON `test`.* TO PUBLIC\nGRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, REFERENCES, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, EVENT, TRIGGER, DELETE HISTORY, SHOW CREATE ROUTINE ON `test\\_%`.* TO PUBLIC"
+  }
+ ],
+ "findings": [
+  "keyword baseline (ANN, published on MariaDB 12.2.2, here 12.3.3-MariaDB) differs from the published miss list in this run: [fi] Suomen talouskriisi 1990-luvun alussa → expected Suomen 1990-luvun alun lama, rank 10; [fi] Suomen talouskriisi 1990-luvun alussa → expected Suomen 1990-luvun alun lama, rank >10",
+  "evaluate.py ran in 12 s against 12.3.3-MariaDB 3306 wikirag hindsight@localhost.",
+  "12.3 rejects `'2012-01-01 00:00:00','2012-01-01 00:00:00'` with error 4112; the plan's 10.11 sandbox saw 1525: Incorrect system-version range 'row_start' value: '2012-01-01 00:00:00.000000' and 'row_end' value: '2012-01-01 00:00:00.000000'",
+  "T3 at scale is intermittent. This run: 0 short result sets, min recall 0.8 on versioned tables vs 0.97 on the plain control. Review run on the same server: versioned AS OF, 6 of 54 LIMIT 30 queries short (min 0 rows), min recall 0.00. Decision: the plan's fallback is required, not optional. Vectors live only in the plain `chunk` table and time travel is a join. F5 re-measures recall after the final load.",
+  "Headline query: `routed ... LIMIT 25` has no ORDER BY, so when the union exceeds 25 pages SQL drops pages arbitrarily before the API layer can trim by rank (adversarial review reproduced an R3-only page vanishing). F7 must rank or cap per leg inside SQL.",
+  "Embeddings: Ollama 33/s vs sentence-transformers MPS 32/s on 50 paragraphs. ST parity is ~0.9999 only with max_seq_length >= the input; the plan's 512 gives min 0.9999 here. Use Ollama for every vector (it reproduces S to 0.999979)."
+ ],
+ "generated": "2026-11-13 20:16 UTC"
+}

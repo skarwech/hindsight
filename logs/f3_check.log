@@ -1,0 +1,19 @@
+[pass] F3.1 Determinism: a serial re-run equals the stored parallel run (section, hash, exact spelling, citations): 0 of 5,107 differ (Suomen suuriruhtinaskunta, P. E. Svinhufvud, Axel Olof Freudenthal, Eduskuntavaalit 2011, Talvisota)
+  step 0: 26.2 s
+[pass] F3.2 Boundary stability: chunk hashes changed per edit, all 39,261 consecutive revision pairs: median 1, P90 2, P99 11, max 1020; 43% of edits change no chunk; mean added 1.11
+  step 1: 0.9 s
+[pass] F3.3 Coverage: chunk text covers the starter-cleaned article (independent oracle, 50 revisions): 96.69% covered; 3.4% is boilerplate sections; content lost elsewhere 0.000%
+  step 2: 2.0 s
+[pass] F3.4 Markup leaks ({{, [[, <ref, {|) and HTML entities in distinct chunks: 78 of 30,946 (0.25%); in any spelling 106 of 34,378; 0 with an entity
+[pass] F3.6 Sizes and encoding: length band, empties, MariaDB TEXT and VARCHAR(255) bounds, UTF-8, placeholders: 98.8% in band; 0 empty; max 1,500 chars / 2,673 bytes; 0 long sections; 0 U+FFFD introduced (1 in the source); 0 placeholders
+  step 3: 0.5 s
+[pass] F3.5 n_refs equals the citations on the raw lines each chunk came from (oracle cleaner, all chunk kinds): 6,583 of 6,583 agree ({'single': 5838, 'merged': 528, 'list': 217}); invariant broken in 0 of 300 revisions
+  step 4: 7.7 s
+100% ▕██████████████████████████████████████▏ (00:00:02.23 elapsed)     
+[pass] F3.7 Cleaner = the starter's history.clean() with the five documented fixes, on every distinct hero text: 34,326 of 34,326 identical
+  step 5: 118.2 s
+[pass] F3.8 Output integrity: revision set and order = page_state; positions contiguous; every hash recomputes; no dangling hash: revisions equal (39,418); 0 position gaps; 0 bad hashes over 30,946 texts + 34,378 spellings; dangling 0 spellings, 0 texts
+  step 6: 1.2 s
+[info] F3.9 N, the distinct chunk hashes (sizes Step 4), and what the run recorded: N = 30,946 from 2,251,722 (revision, chunk) rows over 60 pages, 43.3 s; embedding at ~32/s ≈ 16 min; 2,823 hashes join several spellings (6.4% of rows use a non-representative spelling, kept in chunk_variant); placeholder fallbacks 1; orphan citations 1,177; hidden revisions with 0 chunks 53 of 53; other revisions with 0 chunks 18 (blanked or emptied)
+  step 7: 0.5 s
+wrote /Users/skarwech/Library/Application Support/Claude/scratch-workspaces/f37a048b-93eb-4dd4-8d14-b72e9b4ab4b0/ae9e7859-7c52-4b55-ba4e-d3a289851b61/scratch-2026-11-13-b64058/docs/validation/f3.json

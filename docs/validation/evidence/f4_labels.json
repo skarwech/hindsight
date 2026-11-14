@@ -1,0 +1,1815 @@
+{
+ "blind_sha256": "4c3d0d1c1e3b17050ab50d739142d6531892186379d0fafb4e3d2fd20180a22e",
+ "judges": [
+  {
+   "judge": "judge-strict-editor",
+   "labels": [
+    {
+     "id": 1,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 2,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 3,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 4,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 5,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 6,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 7,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 8,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 9,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 10,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 11,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 12,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 13,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 14,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 15,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 16,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 17,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 18,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 19,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 20,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 21,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 22,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 23,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 24,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 25,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 26,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 27,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 28,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 29,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 30,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 31,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 32,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 33,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 34,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 35,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 36,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 37,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 38,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 39,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 40,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 41,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 42,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 43,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 44,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 45,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 46,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 47,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 48,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 49,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 50,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 51,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 52,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 53,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 54,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 55,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 56,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 57,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 58,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 59,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 60,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 61,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 62,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 63,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 64,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 65,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 66,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 67,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 68,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 69,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 70,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 71,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 72,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 73,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 74,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 75,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 76,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 77,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 78,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 79,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 80,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 81,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 82,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 83,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 84,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 85,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 86,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 87,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 88,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 89,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 90,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 91,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 92,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 93,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 94,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 95,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 96,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 97,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 98,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 99,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 100,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 101,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 102,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 103,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 104,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 105,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 106,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 107,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 108,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 109,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 110,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 111,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 112,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 113,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 114,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 115,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 116,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 117,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 118,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 119,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 120,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 121,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 122,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 123,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 124,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 125,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 126,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 127,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 128,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 129,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 130,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 131,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 132,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 133,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 134,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 135,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 136,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 137,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 138,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 139,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 140,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 141,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 142,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 143,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 144,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 145,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 146,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 147,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 148,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 149,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 150,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 151,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 152,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 153,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 154,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 155,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 156,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 157,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 158,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 159,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 160,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 161,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 162,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 163,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 164,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 165,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 166,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 167,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 168,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 169,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 170,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 171,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 172,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 173,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 174,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 175,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 176,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 177,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 178,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 179,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 180,
+     "same": true,
+     "confidence": "high"
+    }
+   ]
+  },
+  {
+   "judge": "judge-history-reader",
+   "labels": [
+    {
+     "id": 1,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 2,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 3,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 4,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 5,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 6,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 7,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 8,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 9,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 10,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 11,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 12,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 13,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 14,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 15,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 16,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 17,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 18,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 19,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 20,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 21,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 22,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 23,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 24,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 25,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 26,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 27,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 28,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 29,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 30,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 31,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 32,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 33,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 34,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 35,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 36,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 37,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 38,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 39,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 40,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 41,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 42,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 43,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 44,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 45,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 46,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 47,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 48,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 49,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 50,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 51,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 52,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 53,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 54,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 55,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 56,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 57,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 58,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 59,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 60,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 61,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 62,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 63,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 64,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 65,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 66,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 67,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 68,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 69,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 70,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 71,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 72,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 73,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 74,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 75,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 76,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 77,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 78,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 79,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 80,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 81,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 82,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 83,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 84,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 85,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 86,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 87,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 88,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 89,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 90,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 91,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 92,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 93,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 94,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 95,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 96,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 97,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 98,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 99,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 100,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 101,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 102,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 103,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 104,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 105,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 106,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 107,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 108,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 109,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 110,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 111,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 112,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 113,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 114,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 115,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 116,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 117,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 118,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 119,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 120,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 121,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 122,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 123,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 124,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 125,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 126,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 127,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 128,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 129,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 130,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 131,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 132,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 133,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 134,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 135,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 136,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 137,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 138,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 139,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 140,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 141,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 142,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 143,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 144,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 145,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 146,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 147,
+     "same": false,
+     "confidence": "low"
+    },
+    {
+     "id": 148,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 149,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 150,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 151,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 152,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 153,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 154,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 155,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 156,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 157,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 158,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 159,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 160,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 161,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 162,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 163,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 164,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 165,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 166,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 167,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 168,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 169,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 170,
+     "same": true,
+     "confidence": "low"
+    },
+    {
+     "id": 171,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 172,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 173,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 174,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 175,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 176,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 177,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 178,
+     "same": false,
+     "confidence": "high"
+    },
+    {
+     "id": 179,
+     "same": true,
+     "confidence": "high"
+    },
+    {
+     "id": 180,
+     "same": true,
+     "confidence": "high"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,25 @@
+[pass] F1.1a Dataset M files match SHA256SUMS, and SHA256SUMS matches the release asset: 17 of 17 OK; sums file = release: True
+[pass] F1.1b RAG starter's copy of S equals the S release (s-2026-10): identical
+[pass] F1.2a S articles per language: {'en': 5254, 'fi': 19285, 'sv': 4921}
+[pass] F1.2b S vectors per language, every article has one: {'en': 5254, 'fi': 19285, 'sv': 4921}, 0 missing, 0 orphans
+[pass] F1.2c Vector model label and truncated articles: bge-m3; 290 truncated
+[pass] F1.2d Loaded vectors equal the release vectors byte for byte (1024 x float32): 29460 of 29460 equal; norms 1.00000–1.00000 (sample)
+[info] F1.2e S load time with the starter's setup.sh --local: 4 min 5 s
+[pass] F1.3a Starter evaluate.py (ANN), vector search, 37 questions vs published: 57/76/86%, MRR 0.65; every row identical: True; misses differing: 0
+[info] F1.3b Starter evaluate.py (ANN), keyword search, 37 questions vs published: 11/16/38%, MRR 0.15; every row identical: False; misses differing: 2
+[pass] F1.3c Exact search (IGNORE INDEX) on the starter's 37 questions = published numbers (deterministic oracle): exact 57/76/86%, MRR 0.65; ANN ef 80 now 57/76/86%, MRR 0.65; 0 questions where ANN rank != exact rank
+[pass] F1.4-T1 T1 backdated history rows as an ordinary user; AS OF boundaries (exactly one row each): old / new / old / 0
+[pass] F1.4-P pitfalls.sql (Appendix C) + pitfalls_extra.sql on 12.3: values, row counts and error codes: 31 of 31 as expected
+[pass] F1.4-P2 AS OF TIMESTAMP ? through the Python connector: bare date vs full datetime: '2011-06-01': ERROR 1525; '2011-06-01 00:00:00': n=1
+[pass] F1.4-T2 T2 HNSW + FULLTEXT on one table (4 rows): MATCH and vector query: MATCH 1,2; vector 1,2; index e
+[pass] F1.4-T3 T3 HNSW on a system-versioned table creates and answers (toy: 20 rows, so the graph is fully visited): [28, 5, 15, 5, 20, 1]; index now e, AS OF e; errors 0
+[info] F1.4-T3b T3 at scale: 20,000 rows dim 64, churned; plus 8,000 ids x 3 backdated versions. ANN LIMIT 30 vs exact: this run: 0 short sets, 0 duplicate ids, min recall versioned 0.8 vs plain 0.97; review run: versioned AS OF, 6 of 54 LIMIT 30 queries short (min 0 rows), min recall 0.00
+[pass] F1.4-T4 T4 headline query (verbatim) across schemas: each routing leg alone, AS OF vs an independent oracle: legs ok True; 33 dates, 96 rows, 0 period violations, 0 oracle mismatches; index keys ['PRIMARY', 'distinct_key', 'emb', 'embedding', 'text', 'text_hash']
+[info] F1.4-T4c R1 cost: vector index with and without the language filter: lang='fi' (as in the headline query): 95 ms, 7478 handler reads; no filter: 10 ms, 1932 handler reads
+W1113 22:21:22.788000 26106 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights: 100%|██████████| 391/391 [00:00<00:00, 58666.84it/s]
+[pass] F1.4-T5 T5 Ollama vs sentence-transformers bge-m3 parity, 50 Finnish paragraphs (ST max_seq_length 8192): min 0.99989, median 0.99999
+[pass] F1.4-T5b Ollama today reproduces S's stored vectors (10 fi articles by length, 2 truncated; title + text): min 0.999979, median 0.999999
+[pass] F1.5 Server: version >= 11.7, insert_history by an ordinary user, max_allowed_packet >= 64 MB: 12.3.3-MariaDB; 1 as hindsight@localhost (ordinary: True, secure_timestamp NO); 256 MB
+wrote /Users/skarwech/Library/Application Support/Claude/scratch-workspaces/f37a048b-93eb-4dd4-8d14-b72e9b4ab4b0/ae9e7859-7c52-4b55-ba4e-d3a289851b61/scratch-2026-11-13-b64058/docs/validation/f1.json

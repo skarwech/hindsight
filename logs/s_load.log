@@ -1,0 +1,26 @@
+1/4  Python packages
+
+[notice] A new release of pip is available: 25.2 -> 26.3
+[notice] To update, run: /Users/skarwech/Library/Application Support/Claude/scratch-workspaces/f37a048b-93eb-4dd4-8d14-b72e9b4ab4b0/ae9e7859-7c52-4b55-ba4e-d3a289851b61/scratch-2026-11-13-b64058/starters/mariadb-vector-wikipedia-rag/.venv/bin/python3 -m pip install --upgrade pip
+2/4  Embedding model bge-m3 (1.2 GB, once)
+3/4  The tables, in your own MariaDB
+Tables in wikirag on port 3306: article, article_category, article_vector, category_link
+4/4  Articles, categories and vectors (downloads 110 MB the first time)
+data/articles-en.parquet: 5254 articles
+data/articles-fi.parquet: 19285 articles
+data/articles-sv.parquet: 4921 articles
+Articles in the table: {'en': 5254, 'fi': 19285, 'sv': 4921}
+Category links: 1760. Article-category pairs: {'en': 7060, 'fi': 25138, 'sv': 6839}
+Downloading data/vectors-bge-m3-en.parquet ...
+data/vectors-bge-m3-en.parquet: 5254 vectors, 13 s
+Downloading data/vectors-bge-m3-fi.parquet ...
+data/vectors-bge-m3-fi.parquet: 19285 vectors, 149 s
+Downloading data/vectors-bge-m3-sv.parquet ...
+data/vectors-bge-m3-sv.parquet: 4921 vectors, 50 s
+Vectors in the table: {'en': 5254, 'fi': 19285, 'sv': 4921}
+
+Ready. Start the search page:  .venv/bin/python app.py   then open http://localhost:8000
+./setup.sh --local 2>&1  5.09s user 1.69s system 2% cpu 4:04.71 total
+tail -25  0.00s user 0.00s system 0% cpu 4:04.71 total
+
+[exited with code 0]

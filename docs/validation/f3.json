@@ -1,0 +1,276 @@
+{
+ "feature": "F3",
+ "title": "Chunker and hashing",
+ "gate": "H8",
+ "checks": [
+  {
+   "id": "F3.1",
+   "name": "Determinism: a serial re-run equals the stored parallel run (section, hash, exact spelling, citations)",
+   "kind": "invariant",
+   "expect": "0 of 5,107 revisions differ (5 pages)",
+   "got": "0 of 5,107 differ (Suomen suuriruhtinaskunta, P. E. Svinhufvud, Axel Olof Freudenthal, Eduskuntavaalit 2011, Talvisota)",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F3.2",
+   "name": "Boundary stability: chunk hashes changed per edit, all 39,261 consecutive revision pairs",
+   "kind": "invariant",
+   "expect": "median <= 2 and P90 <= 6 (changed = max(added, removed) per pair)",
+   "got": "median 1, P90 2, P99 11, max 1020; 43% of edits change no chunk; mean added 1.11",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F3.3",
+   "name": "Coverage: chunk text covers the starter-cleaned article (independent oracle, 50 revisions)",
+   "kind": "invariant",
+   "expect": ">= 95% of cleaned characters (plan); content lost outside boilerplate sections <= 0.5%",
+   "got": "96.69% covered; 3.4% is boilerplate sections; content lost elsewhere 0.000%",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F3.4",
+   "name": "Markup leaks ({{, [[, <ref, {|) and HTML entities in distinct chunks",
+   "kind": "invariant",
+   "expect": "<= 0.5% of chunks; every hit listed; entities decoded",
+   "got": "78 of 30,946 (0.25%); in any spelling 106 of 34,378; 0 with an entity",
+   "status": "pass",
+   "evidence": "rev 892678: …'nistön sukulaisista politiikassa mukana on myös veljenpoika [[Ville Niinistö], joka on Vihreitten aktivisti.'…\nrev 10616593: …' kasvu ja omanarvontunnon nousu, aatteellisina työkaluinaan [[sosialismi, nationalismi ja myös liberalismi. Suomalainen '…\nrev 15794483: …'<ref sauli niinistö on kaikkien aikojen vähä-älyisin olento '…\nrev 625490: …'un maan taktiikan, pyrkien tuhoamaan kaiken vastaan tulevan [[infrastruktuurin, jotta niistä ei olisi vastustajalle hyöt'…\nrev 16076045: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 5698523: …'[[Kuva:Spravka.jpg|thumb|left|270px|Neuvostoliittolainen pro'…\nrev 16668623: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]\\nSopimus sai nimensä solmimispaikastaan, '…\nrev 1857562: …'ttelut käytävän vuoden 1914 rajan pohjalta lukuun ottamatta [[Repola]a ja Porajärveä, joista voitaisiin neuvotella eriks'…\nrev 15384101: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Lyyssinlinnassa]]\\nSopimus sai nimensä solmimispaikastaan, '…\nrev 6742850: …'ääkäreitä värväytyi Kortesjärveltä (alue nykyään osa Kauhava[[n kaupunkia), joka tällä perusteella ilmoitti olleensa jää'…\nrev 9295624: …'Neuvostoliitto esitti, että Suomi luovuttaisigda ja [[Porajärvi|Porajärveltä]dfgsopimuksessa jäivät neuvosto-Ven'…\nrev 489969: …'stukikohdastaan. Suomen näkökulmasta puhuttiin vaaran vuodet[[vaaran vuosista 1944-1948.'…\nrev 15853209: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 2055970: …'kkäysten jälkeen suomalaispuolustus vakaantui Kollaanjoelle [[7. joulukuuta] alkaen. Laatokan rantamilla Suomen armeija '…\nrev 17041955: …'taan Suomen tasavallan presidentti toimikaudelle 2024–2030.\\n[[Luokka:Suomen presidentinvaalit|2024]moi'…\nrev 14371202: …' Raudun risti, Sipoon kunnnan muistomitali, Svidjan mitali, [[Tampereen valloituksen muistomitali], Venäjänsaaren muisto'…\nrev 16186922: …'njohtaja Nikolai Podgornyi YYA-sopimuksen 25-vuotisjuhlassa [[Finlandia-talossa 1973]]'…\nrev 19189873: …'Ensimmäisiä nuijasotaa koskevia tutkimuksia oli [[Yrjö-Sakari Yrjö-Koskinen|Yrjö-Sakari Yrjö-Koskisen] vuosi'…\nrev 1810574: …'ottelut käytävän vuoden 1914 rajan pohjalta lukuunottamatta [[Repola]a ja Porajärveä, joista voitaisiin neuvotella eriks'…\nrev 2333910: …' Jukkaeer5uhhkojoiergtefnjiojniiiji Targraer4rty ja etenkin [[Hannu Rautkallio, joka tulee lähelle Tuure Junnilan näkemy'…\nrev 4523932: …'[[linkki[[linkki[[linkki[[linkki[[linkki[[linkki[[linkki[[li'…\nrev 21219040: …'htävänä oli Suomeen hyökkäämällä pakottaa Ruotsi liittymään [[mannermaasulkemus|mannermaasulkemukseen]. Ranska nimenomaa'…\nrev 785933: …'itsevan syntymäkodin nimi on Lepikon torppa, hänellä ei ole [[torpparitaustaa. Talo oli hankittu omakotitaloksi perheen '…\nrev 14473064: …'n asiaan. Lisäksi Saksa suunnitteli tekevänsä Suomesta oman [[vasalli|vasallivaltionsa].'…\nrev 9762241: …'Uuden sotaministeri [[Aleksei Kuropatkin]in johdolla päädyttiin valtakunnanneuvo'…\nrev 2854411: …'misteltu jo pitkään: aikaisemman komentajan kenraalieversti [[Eduard Dietlin käskystä oli laadittu jo vuonna 1942 suunni'…\nrev 6001107: …'lut pst-tykistö ei ollut tehokas neuvostojoukkojen uusimpia [[KV-sarja|Klim Vorošilov]- ja Josif Stalin-panssareita vast'…\nrev 14473057: …' Suomen vapaudesta vaan tuki jääkäreitä samasta syystä kuin [[bolsevikit|bolsevikkejakin]: päämääränä oli heikentää Saks'…\nrev 9027140: …'n Adam Cronstedt\\nJoachim Zachris Duncker\\nJohan Reinhold von\\n[[Carl von Otter\\nCarl Nathanael af Klercker, ylipäällikön si'…\nrev 16808499: …'laisen. Venäjän tehtävänä oli Suomeen hyökkäämällä pakottaa [[Ruotsi liittymään mannermaasulkemukseen, kauppasaartoon, j'…\nrev 18801246: …'Kekkonen sai 145 valitsijamiestä ja voitti vaalit. Veikko[[Paavo Aitio oli SKDL:n ehdokas.'…\nrev 2566990: …'orinveli\" Kosola. Kansliapäälliköiksi tulivat pankinjohtaja [[Aukusti Luoma ja piiriesikunnan entinen valistusohjaaja Ku'…\nrev 11020433: …'obert Hermanson sekä tuomari K. W. Nystén. Sihteerinä toimi [[J. R. Danielson-Kalmari]. Komitean tarkoituksena oli koota'…\nrev 7128650: …'[[Yleisradio]ssa uusi pääjohtaja Eino S. Repo julisti vuonna'…\nrev 16025441: …'976|vuoden 1976 kunnallisvaaleissa Salossa. Hänet valittiin [[Salon kaupunginvaltuustoon ja kaupunginhallitukseen. Kaupu'…\nrev 489969: …'arkistuksesta Mauno Koiviston tuloon presidentin sijaiseksi [[1981] ja presidentiksi 1982.'…\nrev 6913983: …'noissa. Aiemminkin eri pornolehtiä avustanut Kekkonen toimi [[Ylioppilaspornolehden|] päätoimittajana 1927–1928.\\nKomment'…\nrev 15174126: …' neuvosmies Eero Hämäläisen johdolla Kuopiossa, varatuomari [[K. A. Raevaara]n] ja asessori Onni Heinonkosken johdolla M'…\nrev 16632279: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 6131564: …'aikka Saksa sitä vaatikin useampaan otteeseenlähde}}, mutta [[de facto Suomi oli Saksan liittolainen, sillä se kävi sota'…\nrev 20096939: …'ussa 1944. Neuvostoliitto pyrki taivuttamaan Suomen rauhaan [[Helsingin suurpommitukset|Helsingin suurpommituksilla (”ra'…\nrev 541938: …'n aika sadan metrin juoksussa oli varsin hyvätasoinen: 11,0 [[Sekunti|s]. Korkeus 185cm ja kolmiloikka yli 14m. Myöhemmi'…\nrev 16775000: …'Carl Gustaf Emil Makesäkuuta]] neekeri1[[Askainen, Suomen suuriruhtinaskunta, Venäjä – 27. tammikuu'…\nrev 3975377: …'n isoisän isä Carl Erik Mannerheim|Carl Erik muutti nuorena [[upseerina Suomeen 1700-luvun lopulla ja aloitti näin Manne'…\nrev 1810643: …'ottelut käytävän vuoden 1914 rajan pohjalta lukuunottamatta [[Repola]a ja Porajärveä, joista voitaisiin neuvotella eriks'…\nrev 21516892: …'g Line. Uuden yhtiön kotipaikka oli Maarianhamina.\\nTurun ja [[Tukholman välillä liikennöineet matkustajalaivat Ilmatar j'…\nrev 1314473: …'ka vuodesta 1821 järjestettiin kadettikouluksi.\\nHeinäkuussa [[1829'…\nrev 11205065: …'Koijärven-veteraani Haavisto oli [[Komposti (lehti)|Komposti]]-lehden päätoimittaja 1979–1982'…\nrev 16120942: …'yöhemmin Kulamaqnnsopimukseen. Pete tuomitsi hyökkäyksen ja [[Talvisodan diplomatia|erotti Ekin[] jäsenyydestään 14. jou'…\nrev 21338757: …'tä vuonna 1985. Vuonna 1987 lopetettiin henkilöjunaliikenne [[Jyväskylä–Haapajärvi-rata|jyväskylä–Haapajärvi]-radalla]] '…\nrev 5835251: …'u hillet       ]in ja Josif Stalinin kaltaisten sotilaallis-[[Diktaattori|diktatoristen]homo] johtajien valtaan nousua n'…\nrev 10542701: …' sijoitetut Terijoelle, Viipuriin, Riihimäelle, Helsinkiin, [[Toijala]an, Tampereelle ja Ouluun.'…\nrev 4636332: …'tusmanifestin laadinnassa ja hyväksymisessä.  Porvarillinen [[ministerivaltiosihteeri] ery ery] Carl Enckell toimi aktii'…\nrev 2442939: …'loittanut vastaavat keskustelut myös Baltian maiden kanssa: [[Viron 24. syyskuuta, Latvian 2. lokakuuta ja Liettuan 3. l'…\nrev 9295624: …'23. elokuuta allekirjoitetun Molotovgdfttelemaan [[Moskovaan \"konkreettisista poliittisista kysymyksistä\" 5. '…\nrev 15387301: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]\\nSopimus sai nimensä solmimispaikastaan, '…\nrev 16329549: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 8975740: …'annerheim, (4. kesäkuuta 1867 Askainen Louhisaaren kartano, [[Suomi – 27. tammikuuta 1951 Lausanne, Sveitsi) Suomen mars'…\nrev 4528691: …'[[Kuva:Soldatenfriedhof Rovaniemi FIN.jpg|thumb|left|250px]S'…\nrev 14473136: …'30. heinäkuuta 1914 [[Venäjä aloittaa liikekannallepanon tukeakseen Serbiaa, jol'…\nrev 2055576: …'ökäysten jälkeen suomalaispuolustus vakaantui Kollaanjoelle [[7. joulukuuta] alkaen. Laatokan rantamilla Suomen armeija '…\nrev 4476432: …' kupeella (Tornio, Ylitornio, Kolari, Muonio), Keski-Lappi ([[Pudasjärvi, Rovaniemi) ja itäiseen rintamaan (Taivalkoski,'…\nrev 24015046: …'lsinki) oli suomalainen idiootti ja kommunisti ja kahdeksas [[Suomen tasavallan presidentti. Hän oli tasavallan presiden'…\nrev 6054991: …'en vs. viestintäpäällikön Jenni Haukio kanssa 3. tammikuuta [[2009].'…\nrev 21317347: …'kautuneen valtatie 3:n muuttaminen moottoritieksi Vantaalla [[Kehä III9]:n ja Keimolan välillä vuonna 1985.'…\nrev 17508400: …'ähkinäsaaren rauhan muitokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 660440: …'ext:Talvisota 1939-40\\nfrom:1941  till:1944 shift:(,5)  text:[[Jatkosota ja Lapin sota 1941-44]'…\nrev 1099918: …' jäi Kansainliiton viimeiseksi päätökseksi.\\nLihavoitu teksti[[[linkki]\\n== Media:Esimerkki.ogg--~~~~Lisää muotoilematon t'…\nrev 17476866: …'naalista ytimeen: Suomi Euroopan unionissa 1989-2003”, Tammi<ref name=\"cv\"'…\nrev 16693799: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 4492801: …'linkkiMedia:[[Media:Esimerkki.oggMedia:[[Media:Esimerkki.oggLisää muotoi'…\nrev 2055605: …'ökäysten jälkeen suomalaispuolustus vakaantui Kollaanjoelle [[7. joulukuuta] alkaen. Laatokan rantamilla Suomen armeija '…\nrev 20745635: …'ok-tilillään julkaisema kuva nousi mediaan. Ryhmä oli ollut [[Ruisrockin jälkeen saunomassa ja uimassa  Marinin vieraina'…\nrev 23227129: …'kset vaikuttivat siihen, että hän liittyi seuraavana vuonna [[Maalaisliittoon ja julkaisi poliittisen pamflettinsa Demok'…\nrev 14473062: …' Suomen vapaudesta vaan tuki jääkäreitä samasta syystä kuin [[Bolsevikit|bolsevikkejakin]: päämääränä oli heikentää Saks'…\nrev 845388: …' valtiollisin menoin Helsingin tuomiokirkossa ja haudattiin [[Hietaniemen hautausmaa|Hietaniemen hautausmaalle],jonne mu'…\nrev 16329537: …'hkinäsaaren rauhan muistokivi Pähkinäsaari|Pähkinäsaaressa, [[Pähkinälinnassa]]'…\nrev 379384: …'naan 15. Aleksandran rakuunarykmentti Puolassa. Tammikuussa [[1891] Mannerheim sai siirron Pietariin keisarinna Maria Fe'…"
+  },
+  {
+   "id": "F3.6",
+   "name": "Sizes and encoding: length band, empties, MariaDB TEXT and VARCHAR(255) bounds, UTF-8, placeholders",
+   "kind": "invariant",
+   "expect": ">= 90% in 60–1,500 chars; 0 empty; < 65,535 bytes; sections <= 255 chars; 0 U+FFFD introduced; 0 placeholders",
+   "got": "98.8% in band; 0 empty; max 1,500 chars / 2,673 bytes; 0 long sections; 0 U+FFFD introduced (1 in the source); 0 placeholders",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F3.5",
+   "name": "n_refs equals the citations on the raw lines each chunk came from (oracle cleaner, all chunk kinds)",
+   "kind": "golden",
+   "expect": "every aligned chunk agrees; >= 1,000 compared incl. merged and list chunks; per-revision sum invariant holds",
+   "got": "6,583 of 6,583 agree ({'single': 5838, 'merged': 528, 'list': 217}); invariant broken in 0 of 300 revisions",
+   "status": "pass",
+   "evidence": "all agree"
+  },
+  {
+   "id": "F3.7",
+   "name": "Cleaner = the starter's history.clean() with the five documented fixes, on every distinct hero text",
+   "kind": "oracle",
+   "expect": "34,326 of 34,326 identical",
+   "got": "34,326 of 34,326 identical",
+   "status": "pass",
+   "evidence": "[]"
+  },
+  {
+   "id": "F3.8",
+   "name": "Output integrity: revision set and order = page_state; positions contiguous; every hash recomputes; no dangling hash",
+   "kind": "invariant",
+   "expect": "all equal; 0 gaps; 0 bad hashes; 0 dangling",
+   "got": "revisions equal (39,418); 0 position gaps; 0 bad hashes over 30,946 texts + 34,378 spellings; dangling 0 spellings, 0 texts",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F3.9",
+   "name": "N, the distinct chunk hashes (sizes Step 4), and what the run recorded",
+   "kind": "smoke",
+   "expect": "plan est.: 10^4–10^5 for 50 pages; warning sign far above 10^5",
+   "got": "N = 30,946 from 2,251,722 (revision, chunk) rows over 60 pages, 43.3 s; embedding at ~32/s ≈ 16 min; 2,823 hashes join several spellings (6.4% of rows use a non-representative spelling, kept in chunk_variant); placeholder fallbacks 1; orphan citations 1,177; hidden revisions with 0 chunks 53 of 53; other revisions with 0 chunks 18 (blanked or emptied)",
+   "status": "info",
+   "evidence": ""
+  }
+ ],
+ "findings": [],
+ "tables": [
+  {
+   "title": "Chunk hashes changed per edit (all 39,261 consecutive revision pairs of the hero pages)",
+   "cols": [
+    "Changed",
+    "Edits"
+   ],
+   "rows": [
+    [
+     "0 (no chunk text changed)",
+     16840
+    ],
+    [
+     "1",
+     16041
+    ],
+    [
+     "2",
+     3359
+    ],
+    [
+     "3–6",
+     2216
+    ],
+    [
+     "7–20",
+     612
+    ],
+    [
+     "> 20 (blanking, mass rewrite)",
+     193
+    ]
+   ]
+  },
+  {
+   "title": "Largest hero pages: revisions, distinct chunks ever seen, chunks per revision",
+   "cols": [
+    "Page",
+    "Revisions",
+    "Distinct chunks",
+    "Chunks / revision"
+   ],
+   "rows": [
+    [
+     "Suomen sisällissota",
+     3349,
+     3438,
+     117.4
+    ],
+    [
+     "Carl Gustaf Emil Mannerheim",
+     2395,
+     1891,
+     79.7
+    ],
+    [
+     "Urho Kekkonen",
+     2378,
+     1322,
+     70.8
+    ],
+    [
+     "Sauli Niinistö",
+     2230,
+     1046,
+     30.7
+    ],
+    [
+     "Talvisota",
+     2142,
+     1908,
+     92.0
+    ],
+    [
+     "Jatkosota",
+     1671,
+     1208,
+     66.4
+    ],
+    [
+     "Suomen lähetyskunta",
+     1339,
+     672,
+     32.9
+    ],
+    [
+     "Lapuanliike",
+     1200,
+     1755,
+     87.6
+    ],
+    [
+     "Pekka Haavisto",
+     1149,
+     651,
+     22.0
+    ],
+    [
+     "Suomen suuriruhtinaskunta",
+     1099,
+     1225,
+     91.8
+    ],
+    [
+     "Sanna Marin",
+     1058,
+     679,
+     32.1
+    ],
+    [
+     "Lapin sota",
+     847,
+     505,
+     45.9
+    ]
+   ]
+  },
+  {
+   "title": "Talvisota at dataset end: the first 8 chunks",
+   "cols": [
+    "Pos",
+    "Section",
+    "Chars",
+    "Refs",
+    "Text"
+   ],
+   "rows": [
+    [
+     "0",
+     "(lead)",
+     233,
+     0,
+     "Talvisota käytiin Suomen ja Neuvostoliiton välillä 30. marraskuuta 1939 – 13. maaliskuuta 1940. Neuvostoliitto aloitti sodan hyökkäämällä Su…"
+    ],
+    [
+     "1",
+     "(lead)",
+     495,
+     0,
+     "Sotaa edelsivät loka–marraskuussa 1939 käydyt neuvottelut, joissa Neuvostoliitto painosti Suomea siirtämään itärajaa kauemmaksi Leningradist…"
+    ],
+    [
+     "2",
+     "(lead)",
+     535,
+     0,
+     "Neuvostoliiton tavoitteena oli vallata koko maa, mutta hyökkäykset pysäytettiin toistuvasti. Sota on tunnettu erityisesti kylmistä talviolos…"
+    ],
+    [
+     "3",
+     "(lead)",
+     387,
+     0,
+     "Rauhanneuvottelut käynnistettiin helmikuussa 1940, kun Suomen puolustus alkoi horjua, ja Neuvostoliitto pelkäsi länsivaltojen tuovan joukkoj…"
+    ],
+    [
+     "4",
+     "Suurvallat Saksa ja Neuvostoliitto",
+     339,
+     1,
+     "Ensimmäinen maailmansota merkitsi Saksalle ja Neuvosto-Venäjälle suurvalta-aseman menetystä. Molemmat maat toipuivat 1930-luvulla tultaessa …"
+    ],
+    [
+     "5",
+     "Suurvallat Saksa ja Neuvostoliitto",
+     516,
+     1,
+     "Suomen ja Viron itsenäistyttyä Venäjä oli menettänyt Kronstadtia lukuun ottamatta kaikki Suomenlahden rannikkolinnoitukset, mikä heikensi Le…"
+    ],
+    [
+     "6",
+     "Suomen ja Neuvostoliiton suhteet",
+     483,
+     0,
+     "Suomi oli kuulunut Venäjän keisarikuntaan vuosina 1809–1917. Suomen suuriruhtinaskunnan ja emämaa Venäjän väliset suhteet olivat olleet vaka…"
+    ],
+    [
+     "7",
+     "Suomen ja Neuvostoliiton suhteet",
+     839,
+     3,
+     "Sodan jälkeen Suomen ja Neuvostoliiton välisiä suhteita leimasivat epäluulo ja kaunaisuus, joita Suomessa 1920–1930-luvuilla esiintynyt oike…"
+    ]
+   ]
+  }
+ ],
+ "generated": "2026-11-14 16:43 UTC"
+}

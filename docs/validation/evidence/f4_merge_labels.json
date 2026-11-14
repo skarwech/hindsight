@@ -1,0 +1,155 @@
+{
+ "blind_sha256": "b5f9fde54085c3cb2af6cf693f8d606d7be04e6b47cc9fff0aa9f12d1f08ad4e",
+ "judges": [
+  {
+   "judge": "judge-strict-editor",
+   "labels": [
+    {
+     "id": 1,
+     "same": true,
+     "confidence": 0.9
+    },
+    {
+     "id": 2,
+     "same": true,
+     "confidence": 0.95
+    },
+    {
+     "id": 3,
+     "same": true,
+     "confidence": 0.58
+    },
+    {
+     "id": 4,
+     "same": true,
+     "confidence": 0.68
+    },
+    {
+     "id": 5,
+     "same": true,
+     "confidence": 0.93
+    },
+    {
+     "id": 6,
+     "same": true,
+     "confidence": 0.95
+    },
+    {
+     "id": 7,
+     "same": false,
+     "confidence": 0.6
+    },
+    {
+     "id": 8,
+     "same": false,
+     "confidence": 0.65
+    },
+    {
+     "id": 9,
+     "same": true,
+     "confidence": 0.97
+    },
+    {
+     "id": 10,
+     "same": true,
+     "confidence": 0.97
+    },
+    {
+     "id": 11,
+     "same": true,
+     "confidence": 0.95
+    },
+    {
+     "id": 12,
+     "same": true,
+     "confidence": 0.95
+    },
+    {
+     "id": 13,
+     "same": true,
+     "confidence": 0.6
+    },
+    {
+     "id": 14,
+     "same": true,
+     "confidence": 0.9
+    }
+   ]
+  },
+  {
+   "judge": "judge-history-reader",
+   "labels": [
+    {
+     "id": 1,
+     "same": true,
+     "confidence": 0.8
+    },
+    {
+     "id": 2,
+     "same": true,
+     "confidence": 0.92
+    },
+    {
+     "id": 3,
+     "same": false,
+     "confidence": 0.58
+    },
+    {
+     "id": 4,
+     "same": false,
+     "confidence": 0.58
+    },
+    {
+     "id": 5,
+     "same": true,
+     "confidence": 0.9
+    },
+    {
+     "id": 6,
+     "same": true,
+     "confidence": 0.92
+    },
+    {
+     "id": 7,
+     "same": false,
+     "confidence": 0.65
+    },
+    {
+     "id": 8,
+     "same": false,
+     "confidence": 0.72
+    },
+    {
+     "id": 9,
+     "same": true,
+     "confidence": 0.93
+    },
+    {
+     "id": 10,
+     "same": true,
+     "confidence": 0.93
+    },
+    {
+     "id": 11,
+     "same": true,
+     "confidence": 0.9
+    },
+    {
+     "id": 12,
+     "same": true,
+     "confidence": 0.9
+    },
+    {
+     "id": 13,
+     "same": true,
+     "confidence": 0.55
+    },
+    {
+     "id": 14,
+     "same": true,
+     "confidence": 0.9
+    }
+   ]
+  }
+ ]
+}

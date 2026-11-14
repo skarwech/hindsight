@@ -1,0 +1,381 @@
+{
+ "feature": "F2",
+ "title": "Corpus layer page_state and triage",
+ "gate": "H5",
+ "checks": [
+  {
+   "id": "F2.1a",
+   "name": "All versions and pages loaded",
+   "kind": "invariant",
+   "expect": "862,076 versions, 19,742 pages",
+   "got": "862,076 versions, 19,742 pages",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F2.1b",
+   "name": "Per-page version counts equal the Parquet counts",
+   "kind": "invariant",
+   "expect": "0 mismatching pages",
+   "got": "0 mismatching pages of 19,742",
+   "status": "pass",
+   "evidence": "[]"
+  },
+  {
+   "id": "F2.1c",
+   "name": "Every Parquet row is in page_state with identical metadata; row_start = edit time + the expected µs bump",
+   "kind": "oracle",
+   "expect": "0 mismatches; same-second edits shifted by +k µs in rev_id order (expected from the Parquet)",
+   "got": "0 mismatches ; 20 rows needed a bump",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F2.2",
+   "name": "History chain: each version ends exactly where the next begins; one current row per page",
+   "kind": "invariant",
+   "expect": "0 broken; 0 extra current rows; 0 pages without a current row",
+   "got": "0 broken; 0 extra current rows; 0 pages without a current row",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F2.3",
+   "name": "AS OF a revision's own time returns it; 1 µs earlier returns its predecessor (10,000 random revisions)",
+   "kind": "invariant",
+   "expect": "10,000 of 10,000 both ways",
+   "got": "10,000 at; 10,000 at -1 µs",
+   "status": "pass",
+   "evidence": "failures at: []\nfailures before: []"
+  },
+  {
+   "id": "F2.3b",
+   "name": "AS OF latency, one page (10,000 timed queries)",
+   "kind": "smoke",
+   "expect": "plan F6: p95 <= 10 ms (for claims)",
+   "got": "p50 0.05 ms, p95 0.15 ms",
+   "status": "info",
+   "evidence": ""
+  },
+  {
+   "id": "F2.4a",
+   "name": "Starter's 50 articles: total versions, per year (measure.txt), and the two largest",
+   "kind": "oracle",
+   "expect": "31,848; all 24 years equal; Suomen sisällissota 3,357; Talvisota 2,143",
+   "got": "31,848; 24 of 24 years equal; 3,357; 2,143",
+   "status": "pass",
+   "evidence": "all years equal"
+  },
+  {
+   "id": "F2.4b",
+   "name": "Talvisota reverts (starter's window SQL and our load-time flag) and how many undo an anonymous edit",
+   "kind": "oracle",
+   "expect": "328 reverts both ways; 240 undo an anonymous editor (starter's regex)",
+   "got": "starter SQL 328, our is_revert 328; 240 by the starter's regex, 240 by M's anonymous flag",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F2.5",
+   "name": "Anonymous share of versions",
+   "kind": "oracle",
+   "expect": "17–21% (dataset README: 19%)",
+   "got": "19.3%",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F2.6a",
+   "name": "Golden cases for is_revert / undone / bump / NULL sha1 (pipeline/test_revisions.py)",
+   "kind": "golden",
+   "expect": "7 of 7 pass",
+   "got": "7 passed, exit 0",
+   "status": "pass",
+   "evidence": ".......                                                                  [100%]\n7 passed in 0.01s\n"
+  },
+  {
+   "id": "F2.6b",
+   "name": "Stored is_revert = the starter's window-function rule; stored is_revert and undone = flags() re-run on the stored rows",
+   "kind": "invariant",
+   "expect": "0 of 862,076 differ on each; reverts > 0 and undone > 0",
+   "got": "SQL rule: 0 differ; flags() re-run: 0 is_revert, 0 undone differ; 45,668 reverts, 18,849 undone (62% of them anonymous)",
+   "status": "pass",
+   "evidence": ""
+  },
+  {
+   "id": "F2.7",
+   "name": "Ten revisions covering the edge cases match live fi.wikipedia: page, UTC time, user, sha1, size, minor",
+   "kind": "oracle",
+   "expect": "10 of 10",
+   "got": "10 of 10",
+   "status": "pass",
+   "evidence": "2003 2928 (2003-08-09): page ok, time ok, user ok, sha1 ok, size ok, minor ok\n2026 (before 1 Oct) 23902209 (2026-03-20): page ok, time ok, user ok, sha1 ok, size ok, minor ok\nIP edit 15127149 (2015-08-09): page ok, time ok, user ok, sha1 ok, size ok, minor ok\ntemporary account 24148110 (2026-08-02): page ok, time ok, user ok, sha1 ok, size ok, minor ok\nminor edit 1762423 (2006-10-17): page ok, time ok, user ok, sha1 ok, size ok, minor ok\nsame-second (bumped) 464846 (2005-10-07): page ok, time ok, user ok, sha1 ok, size ok, minor ok\nhidden text (NULL sha1) 22363198 (2024-05-02): page ok, time ok, user ok, sha1 ok, size ok, minor ok [hidden on wiki: sha1hidden]\nrandom 1 17374539 (2018-06-14): page ok, time ok, user ok, sha1 ok, size ok, minor ok\nrandom 2 2618043 (2007-04-04): page ok, time ok, user ok, sha1 ok, size ok, minor ok\nrandom 3 12268955 (2012-10-26): page ok, time ok, user ok, sha1 ok, size ok, minor ok"
+  },
+  {
+   "id": "F2.8",
+   "name": "Hero set frozen (docs/hero.tsv + hero.md): all gold pages of the 37 test questions and the starter's 50, all in page_state",
+   "kind": "invariant",
+   "expect": "37 of 37 gold titles; 50 of 50 starter pages; every hero page in page_state",
+   "got": "37 of 37 gold; 50 of 50 starter; 60 of 60 pages in page_state",
+   "status": "pass",
+   "evidence": "[]"
+  },
+  {
+   "id": "F2.9",
+   "name": "Load time, size, triage latency",
+   "kind": "smoke",
+   "expect": "plan est.: load tens of minutes; a few hundred MB; triage in seconds",
+   "got": "load 5.3 s (8 workers, fresh True); 283 MB; triage 12.7 s over 19,742 pages",
+   "status": "info",
+   "evidence": "{\"pages\": 19742, \"skipped\": 0, \"rows\": 862076, \"bumped\": 20, \"reverts\": 45668, \"undone\": 18849, \"seconds\": 5.3, \"workers\": 8, \"fresh\": true}"
+  },
+  {
+   "id": "F2.8b",
+   "name": "Triage numbers in hero.tsv reproduce from an independent Python implementation (disputes, war months, versions)",
+   "kind": "oracle",
+   "expect": "60 of 60 pages equal",
+   "got": "60 of 60 equal",
+   "status": "pass",
+   "evidence": "all equal"
+  },
+  {
+   "id": "F2.10",
+   "name": "Resume: re-running the loader on a full table inserts nothing",
+   "kind": "invariant",
+   "expect": "0 pages loaded, 19,742 skipped, row count unchanged",
+   "got": "0 loaded, 19742 skipped; rows 862,076 -> 862,076",
+   "status": "pass",
+   "evidence": "{\"pages\": 0, \"skipped\": 19742, \"rows\": 0, \"bumped\": 0, \"reverts\": 0, \"undone\": 0, \"seconds\": 0.8, \"workers\": 8, \"fresh\": false}\n"
+  }
+ ],
+ "findings": [],
+ "tables": [
+  {
+   "title": "Starter's 50 articles: versions per year, page_state vs the starter's measure.txt",
+   "cols": [
+    "Year",
+    "page_state",
+    "starter"
+   ],
+   "rows": [
+    [
+     "2003",
+     16,
+     16
+    ],
+    [
+     "2004",
+     435,
+     435
+    ],
+    [
+     "2005",
+     1757,
+     1757
+    ],
+    [
+     "2006",
+     2729,
+     2729
+    ],
+    [
+     "2007",
+     2840,
+     2840
+    ],
+    [
+     "2008",
+     2487,
+     2487
+    ],
+    [
+     "2009",
+     1772,
+     1772
+    ],
+    [
+     "2010",
+     1430,
+     1430
+    ],
+    [
+     "2011",
+     1403,
+     1403
+    ],
+    [
+     "2012",
+     1005,
+     1005
+    ],
+    [
+     "2013",
+     742,
+     742
+    ],
+    [
+     "2014",
+     865,
+     865
+    ],
+    [
+     "2015",
+     884,
+     884
+    ],
+    [
+     "2016",
+     745,
+     745
+    ],
+    [
+     "2017",
+     863,
+     863
+    ],
+    [
+     "2018",
+     1455,
+     1455
+    ],
+    [
+     "2019",
+     1210,
+     1210
+    ],
+    [
+     "2020",
+     1683,
+     1683
+    ],
+    [
+     "2021",
+     1393,
+     1393
+    ],
+    [
+     "2022",
+     1263,
+     1263
+    ],
+    [
+     "2023",
+     1667,
+     1667
+    ],
+    [
+     "2024",
+     1318,
+     1318
+    ],
+    [
+     "2025",
+     1281,
+     1281
+    ],
+    [
+     "2026",
+     605,
+     605
+    ]
+   ]
+  },
+  {
+   "title": "Triage: most contested pages (rank-average of disputes per 100 versions and edit-war months)",
+   "cols": [
+    "#",
+    "Page",
+    "Versions",
+    "Disputes /100",
+    "Edit-war months"
+   ],
+   "rows": [
+    [
+     "1",
+     "Sanna Marin",
+     1059,
+     7.46,
+     10
+    ],
+    [
+     "2",
+     "Karjala",
+     572,
+     6.64,
+     5
+    ],
+    [
+     "3",
+     "Sinimusta Liike",
+     307,
+     7.82,
+     4
+    ],
+    [
+     "4",
+     "Juha Sipilä",
+     713,
+     6.31,
+     5
+    ],
+    [
+     "5",
+     "Anne Berner",
+     308,
+     7.79,
+     4
+    ],
+    [
+     "6",
+     "Suomen Kansa Ensin",
+     415,
+     7.23,
+     4
+    ],
+    [
+     "7",
+     "Pekka Haavisto",
+     1165,
+     6.01,
+     6
+    ],
+    [
+     "8",
+     "Axel Olof Freudenthal",
+     527,
+     9.11,
+     3
+    ],
+    [
+     "9",
+     "Sauli Niinistö",
+     2257,
+     5.41,
+     14
+    ],
+    [
+     "10",
+     "Turvapaikanhakijoiden mielenosoitus Helsingissä 2017",
+     247,
+     6.07,
+     3
+    ],
+    [
+     "11",
+     "Suomi–Neuvostoliitto-Seura",
+     138,
+     12.32,
+     2
+    ],
+    [
+     "12",
+     "Jaama",
+     253,
+     11.86,
+     2
+    ]
+   ]
+  }
+ ],
+ "generated": "2026-11-14 16:43 UTC"
+}

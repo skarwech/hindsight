@@ -1,0 +1,17 @@
+# local environment and data, rebuilt by the README's commands
+.venv/
+.mariadb/
+data/
+starters/
+.claude/
+# caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+*.tmp
+# machine-local logs
+logs/mariadb.err
+logs/ollama.log

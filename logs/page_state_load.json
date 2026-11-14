@@ -1,0 +1,173 @@
+{
+ "pages": 19742,
+ "skipped": 0,
+ "rows": 862076,
+ "bumped": 20,
+ "reverts": 45668,
+ "undone": 18849,
+ "seconds": 5.3,
+ "workers": 8,
+ "fresh": true,
+ "files": [
+  {
+   "file": "versions-01.parquet",
+   "pages": 281,
+   "skipped": 0,
+   "rows": 103607,
+   "bumped": 5,
+   "reverts": 12320,
+   "undone": 5937,
+   "seconds": 4.7
+  },
+  {
+   "file": "versions-02.parquet",
+   "pages": 419,
+   "skipped": 0,
+   "rows": 94990,
+   "bumped": 4,
+   "reverts": 7966,
+   "undone": 3333,
+   "seconds": 4.4
+  },
+  {
+   "file": "versions-03.parquet",
+   "pages": 408,
+   "skipped": 0,
+   "rows": 55786,
+   "bumped": 0,
+   "reverts": 3510,
+   "undone": 1282,
+   "seconds": 2.7
+  },
+  {
+   "file": "versions-04.parquet",
+   "pages": 845,
+   "skipped": 0,
+   "rows": 81910,
+   "bumped": 2,
+   "reverts": 3962,
+   "undone": 1316,
+   "seconds": 3.9
+  },
+  {
+   "file": "versions-05.parquet",
+   "pages": 774,
+   "skipped": 0,
+   "rows": 58520,
+   "bumped": 0,
+   "reverts": 2678,
+   "undone": 914,
+   "seconds": 2.9
+  },
+  {
+   "file": "versions-06.parquet",
+   "pages": 574,
+   "skipped": 0,
+   "rows": 35834,
+   "bumped": 1,
+   "reverts": 1419,
+   "undone": 571,
+   "seconds": 1.8
+  },
+  {
+   "file": "versions-07.parquet",
+   "pages": 827,
+   "skipped": 0,
+   "rows": 50029,
+   "bumped": 1,
+   "reverts": 1724,
+   "undone": 604,
+   "seconds": 2.5
+  },
+  {
+   "file": "versions-08.parquet",
+   "pages": 1298,
+   "skipped": 0,
+   "rows": 57743,
+   "bumped": 2,
+   "reverts": 1745,
+   "undone": 511,
+   "seconds": 2.9
+  },
+  {
+   "file": "versions-09.parquet",
+   "pages": 1070,
+   "skipped": 0,
+   "rows": 46026,
+   "bumped": 2,
+   "reverts": 1526,
+   "undone": 631,
+   "seconds": 2.2
+  },
+  {
+   "file": "versions-10.parquet",
+   "pages": 1656,
+   "skipped": 0,
+   "rows": 49997,
+   "bumped": 0,
+   "reverts": 1386,
+   "undone": 512,
+   "seconds": 2.2
+  },
+  {
+   "file": "versions-11.parquet",
+   "pages": 1166,
+   "skipped": 0,
+   "rows": 30943,
+   "bumped": 1,
+   "reverts": 995,
+   "undone": 347,
+   "seconds": 1.3
+  },
+  {
+   "file": "versions-12.parquet",
+   "pages": 1368,
+   "skipped": 0,
+   "rows": 40535,
+   "bumped": 0,
+   "reverts": 1530,
+   "undone": 664,
+   "seconds": 1.7
+  },
+  {
+   "file": "versions-13.parquet",
+   "pages": 2317,
+   "skipped": 0,
+   "rows": 47758,
+   "bumped": 0,
+   "reverts": 1643,
+   "undone": 613,
+   "seconds": 1.8
+  },
+  {
+   "file": "versions-14.parquet",
+   "pages": 2576,
+   "skipped": 0,
+   "rows": 44592,
+   "bumped": 0,
+   "reverts": 1657,
+   "undone": 706,
+   "seconds": 1.2
+  },
+  {
+   "file": "versions-15.parquet",
+   "pages": 2723,
+   "skipped": 0,
+   "rows": 46681,
+   "bumped": 1,
+   "reverts": 1372,
+   "undone": 788,
+   "seconds": 1.1
+  },
+  {
+   "file": "versions-16.parquet",
+   "pages": 1440,
+   "skipped": 0,
+   "rows": 17125,
+   "bumped": 1,
+   "reverts": 235,
+   "undone": 120,
+   "seconds": 0.7
+  }
+ ]
+}
