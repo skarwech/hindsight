@@ -8,6 +8,7 @@ from __future__ import annotations
 import csv
 import json
 import os
+import ssl
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -36,7 +37,10 @@ def _database_settings() -> dict[str, Any]:
 
 
 def connect_db() -> pymysql.connections.Connection:
-    connection = pymysql.connect(**_database_settings(), autocommit=True, charset="utf8mb4", connect_timeout=10)
+    settings = _database_settings()
+    if settings["host"].strip("[]").lower() not in {"localhost", "127.0.0.1", "::1"}:
+        settings["ssl"] = ssl.create_default_context()
+    connection = pymysql.connect(**settings, autocommit=True, charset="utf8mb4", connect_timeout=10)
     connection.cursor().execute("SET time_zone = '+00:00'")
     return connection
 

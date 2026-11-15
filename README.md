@@ -117,6 +117,7 @@ Streamlit Cloud installs only the lightweight app dependencies from `requirement
 uses `requirements-dev.txt`. The app reads `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` from the environment.
 Streamlit deployments can set the same values under `[database]` in `.streamlit/secrets.toml` (`host`, `port`, `user`,
 `password`, `name`). The default settings target the project-local MariaDB bound to `127.0.0.1`; a hosted app needs a
-network-reachable MariaDB host configured in its secrets.
+network-reachable MariaDB host configured in its secrets. The app and pipeline helpers use TLS with certificate
+verification for non-local database hosts; keep that enabled for hosted databases.
 
 Wikipedia text and everything derived from it is CC BY-SA 4.0.

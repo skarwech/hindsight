@@ -14,7 +14,10 @@ EMBED_OPTS = {"num_ctx": 8192, "num_batch": 8192}   # Ollama needs both, or long
 
 
 def connect(database: str) -> mariadb.Connection:
-    con = mariadb.connect(**DB, database=database, autocommit=True)
+    settings = DB.copy()
+    if settings["host"].strip("[]").lower() not in {"localhost", "127.0.0.1", "::1"}:
+        settings["ssl_verify_cert"] = True
+    con = mariadb.connect(**settings, database=database, autocommit=True)
     con.cursor().execute("SET time_zone = '+00:00'")
     return con
 
