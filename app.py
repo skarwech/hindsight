@@ -18,6 +18,7 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parent
 HERO_TSV = ROOT / "docs" / "hero.tsv"
+DEMO_JSON = ROOT / "docs" / "demo_snapshots.json"
 
 st.set_page_config(page_title="Hindsight", page_icon="🕰️", layout="wide")
 
@@ -53,6 +54,11 @@ def load_catalog() -> list[dict[str, Any]]:
             {**row, "page_id": int(row["page_id"])}
             for row in csv.DictReader(file, delimiter="\t")
         ]
+
+
+@st.cache_data(show_spinner=False)
+def load_demo_snapshots() -> list[dict[str, Any]]:
+    return json.loads(DEMO_JSON.read_text(encoding="utf-8"))["snapshots"]
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -150,7 +156,9 @@ def render_snapshot(snapshot: dict[str, Any] | None, page_id: int, as_of: date) 
     st.title(title)
     st.caption(f"Page {page_id} · snapshot date {as_of.isoformat()} UTC · dataset ends 1 October 2026")
 
-    timestamp: datetime = snapshot["row_start"]
+    timestamp = snapshot["row_start"]
+    if isinstance(timestamp, str):
+        timestamp = datetime.fromisoformat(timestamp)
     first, second, third = st.columns(3)
     first.metric("Revision", f"{rev_id:,}")
     second.metric("Claims", f"{len(snapshot['claims']):,}")
@@ -190,9 +198,31 @@ try:
     catalog = load_catalog()
     earliest, latest = load_date_bounds()
 except (pymysql.MySQLError, RuntimeError, OSError) as error:
-    st.error("Hindsight could not load its article history. Check the database connection and the app setup notes in README.")
+    st.warning("Demo mode: the full history database is not connected. This sample includes four snapshots of Talvisota.")
+    try:
+        demo_snapshots = load_demo_snapshots()
+    except (OSError, json.JSONDecodeError, KeyError) as demo_error:
+        st.error("Hindsight could not load the database or the packaged demo sample.")
+        with st.expander("Technical details"):
+            st.code(f"Database: {error}\nDemo data: {demo_error}")
+        st.stop()
+
+    with st.sidebar:
+        st.header("Demo snapshots")
+        demo_by_date = {item["as_of"]: item for item in demo_snapshots}
+        demo_date = st.selectbox(
+            "Talvisota as of",
+            list(demo_by_date),
+            index=len(demo_by_date) - 1,
+        )
+        demo = demo_by_date[demo_date]
+    render_snapshot(demo["snapshot"], demo["page_id"], date.fromisoformat(demo["as_of"]))
+    st.markdown(
+        "Sample text: [Finnish Wikipedia history dataset M](https://github.com/MariaDB/mariadb-wikipedia-datasets); "
+        "Wikipedia-derived content is CC BY-SA 4.0."
+    )
     with st.expander("Technical details"):
-        st.code(str(error))
+        st.code(f"Database: {error}")
     st.stop()
 
 with st.sidebar:
