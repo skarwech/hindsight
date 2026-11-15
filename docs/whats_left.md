@@ -9,15 +9,15 @@ Status on 2026-11-15. Validation status per feature: `docs/dashboard.html`; deci
 | 0–3 | F1–F4: environment, `page_state`, chunker, lineage resolver | validated |
 | 4 | F5 embeddings and `chunk` store; F4S semantic lineage | validated: F5.6 (the plan's probe check) and the semantic-link gate fail as specified, so the semantic pass is not adopted |
 | 5 | F6 deep layer: `claim`, `layout`, `text_variant` | all programmatic F6 checks pass; **awaiting user review** |
-| 6–8 | F7–F13: retrieval, answers, then/now, insight, audit | not started |
-| 9 | F14 web UI | Streamlit historical snapshot prototype added; full UI and F14 validation remain |
+| 6–8 | F7–F13: time-aware retrieval, then/now, insight, audit | not started; a current-article local RAG baseline is now available |
+| 9 | F14 web UI | Streamlit snapshot viewer and local RAG Q&A added; full UI and F14 validation remain |
 | 10–12 | F15–F17: benchmark, stretch features, ship | not started |
 
 ## Left in Step 5 (before asking for validation)
 
 The review fixes are implemented and the full validation ran on 2026-11-15. F6.1–F6.4, F6.6 and F6.7 pass; F6.5 records storage as information. The 8 fault cases all produced their expected failing sub-checks. Fresh results are in `docs/validation/f6.json`, `docs/validation/evidence/f6_mutations.json` and `docs/dashboard.html`.
 
-Remaining Step 5 work: review the F6 results and accept the step. A Streamlit historical snapshot viewer is now available in `app.py`; it uses F6 history only. Retrieval, Q&A, then-versus-now comparison and the rest of F14 are still unimplemented.
+Remaining Step 5 work: review the F6 results and accept the step. The Streamlit app now has historical snapshots and a local, current-article RAG Q&A view. Retrieval against claims as of a selected date, then-versus-now comparison, and the rest of F14 are still unimplemented.
 
 ## Open decisions (yours)
 

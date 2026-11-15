@@ -1,11 +1,11 @@
-"""Streamlit reader for the validated Hindsight article-history layer.
+"""Streamlit reader and local RAG explorer for Hindsight.
 
 Run with: streamlit run app.py
-Requires MariaDB tables produced by Steps 1–5. Question answering and date snapping are not part of this prototype yet.
 """
 from __future__ import annotations
 
 import csv
+import getpass
 import json
 import os
 import ssl
@@ -14,7 +14,9 @@ from pathlib import Path
 from typing import Any
 
 import pymysql
+import requests
 import streamlit as st
+from local_rag import database_status, generate_answer, retrieve
 
 ROOT = Path(__file__).resolve().parent
 HERO_TSV = ROOT / "docs" / "hero.tsv"
@@ -28,13 +30,19 @@ def _database_settings() -> dict[str, Any]:
         secrets = dict(st.secrets.get("database", {}))
     except Exception:
         secrets = {}
+    socket = os.environ.get("DB_SOCKET", secrets.get("socket"))
+    if not socket and not os.environ.get("DB_HOST") and not secrets.get("host"):
+        candidate = Path("/tmp/mysql.sock")
+        if candidate.exists():
+            socket = str(candidate)
+    local_socket = bool(socket)
     return {
         "host": os.environ.get("DB_HOST", secrets.get("host", "127.0.0.1")),
         "port": int(os.environ.get("DB_PORT", secrets.get("port", 3306))),
-        "user": os.environ.get("DB_USER", secrets.get("user", "hindsight")),
-        "password": os.environ.get("DB_PASSWORD", secrets.get("password", "hindsight")),
+        "user": os.environ.get("DB_USER", secrets.get("user", getpass.getuser() if local_socket else "hindsight")),
+        "password": os.environ.get("DB_PASSWORD", secrets.get("password", "" if local_socket else "hindsight")),
         "database": os.environ.get("DB_NAME", secrets.get("name", "wikihistory")),
-        "unix_socket": os.environ.get("DB_SOCKET", secrets.get("socket")),
+        "unix_socket": socket,
     }
 
 
@@ -190,14 +198,94 @@ def render_snapshot(snapshot: dict[str, Any] | None, page_id: int, as_of: date) 
             st.text(claim["text"])
 
 
+def render_local_rag() -> None:
+    st.header("Ask Finnish, Swedish, and English Wikipedia")
+    st.caption(
+        "Local MariaDB Vector retrieval and Ollama answer generation. This uses the corpus's latest article snapshots, "
+        "not a selected historical date; no hosted AI API is used."
+    )
+    try:
+        status = database_status()
+    except pymysql.MySQLError as error:
+        st.error("The local RAG database is not ready. Follow the ‘Local RAG setup’ steps in README.md.")
+        with st.expander("Technical details"):
+            st.code(str(error))
+        return
+
+    st.caption(f"RAG corpus: {status['articles']:,} articles · {status['vectors']:,} ready-made vectors")
+    if status["articles"] == 0 or status["vectors"] == 0:
+        st.warning("The RAG tables exist but do not contain article vectors yet. Follow the local setup steps in README.md.")
+        return
+
+    with st.form("rag-query-form"):
+        question = st.text_input("Question", placeholder="Why did the Winter War begin?")
+        first, second = st.columns([2, 1])
+        language = first.selectbox(
+            "Search language",
+            ["all", "fi", "en", "sv"],
+            format_func=lambda value: {
+                "all": "All languages",
+                "fi": "Finnish",
+                "en": "English",
+                "sv": "Swedish",
+            }[value],
+        )
+        limit = second.slider("Sources", min_value=3, max_value=8, value=5)
+        submitted = st.form_submit_button("Ask locally", type="primary")
+
+    if submitted:
+        if not question.strip():
+            st.warning("Enter a question first.")
+            return
+        if len(question) > 1_000:
+            st.warning("Keep the question under 1,000 characters.")
+            return
+
+        st.session_state.pop("local_rag_sources", None)
+        st.session_state.pop("local_rag_answer", None)
+        try:
+            with st.spinner("Finding relevant articles…"):
+                sources = retrieve(question.strip(), language=language, limit=limit)
+            if not sources:
+                st.info("No matching articles were found.")
+                return
+            st.session_state["local_rag_sources"] = sources
+            with st.spinner("Writing a cited answer with the local Ollama model…"):
+                st.session_state["local_rag_answer"] = generate_answer(question.strip(), sources)
+        except (pymysql.MySQLError, requests.RequestException, RuntimeError, ValueError) as error:
+            st.error("Local RAG could not complete this question. Check MariaDB, Ollama, and the model names in README.md.")
+            with st.expander("Technical details"):
+                st.code(str(error))
+
+    sources = st.session_state.get("local_rag_sources", [])
+    if sources:
+        st.subheader("Answer")
+        answer = st.session_state.get("local_rag_answer")
+        if answer:
+            st.markdown(answer)
+        else:
+            st.info("The retrieved sources are shown below. Start Ollama with the configured chat model to generate an answer.")
+        st.subheader("Sources")
+        for index, source in enumerate(sources, start=1):
+            with st.expander(f"[{index}] {source['title']} · {source['lang']} · distance {source['distance']:.3f}"):
+                st.link_button("Open Wikipedia article", source["url"])
+                st.write(source["excerpt"] or "No excerpt was available.")
+
+
 st.title("Hindsight")
 st.caption("Explore how Finnish Wikipedia articles changed over time.")
-st.info("This prototype reconstructs historical article snapshots. Question answering, comparison, and vandalism date snapping are still in development.")
+st.info("Browse historical snapshots or ask a question against the local Wikipedia RAG corpus.")
+
+with st.sidebar:
+    view = st.radio("Explore", ["Historical snapshots", "Local RAG questions"])
 
 try:
     catalog = load_catalog()
     earliest, latest = load_date_bounds()
 except (pymysql.MySQLError, RuntimeError, OSError) as error:
+    if view == "Local RAG questions":
+        render_local_rag()
+        st.stop()
     st.warning("Demo mode: the full history database is not connected. This sample includes four snapshots of Talvisota.")
     try:
         demo_snapshots = load_demo_snapshots()
@@ -223,6 +311,10 @@ except (pymysql.MySQLError, RuntimeError, OSError) as error:
     )
     with st.expander("Technical details"):
         st.code(f"Database: {error}")
+    st.stop()
+
+if view == "Local RAG questions":
+    render_local_rag()
     st.stop()
 
 with st.sidebar:

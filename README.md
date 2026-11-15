@@ -100,11 +100,13 @@ The semantic pass did not reach its precision bar (F4S), so Step 5 loads the cha
 (cd eval && ../.venv/bin/python f6_check.py; ../.venv/bin/python render.py)   # F6, ~1 min (every revision rebuilt through AS OF)
 ```
 
-## Streamlit app: historical article viewer
+## Streamlit app: snapshots and local RAG
 
-The current UI reconstructs a selected hero article from `page_state`, `layout`, `claim`, and `text_variant`. It is a local
-prototype for the validated Step 5 history layer; question answering, then-versus-now comparison, and vandalism date
-snapping are part of the later retrieval steps and are not available yet.
+The UI has two views. **Historical snapshots** reconstructs a selected hero article from `page_state`, `layout`, `claim`,
+and `text_variant`. **Local RAG questions** retrieves Wikipedia articles with MariaDB Vector and asks a local Ollama
+model to answer from cited excerpts. It uses the starter's Finnish, Swedish, and English article corpus and precomputed
+`bge-m3` vectors. This RAG corpus is the latest article snapshot and does not yet answer for a historical date. Answer
+generation runs on the same machine as Streamlit; it does not call a hosted AI service.
 
 After the database and Steps 1–5 data are loaded:
 
@@ -122,5 +124,43 @@ packaged Talvisota snapshots from `docs/demo_snapshots.json`, so the UI can be p
 app and pipeline helpers use TLS with certificate verification for non-local database hosts; keep that enabled for
 hosted databases. For local socket-based MariaDB, set `DB_SOCKET` to its socket path and use `DB_USER` / `DB_PASSWORD`
 for a local account.
+
+### Local RAG setup
+
+The local RAG view needs MariaDB 11.7 or newer with the vector tables loaded, Ollama running, and the local models
+`bge-m3` (embeddings) and `qwen3:8b` (answer generation). These models are configured by default; override them with
+`RAG_EMBED_MODEL` and `RAG_CHAT_MODEL` if you use different local models. On the current macOS setup, MariaDB is
+reachable through `/tmp/mysql.sock` and the prepared article and vector Parquet files are already in
+`starters/mariadb-vector-wikipedia-rag/data/`.
+
+Install the app and starter dependencies if needed, create the RAG schema, and load the prepared data. The commands
+below use the current local MariaDB account; change `DB_USER` or `DB_SOCKET` for another installation. Loading the
+article rows and vectors takes a few minutes the first time and is safe to repeat.
+
+```sh
+uv pip install --python .venv/bin/python -r requirements.txt
+export DB_SOCKET=/tmp/mysql.sock
+export DB_USER="$USER"
+export DB_PASSWORD=
+
+mariadb --no-defaults --protocol=SOCKET --socket="$DB_SOCKET" -u "$DB_USER" \
+  -e "CREATE DATABASE IF NOT EXISTS wikirag CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+
+(cd starters/mariadb-vector-wikipedia-rag && \
+  DB_NAME=wikirag ../../.venv/bin/python create_tables.py && \
+  DB_NAME=wikirag ../../.venv/bin/python load.py --vectors)
+```
+
+Start MariaDB and Ollama before launching Streamlit. If Ollama is not already running from its macOS app, use a
+separate terminal for `ollama serve`. Install the model files once with `ollama pull bge-m3` and `ollama pull qwen3:8b`.
+Then launch the app with the same local DB environment:
+
+```sh
+export DB_NAME=wikihistory
+.venv/bin/streamlit run app.py
+```
+
+Streamlit Cloud can show the packaged historical snapshot sample, but it cannot reach the MariaDB and Ollama processes
+on this Mac. The local RAG view is therefore for the locally running app unless you separately host both services.
 
 Wikipedia text and everything derived from it is CC BY-SA 4.0.
