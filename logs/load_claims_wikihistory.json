@@ -16,6 +16,23 @@
     "chunk_variant.parquet": "198b93df41c1706c21d822bfe4d7a8fc1d0f6f47afbcb00b2ef32e768a81119d"
    },
    "lineage_log": "fe27b22372f41c8893a2dbc9ee86d2a43bf596281ffb30ebfdd61892b623b142"
+  },
+  {
+   "schema": "wikihistory",
+   "fresh": false,
+   "pages_loaded": 60,
+   "pages_skipped": 0,
+   "claim_rows": 52994,
+   "layout_rows": 6088,
+   "text_variants": 34378,
+   "seconds": 1.4,
+   "inputs": {
+    "states.parquet": "34223fd9b27cf910e476b28541067ae9ae307f981c1724a436479e93d0d8478d",
+    "claim_ids.parquet": "8d1590fbd767787a9472cd74a553fa1b5556d626f1ea23c10bc20ede692cad1f",
+    "revisions.parquet": "02eeb478b243ad637cbd4515371653fdb950d77ace46e2827f9210aad92e35aa",
+    "chunk_variant.parquet": "198b93df41c1706c21d822bfe4d7a8fc1d0f6f47afbcb00b2ef32e768a81119d"
+   },
+   "lineage_log": "fe27b22372f41c8893a2dbc9ee86d2a43bf596281ffb30ebfdd61892b623b142"
   }
  ],
  "inputs": {

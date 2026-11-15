@@ -33,12 +33,13 @@ def _database_settings() -> dict[str, Any]:
         "user": os.environ.get("DB_USER", secrets.get("user", "hindsight")),
         "password": os.environ.get("DB_PASSWORD", secrets.get("password", "hindsight")),
         "database": os.environ.get("DB_NAME", secrets.get("name", "wikihistory")),
+        "unix_socket": os.environ.get("DB_SOCKET", secrets.get("socket")),
     }
 
 
 def connect_db() -> pymysql.connections.Connection:
     settings = _database_settings()
-    if settings["host"].strip("[]").lower() not in {"localhost", "127.0.0.1", "::1"}:
+    if not settings["unix_socket"] and settings["host"].strip("[]").lower() not in {"localhost", "127.0.0.1", "::1"}:
         settings["ssl"] = ssl.create_default_context()
     connection = pymysql.connect(**settings, autocommit=True, charset="utf8mb4", connect_timeout=10)
     connection.cursor().execute("SET time_zone = '+00:00'")

@@ -9,13 +9,18 @@ import requests
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DB = dict(host=os.environ.get("DB_HOST", "127.0.0.1"), port=int(os.environ.get("DB_PORT", 3306)),
           user=os.environ.get("DB_USER", "hindsight"), password=os.environ.get("DB_PASSWORD", "hindsight"))
+DB_SOCKET = os.environ.get("DB_SOCKET")
 OLLAMA = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 EMBED_OPTS = {"num_ctx": 8192, "num_batch": 8192}   # Ollama needs both, or long inputs are cut [S3]
 
 
 def connect(database: str) -> mariadb.Connection:
     settings = DB.copy()
-    if settings["host"].strip("[]").lower() not in {"localhost", "127.0.0.1", "::1"}:
+    if DB_SOCKET:
+        settings.pop("host")
+        settings.pop("port")
+        settings["unix_socket"] = DB_SOCKET
+    elif settings["host"].strip("[]").lower() not in {"localhost", "127.0.0.1", "::1"}:
         settings["ssl_verify_cert"] = True
     con = mariadb.connect(**settings, database=database, autocommit=True)
     con.cursor().execute("SET time_zone = '+00:00'")
